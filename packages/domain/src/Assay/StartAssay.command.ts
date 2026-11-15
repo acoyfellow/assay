@@ -13,15 +13,23 @@ export class AssayStarted extends Domain.Event("AssayStarted", {
 export class AlreadyStarted extends Domain.Rejection("AlreadyStarted", {}) {}
 export class NoSeats extends Domain.Rejection("NoSeats", {}) {}
 export class NoBudget extends Domain.Rejection("NoBudget", {}) {}
-export class DuplicateSeat extends Domain.Rejection("DuplicateSeat", { seat: Schema.String }) {}
+export class DuplicateSeat extends Domain.Rejection("DuplicateSeat", {
+  seat: Schema.String,
+}) {}
 
 export class StartAssay extends Domain.Command(
   "StartAssay",
   {
     target: AssayId,
-    input: { planHash: Schema.String, budgetMicroUsd: MicroUsd, seats: Schema.Array(SeatPlan) },
+    input: {
+      planHash: Schema.String,
+      budgetMicroUsd: MicroUsd,
+      seats: Schema.Array(SeatPlan),
+    },
     events: [AssayStarted],
     rejects: [AlreadyStarted, NoSeats, NoBudget, DuplicateSeat],
   },
-  { description: "Freeze a plan and a budget, and open its seats to be claimed." },
+  {
+    description: "Freeze a plan and a budget, and open its seats to be claimed.",
+  },
 ) {}

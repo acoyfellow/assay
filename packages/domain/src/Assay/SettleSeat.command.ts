@@ -11,15 +11,23 @@ export class SeatSettled extends Domain.Event("SeatSettled", {
   finished: Schema.Boolean,
 }) {}
 
-export class NotClaimed extends Domain.Rejection("NotClaimed", { seat: Schema.String }) {}
+export class NotClaimed extends Domain.Rejection("NotClaimed", {
+  seat: Schema.String,
+}) {}
 
 export class SettleSeat extends Domain.Command(
   "SettleSeat",
   {
     target: AssayId,
-    input: { seat: Schema.String, spentMicroUsd: MicroUsd, passed: Schema.Boolean },
+    input: {
+      seat: Schema.String,
+      spentMicroUsd: MicroUsd,
+      passed: Schema.Boolean,
+    },
     events: [SeatSettled],
     rejects: [NotRunning, NotClaimed],
   },
-  { description: "Release a graded seat's reservation and charge what it really spent." },
+  {
+    description: "Release a graded seat's reservation and charge what it really spent.",
+  },
 ) {}

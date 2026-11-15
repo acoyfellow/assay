@@ -62,7 +62,14 @@ const receipt = (seat: string, outcome: "stopped" | "died", spentMicroUsd: numbe
     totalSpentMicroUsd: total,
   });
 const stop = (seat: string, spentMicroUsd: number, outcome: "stopped" | "died" = "stopped") =>
-  new RecordReceipt({ assayId: id, seat, planHash: "p1", outcome, turns: 3, spentMicroUsd });
+  new RecordReceipt({
+    assayId: id,
+    seat,
+    planHash: "p1",
+    outcome,
+    turns: 3,
+    spentMicroUsd,
+  });
 
 it("the model has no definition errors", () => {
   expect(Domain.verify(AssayModel)).toEqual([]);
@@ -72,11 +79,26 @@ it.effect("a plan starts once, with seats and a budget", () =>
   story(
     Story.when(
       run,
-      new StartAssay({ planHash: "p1", budgetMicroUsd: 250_000, seats: [plan("s1"), plan("s2")] }),
+      new StartAssay({
+        planHash: "p1",
+        budgetMicroUsd: 250_000,
+        seats: [plan("s1"), plan("s2")],
+      }),
     ),
     Story.then(run, started),
-    Story.view(AssayScore, run, { seats: 2, status: "running", budgetMicroUsd: 250_000 }),
-    Story.when(run, new StartAssay({ planHash: "p2", budgetMicroUsd: 1, seats: [plan("s1")] })),
+    Story.view(AssayScore, run, {
+      seats: 2,
+      status: "running",
+      budgetMicroUsd: 250_000,
+    }),
+    Story.when(
+      run,
+      new StartAssay({
+        planHash: "p2",
+        budgetMicroUsd: 1,
+        seats: [plan("s1")],
+      }),
+    ),
     Story.rejected(new AlreadyStarted()),
   ),
 );
@@ -85,16 +107,36 @@ it.effect("a plan with no seats, no budget or the same seat twice is refused", (
   story(
     Story.when(run, new StartAssay({ planHash: "p1", budgetMicroUsd: 1, seats: [] })),
     Story.rejected(new NoSeats()),
-    Story.when(run, new StartAssay({ planHash: "p1", budgetMicroUsd: 0, seats: [plan("s1")] })),
+    Story.when(
+      run,
+      new StartAssay({
+        planHash: "p1",
+        budgetMicroUsd: 0,
+        seats: [plan("s1")],
+      }),
+    ),
     Story.rejected(new NoBudget()),
-    Story.when(run, new StartAssay({ planHash: "p1", budgetMicroUsd: 1, seats: [plan("s1"), plan("s1")] })),
+    Story.when(
+      run,
+      new StartAssay({
+        planHash: "p1",
+        budgetMicroUsd: 1,
+        seats: [plan("s1"), plan("s1")],
+      }),
+    ),
     Story.rejected(new DuplicateSeat({ seat: "s1" })),
   ),
 );
 
 it.effect("a seat is claimed once, and only while its worst case fits the budget", () =>
   story(
-    Story.given(run, new AssayStarted({ ...started, seats: [plan("s1"), plan("s2"), plan("s3")] })),
+    Story.given(
+      run,
+      new AssayStarted({
+        ...started,
+        seats: [plan("s1"), plan("s2"), plan("s3")],
+      }),
+    ),
     Story.when(run, new ClaimSeat({ seat: "s1", runner: "local" })),
     Story.then(run, claim("s1")),
     Story.replied({ reservedMicroUsd: 100_000 }),
@@ -116,7 +158,11 @@ it.effect("a seat that dies can be resumed; its spend adds up across attempts", 
     Story.then(s1, receipt("s1", "died", 20_000)),
     Story.when(s1, stop("s1", 30_000)),
     Story.then(s1, receipt("s1", "stopped", 30_000, 50_000)),
-    Story.state(s1, { _tag: "Stopped", attempts: 2, totalSpentMicroUsd: 50_000 }),
+    Story.state(s1, {
+      _tag: "Stopped",
+      attempts: 2,
+      totalSpentMicroUsd: 50_000,
+    }),
     Story.when(s1, stop("s1", 1)),
     Story.rejected(new AlreadyRecorded()),
   ),
@@ -168,7 +214,15 @@ it.effect(
           totalSpentMicroUsd: 40_000,
         }),
       ),
-      Story.then(run, new SeatSettled({ seat: "s1", spentMicroUsd: 40_000, passed: true, finished: false })),
+      Story.then(
+        run,
+        new SeatSettled({
+          seat: "s1",
+          spentMicroUsd: 40_000,
+          passed: true,
+          finished: false,
+        }),
+      ),
       Story.state(run, { _tag: "Running", committedMicroUsd: 140_000 }),
       Story.when(s1, new RecordGrade({ passed: false, reason: "again" })),
       Story.rejected(new AlreadyGraded({ passed: true })),
@@ -183,9 +237,26 @@ it.effect(
           totalSpentMicroUsd: 10_000,
         }),
       ),
-      Story.then(run, new SeatSettled({ seat: "s2", spentMicroUsd: 10_000, passed: false, finished: true })),
-      Story.state(run, { _tag: "Finished", committedMicroUsd: 50_000, cancelled: false }),
-      Story.view(AssayScore, run, { graded: 2, passed: 1, spentMicroUsd: 50_000, status: "finished" }),
+      Story.then(
+        run,
+        new SeatSettled({
+          seat: "s2",
+          spentMicroUsd: 10_000,
+          passed: false,
+          finished: true,
+        }),
+      ),
+      Story.state(run, {
+        _tag: "Finished",
+        committedMicroUsd: 50_000,
+        cancelled: false,
+      }),
+      Story.view(AssayScore, run, {
+        graded: 2,
+        passed: 1,
+        spentMicroUsd: 50_000,
+        status: "finished",
+      }),
     ),
 );
 
@@ -207,7 +278,13 @@ it.effect("a late grade for a cancelled assay is kept on the seat and not charge
     Story.when(s1, new RecordGrade({ passed: true, reason: "ok" })),
     Story.then(
       s1,
-      new SeatGraded({ assayId: id, seat: "s1", passed: true, reason: "ok", totalSpentMicroUsd: 5 }),
+      new SeatGraded({
+        assayId: id,
+        seat: "s1",
+        passed: true,
+        reason: "ok",
+        totalSpentMicroUsd: 5,
+      }),
     ),
     Story.then(run),
   ),

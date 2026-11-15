@@ -44,5 +44,7 @@ export class AssayScore extends Domain.View(
       AssayCancelled: (score) => ({ ...score, status: "cancelled" as const }),
     },
   },
-  { description: "How an assay is going: seats graded, seats passed, and money spent against the budget." },
+  {
+    description: "How an assay is going: seats graded, seats passed, and money spent against the budget.",
+  },
 ) {}

@@ -10,8 +10,12 @@ export class SeatClaimed extends Domain.Event("SeatClaimed", {
   reservedMicroUsd: MicroUsd,
 }) {}
 
-export class UnknownSeat extends Domain.Rejection("UnknownSeat", { seat: Schema.String }) {}
-export class AlreadyClaimed extends Domain.Rejection("AlreadyClaimed", { runner: Schema.String }) {}
+export class UnknownSeat extends Domain.Rejection("UnknownSeat", {
+  seat: Schema.String,
+}) {}
+export class AlreadyClaimed extends Domain.Rejection("AlreadyClaimed", {
+  runner: Schema.String,
+}) {}
 export class OverBudget extends Domain.Rejection("OverBudget", {
   remainingMicroUsd: MicroUsd,
   neededMicroUsd: MicroUsd,
@@ -26,5 +30,7 @@ export class ClaimSeat extends Domain.Command(
     rejects: [NotRunning, UnknownSeat, AlreadyClaimed, OverBudget],
     reply: { reservedMicroUsd: MicroUsd },
   },
-  { description: "Reserve a seat's worst-case cost from the budget so a runner may start it." },
+  {
+    description: "Reserve a seat's worst-case cost from the budget so a runner may start it.",
+  },
 ) {}

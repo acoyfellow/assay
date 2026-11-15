@@ -79,7 +79,11 @@ export class Assay extends Domain.Aggregate("Assay", {
       const duplicate = firstDuplicate(cmd.seats);
       if (duplicate !== null) return new DuplicateSeat({ seat: duplicate });
       return [
-        new AssayStarted({ planHash: cmd.planHash, budgetMicroUsd: cmd.budgetMicroUsd, seats: cmd.seats }),
+        new AssayStarted({
+          planHash: cmd.planHash,
+          budgetMicroUsd: cmd.budgetMicroUsd,
+          seats: cmd.seats,
+        }),
       ];
     },
     ClaimSeat: (assay, cmd) => {
@@ -91,9 +95,18 @@ export class Assay extends Domain.Aggregate("Assay", {
       const needed = slot.plan.worstCaseMicroUsd;
       const remaining = running.budgetMicroUsd - running.committedMicroUsd;
       if (needed > remaining) {
-        return new OverBudget({ remainingMicroUsd: remaining, neededMicroUsd: needed });
+        return new OverBudget({
+          remainingMicroUsd: remaining,
+          neededMicroUsd: needed,
+        });
       }
-      return [new SeatClaimed({ seat: cmd.seat, runner: cmd.runner, reservedMicroUsd: needed })];
+      return [
+        new SeatClaimed({
+          seat: cmd.seat,
+          runner: cmd.runner,
+          reservedMicroUsd: needed,
+        }),
+      ];
     },
     SettleSeat: (assay, cmd) => {
       const running = runningFor(assay);
@@ -103,7 +116,12 @@ export class Assay extends Domain.Aggregate("Assay", {
       const others = Object.entries(running.seats).filter(([seat]) => seat !== cmd.seat);
       const finished = others.every(([, other]) => other.stage === "settled");
       return [
-        new SeatSettled({ seat: cmd.seat, spentMicroUsd: cmd.spentMicroUsd, passed: cmd.passed, finished }),
+        new SeatSettled({
+          seat: cmd.seat,
+          spentMicroUsd: cmd.spentMicroUsd,
+          passed: cmd.passed,
+          finished,
+        }),
       ];
     },
     CancelAssay: (assay, cmd) => {
@@ -133,7 +151,10 @@ export class Assay extends Domain.Aggregate("Assay", {
         reservedMicroUsd: event.reservedMicroUsd,
       }));
       return claimed._tag === "Running"
-        ? { ...claimed, committedMicroUsd: claimed.committedMicroUsd + event.reservedMicroUsd }
+        ? {
+            ...claimed,
+            committedMicroUsd: claimed.committedMicroUsd + event.reservedMicroUsd,
+          }
         : claimed;
     },
     SeatSettled: (state, event) => {

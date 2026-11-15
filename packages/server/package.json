@@ -1,0 +1,26 @@
+{
+	"name": "@assay/server",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./*": "./src/*.ts"
+	},
+	"bin": {
+		"assay": "./src/cli.ts",
+		"assay-mcp": "./src/mcp.ts"
+	},
+	"scripts": {
+		"serve": "bun src/serve.ts",
+		"test": "bun test/e2e.ts"
+	},
+	"dependencies": {
+		"@alchemy.run/domain": "^2.0.0-beta.87",
+		"@assay/domain": "workspace:*",
+		"@effect/platform-bun": "^4.1.4",
+		"effect": "^4.1.4"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.4.4",
+		"typescript": "^7.0.2"
+	}
+}

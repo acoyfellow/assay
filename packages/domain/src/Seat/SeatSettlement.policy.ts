@@ -8,7 +8,9 @@ import { Seat } from "./Seat.aggregate.ts";
 export class SeatSettlement extends Domain.Policy(
   "SeatSettlement",
   { from: Seat, on: [SeatGraded] },
-  { description: "When a seat is graded, charge its real spend to the assay and count its grade." },
+  {
+    description: "When a seat is graded, charge its real spend to the assay and count its grade.",
+  },
 ) {}
 
 export const SeatSettlementLive = SeatSettlement.toLayer(
@@ -18,7 +20,11 @@ export const SeatSettlementLive = SeatSettlement.toLayer(
       yield* assays
         .send(
           event.assayId,
-          new SettleSeat({ seat: event.seat, spentMicroUsd: event.totalSpentMicroUsd, passed: event.passed }),
+          new SettleSeat({
+            seat: event.seat,
+            spentMicroUsd: event.totalSpentMicroUsd,
+            passed: event.passed,
+          }),
         )
         .pipe(Effect.catchTag(["NotClaimed", "NotRunning"], () => Effect.void));
     });

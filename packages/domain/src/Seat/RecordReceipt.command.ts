@@ -20,9 +20,13 @@ export class ReceiptRecorded extends Domain.Event("ReceiptRecorded", {
 export class AlreadyRecorded extends Domain.Rejection(
   "AlreadyRecorded",
   {},
-  { description: "This seat stopped and has its one receipt. Only a seat that died takes another." },
+  {
+    description: "This seat stopped and has its one receipt. Only a seat that died takes another.",
+  },
 ) {}
-export class WrongPlan extends Domain.Rejection("WrongPlan", { expected: Schema.String }) {}
+export class WrongPlan extends Domain.Rejection("WrongPlan", {
+  expected: Schema.String,
+}) {}
 
 export class RecordReceipt extends Domain.Command(
   "RecordReceipt",
@@ -39,5 +43,7 @@ export class RecordReceipt extends Domain.Command(
     events: [ReceiptRecorded],
     rejects: [AlreadyRecorded, WrongPlan],
   },
-  { description: "Record what a seat did, written by the runner when the agent stops or dies." },
+  {
+    description: "Record what a seat did, written by the runner when the agent stops or dies.",
+  },
 ) {}

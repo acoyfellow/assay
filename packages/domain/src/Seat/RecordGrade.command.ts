@@ -17,7 +17,9 @@ export class NoReceipt extends Domain.Rejection(
   {},
   { description: "Grade a seat only after it stopped with a receipt." },
 ) {}
-export class AlreadyGraded extends Domain.Rejection("AlreadyGraded", { passed: Schema.Boolean }) {}
+export class AlreadyGraded extends Domain.Rejection("AlreadyGraded", {
+  passed: Schema.Boolean,
+}) {}
 
 export class RecordGrade extends Domain.Command(
   "RecordGrade",
