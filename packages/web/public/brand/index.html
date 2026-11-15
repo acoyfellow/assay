@@ -60,12 +60,22 @@ code { font: var(--step-0) var(--code); background: var(--wash); padding: 1px 6p
 .voice ul { margin: var(--space-2) 0 0; padding-left: 18px; color: var(--graphite); }
 .voice li { margin: var(--space-1) 0; }
 .voice b { font-weight: 500; }
+.pats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.pat { position: relative; min-height: 150px; border-radius: var(--radius); border: 1px solid var(--line); }
+.pat.ink { border-color: var(--ink); }
+.pat small { position: absolute; left: 10px; bottom: 10px; font: var(--step-0) var(--code); color: var(--graphite); background: var(--paper); padding: 1px 6px; border-radius: 3px; }
+.pat.ink small { color: var(--quiet); background: var(--ink); }
+.pat.use small { background: var(--wash); }
+.pat.use { margin-top: var(--space-3); min-height: 280px; display: grid; place-items: center; border: 0; }
+.pat.use > div { display: grid; justify-items: center; gap: var(--space-3); text-align: center; }
+.pat.use p { margin: 0; color: var(--graphite); }
 .rules ol { margin: 0; padding-left: 20px; max-width: var(--measure); }
 .rules li { margin: var(--space-2) 0; }
 .rules li span { color: var(--graphite); }
 @media (max-width: 820px) {
   section { grid-template-columns: 1fr; gap: var(--space-3); padding: var(--space-5) 0; }
   .grid4, .sw { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pats { grid-template-columns: 1fr; }
   .type div { grid-template-columns: 1fr; gap: var(--space-1); }
   .voice { grid-template-columns: 1fr; }
 }
@@ -169,7 +179,32 @@ code { font: var(--step-0) var(--code); background: var(--wash); padding: 1px 6p
 </section>
 
 <section>
-  <h2><span>07</span>Parts</h2>
+  <h2><span>07</span>Patterns</h2>
+  <div>
+    <p class="lede">Textures for large empty areas: empty states, the 404, slides, the back of a figure plate. Each is drawn on the same pixel grid as the mark, and is faint enough to only just see. Never put one behind text people need to read.</p>
+    <div class="pats">
+      <div class="pat" style="background:var(--paper) url(/brand/patterns/grid-light.svg)"><small>grid · 12 px rules</small></div>
+      <div class="pat ink" style="background:var(--ink) url(/brand/patterns/grid-dark.svg)"><small>grid · dark</small></div>
+      <div class="pat" style="background:var(--paper) url(/brand/patterns/dots-light.svg)"><small>dots · 12 px pitch</small></div>
+      <div class="pat ink" style="background:var(--ink) url(/brand/patterns/dots-dark.svg)"><small>dots · dark</small></div>
+      <div class="pat" style="background:var(--paper) url(/brand/patterns/rack-light.svg)"><small>rack · offset tubes</small></div>
+      <div class="pat ink" style="background:var(--ink) url(/brand/patterns/rack-dark.svg)"><small>rack · dark</small></div>
+      <div class="pat" style="background:var(--paper) url(/brand/patterns/scatter-light.svg)"><small>scatter · seeded noise, rare signal</small></div>
+      <div class="pat ink" style="background:var(--ink) url(/brand/patterns/scatter-dark.svg)"><small>scatter · dark</small></div>
+      <div class="pat" style="background:var(--paper) url(/brand/patterns/receipt-light.svg)"><small>receipt · ruled lines</small></div>
+      <div class="pat ink" style="background:var(--ink) url(/brand/patterns/receipt-dark.svg)"><small>receipt · dark</small></div>
+      <div class="pat" style="background:var(--paper) url(/brand/patterns/plate-light.svg)"><small>plate · well grid</small></div>
+      <div class="pat ink" style="background:var(--ink) url(/brand/patterns/plate-dark.svg)"><small>plate · dark</small></div>
+    </div>
+    <div class="pat use" style="background:var(--wash) url(/brand/patterns/rack-light.svg)">
+      <div><svg class="px" data-px="tube" width="48" height="48"></svg><p>No assays yet. Start one with <code>assay start-assay</code>.</p></div>
+      <small>in use · empty state</small>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span>08</span>Parts</h2>
   <div style="display:grid;gap:var(--space-5);max-width:var(--measure)">
     <div class="row" style="align-items:center"><a class="btn" href="#">Quick start</a><a class="btn line" href="#">Read the docs</a><a href="#">See the bench</a></div>
     <div class="row" style="align-items:center;gap:var(--space-2)"><span class="tag pass"><i></i>pass</span><span class="tag"><i></i>fail</span><span class="tag"><i></i>running</span><span class="tag">5 seats</span></div>
@@ -181,7 +216,7 @@ grade   <em>pass</em>     server state matches</pre>
 </section>
 
 <section class="rules">
-  <h2><span>08</span>Rules</h2>
+  <h2><span>09</span>Rules</h2>
   <ol>
     <li>Flat. <span>No gradients, no blur, no glass, no drop shadows.</span></li>
     <li>One radius, 6 px. <span>No pills, no nested rounded frames.</span></li>
@@ -195,7 +230,7 @@ grade   <em>pass</em>     server state matches</pre>
 </section>
 
 <section>
-  <h2><span>09</span>Voice</h2>
+  <h2><span>10</span>Voice</h2>
   <div class="voice">
     <div><b>Write</b><ul><li>5 seats per surface. MCP passed 5 of 5.</li><li>A seat starts only if its worst case fits.</li><li>One task, one model. A first signal, not proof.</li></ul></div>
     <div><b>Not</b><ul><li>The future of agent evaluation.</li><li>Seamless, powerful, blazing fast.</li><li>MCP crushes the CLI.</li></ul></div>
