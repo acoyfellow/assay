@@ -113,19 +113,19 @@ const shell = (page: Page, index: number, html: string) => `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(page.title)} · assay</title>
 <meta name="description" content="${escapeHtml(page.description)}">
-<meta name="theme-color" content="#ececeb">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,ROND@6..144,1..1000,0..100&amp;family=Google+Sans+Code:wght@300..800&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&amp;family=Google+Sans+Code:wght@300..800&amp;display=swap">
 <link rel="stylesheet" href="/docs.css">
 </head>
 <body>
-<header class="top"><a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">assay</a><nav><a href="/docs/">Docs</a><a href="/docs/bench/">Bench</a><a href="${repo}">GitHub</a></nav></header>
-<div class="shell"><div class="frame"><div class="layout">
+<header class="top"><div class="top-in"><a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">assay</a><nav><a href="/docs/">Docs</a><a href="/docs/bench/">Bench</a><a href="${repo}">GitHub</a></nav></div></header>
+<div class="layout">
 <details class="side" open><summary>Docs</summary><ul>${nav(page)}</ul></details>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
-</div></div></div>
-<footer class="foot"><a href="/">assay</a> · <a href="/llms.txt">llms.txt</a> · <a href="${repo}">GitHub</a></footer>
+</div>
+<footer class="foot"><div class="foot-in"><a href="/">assay</a><a href="/llms.txt">llms.txt</a><a href="/brand/">Brand</a><a href="${repo}">GitHub</a></div></footer>
 </body>
 </html>
 `;

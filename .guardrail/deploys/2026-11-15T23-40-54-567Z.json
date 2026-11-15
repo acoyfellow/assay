@@ -1,0 +1,34 @@
+{
+  "schema": "guardrail.deploy-receipt.v0",
+  "timestamp": "2026-11-15T23:40:54.567Z",
+  "command": [
+    "guardrail",
+    "receipt",
+    "packages/web/.guardrail-staged.63125.wrangler.jsonc"
+  ],
+  "configPath": "packages/web/.guardrail-staged.63125.wrangler.jsonc",
+  "git": {
+    "sha": "4de5fff981e19d0f691c3d6e2e0847fdbb4bef55",
+    "dirty": true
+  },
+  "decision": {
+    "allowed": true,
+    "findings": []
+  },
+  "exposure": {
+    "isPublic": true,
+    "surface": "custom route assay.coey.dev",
+    "reason": "custom route assay.coey.dev",
+    "criticalMessage": "Worker is attached to custom route assay.coey.dev with sensitive bindings",
+    "routes": [
+      "assay.coey.dev"
+    ],
+    "workersDev": false
+  },
+  "bindings": [],
+  "auth": {
+    "detected": false,
+    "partial": false,
+    "patterns": []
+  }
+}
