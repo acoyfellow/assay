@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>assay · test tube marks · sheet 03</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --paper: #fff; --wash: #f6f7f8; --rule: #e3e5e8; --grid: #eef0f2; --ink: #0e1116; --graphite: #5b626b; --faint: #8a9099; --signal: #1f4fff; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.6 "IBM Plex Sans", Arial, sans-serif; overflow-x: hidden; }
+.sheet { max-width: 1120px; margin: 0 auto; padding: 0 28px 80px; }
+.masthead { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; padding: 40px 0 20px; border-bottom: 1.5px solid var(--ink); }
+.masthead h1 { margin: 0; font: 500 13px "IBM Plex Sans"; letter-spacing: .14em; text-transform: uppercase; }
+.masthead span { font: 12px "IBM Plex Mono"; color: var(--graphite); }
+.intro { color: var(--graphite); max-width: 64ch; margin: 24px 0 32px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+.card { border: 1px solid var(--rule); }
+.big { display: grid; place-items: center; padding: 28px 0; background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 16px 16px; border-bottom: 1px solid var(--rule); }
+.sizes { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; border-bottom: 1px solid var(--rule); }
+.sizes div { display: grid; place-items: center; height: 64px; border-left: 1px solid var(--rule); }
+.sizes div:first-child { border-left: 0; }
+.sizes .inv { background: var(--ink); }
+.lab { padding: 10px 14px 12px; }
+.lab b { font-weight: 500; }
+.lab .n { font: 500 11px "IBM Plex Mono"; color: var(--signal); letter-spacing: .04em; margin-right: 6px; }
+.lab p { margin: 2px 0 0; font-size: 13px; color: var(--graphite); }
+svg { display: block; shape-rendering: crispEdges; }
+.note { font: 12px "IBM Plex Mono"; color: var(--faint); margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header class="masthead"><h1>assay · test tube marks</h1><span>Sheet 03 · rev A · 12 × 12 grid · ink + one signal</span></header>
+  <p class="intro">Twelve test tubes on one 12 × 12 pixel grid. Each is shown large, then at 48, 32 and 16 px, and reversed. Ink is the object, signal blue is the reading. Pick two or three to push further.</p>
+  <div class="grid" id="marks"></div>
+  <p class="note">Cell = 1/12 of the mark. No anti-aliasing: every edge sits on the grid, so 12, 24, 48 px render exact.</p>
+</div>
+<script>
+const marks = [
+  ["Classic", "The baseline. One sample, one reading. Narrow walls, square foot.", [
+    "...######...",
+    "....#..#....",
+    "....#..#....",
+    "....#..#....",
+    "....#..#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    ".....##.....",
+    "............"]],
+  ["Wide", "A wider body and a tapered foot. More liquid to read, more weight at 16 px.", [
+    "..########..",
+    "...#....#...",
+    "...#....#...",
+    "...#....#...",
+    "...#....#...",
+    "...#++++#...",
+    "...#++++#...",
+    "...#++++#...",
+    "...#++++#...",
+    "...#++++#...",
+    "....#++#....",
+    ".....##....."]],
+  ["Graduated", "Ticks on one side. A tube you measure against, not just a tube.", [
+    "...######...",
+    "....#..#....",
+    "....#..##...",
+    "....#..#....",
+    "....#..##...",
+    "....#..#....",
+    "....#++##...",
+    "....#++#....",
+    "....#++##...",
+    "....#++#....",
+    ".....##.....",
+    "............"]],
+  ["Heavy", "Two-pixel walls. Reads as solid glassware, holds up best when small.", [
+    "..########..",
+    "..##....##..",
+    "..##....##..",
+    "..##....##..",
+    "..##....##..",
+    "..##++++##..",
+    "..##++++##..",
+    "..##++++##..",
+    "..##++++##..",
+    "..##++++##..",
+    "...##++##...",
+    "....####...."]],
+  ["Reading", "A meniscus and one signal tick outside the glass: the value being read.", [
+    "..########..",
+    "...#....#...",
+    "...#....#...",
+    "...#....#...",
+    "...#+..+#...",
+    "...#++++#.++",
+    "...#++++#...",
+    "...#++++#...",
+    "...#++++#...",
+    "...#++++#...",
+    "....#++#....",
+    ".....##....."]],
+  ["Bubble", "Something is happening inside. Two loose pixels rise from the liquid.", [
+    "...######...",
+    "....#..#....",
+    "....#..#....",
+    "....#+.#....",
+    "....#..#....",
+    "....#.+#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    ".....##.....",
+    "............"]],
+  ["Sealed", "A stopper on top. The sample is fixed, like a frozen plan or a hidden grader.", [
+    "....####....",
+    "....####....",
+    "...######...",
+    "....#..#....",
+    "....#..#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    "....#++#....",
+    ".....##.....",
+    "............"]],
+  ["Tilted", "Held at an angle, mid-pour. More motion, harder to keep crisp.", [
+    "............",
+    "........####",
+    ".......#..#.",
+    "......#..#..",
+    ".....#..#...",
+    "....#..#....",
+    "...#++#.....",
+    "..#++#......",
+    ".#++#.......",
+    ".#+#........",
+    "..#.........",
+    "............"]],
+  ["Rack", "Three tubes, each one fuller. Many seats, and the loop gets better.", [
+    "###.###.###.",
+    "#.#.#.#.#.#.",
+    "#.#.#.#.#+#.",
+    "#.#.#.#.#+#.",
+    "#.#.#.#.#+#.",
+    "#.#.###.#+#.",
+    "#.#.###.#+#.",
+    "###.###.#+#.",
+    "###.###.#+#.",
+    "###.###.#+#.",
+    ".#...#...#..",
+    "############"]],
+  ["Pair", "Two tubes side by side: before and after, or one surface against another.", [
+    ".####..####.",
+    ".#..#..#..#.",
+    ".#..#..#..#.",
+    ".#..#..#++#.",
+    ".#..#..#++#.",
+    ".#..#..#++#.",
+    ".#..#..#++#.",
+    ".####..#++#.",
+    ".####..#++#.",
+    ".####..#++#.",
+    "..##....##..",
+    "............"]],
+  ["Stubby", "Short and wide, nearly square. The easiest shape for an app icon.", [
+    "............",
+    ".##########.",
+    "..#......#..",
+    "..#......#..",
+    "..#......#..",
+    "..#++++++#..",
+    "..#++++++#..",
+    "..#++++++#..",
+    "..#++++++#..",
+    "...#++++#...",
+    "....####....",
+    "............"]],
+  ["Framed", "The classic tube inside a square tile. Ready for an app icon or a favicon.", [
+    "############",
+    "#..........#",
+    "#..######..#",
+    "#...#..#...#",
+    "#...#..#...#",
+    "#...#..#...#",
+    "#...#++#...#",
+    "#...#++#...#",
+    "#...#++#...#",
+    "#....##....#",
+    "#..........#",
+    "############"]],
+];
+
+const colour = { "#": "var(--ink)", "+": "var(--signal)", o: "var(--rule)" };
+const reversed = { "#": "var(--paper)", "+": "var(--signal)", o: "#3a3f47" };
+
+const svg = (rows, size, palette) => {
+  const cell = size / 12;
+  const rects = rows.flatMap((row, y) =>
+    [...row].map((ch, x) => (palette[ch] ? `<rect x="${x * cell}" y="${y * cell}" width="${cell}" height="${cell}" fill="${palette[ch]}"/>` : "")),
+  );
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${rects.join("")}</svg>`;
+};
+
+document.getElementById("marks").innerHTML = marks
+  .map(([name, about, rows], i) => `
+    <div class="card">
+      <div class="big">${svg(rows, 144, colour)}</div>
+      <div class="sizes">
+        <div>${svg(rows, 48, colour)}</div>
+        <div>${svg(rows, 32, colour)}</div>
+        <div>${svg(rows, 16, colour)}</div>
+        <div class="inv">${svg(rows, 32, reversed)}</div>
+      </div>
+      <div class="lab"><span class="n">T${String(i + 1).padStart(2, "0")}</span><b>${name}</b><p>${about}</p></div>
+    </div>`)
+  .join("");
+</script>
+</body>
+</html>

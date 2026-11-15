@@ -113,16 +113,18 @@ const shell = (page: Page, index: number, html: string) => `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(page.title)} · assay</title>
 <meta name="description" content="${escapeHtml(page.description)}">
-<meta name="theme-color" content="#0b0b0c">
+<meta name="theme-color" content="#ececeb">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,ROND@6..144,1..1000,0..100&amp;family=Google+Sans+Code:wght@300..800&amp;display=swap">
 <link rel="stylesheet" href="/docs.css">
 </head>
 <body>
-<header class="top"><a class="brand" href="/"><span class="dot"></span>assay</a><nav><a href="/docs/">Docs</a><a href="/docs/bench/">Bench</a><a href="${repo}">GitHub</a></nav></header>
-<div class="layout">
+<header class="top"><a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">assay</a><nav><a href="/docs/">Docs</a><a href="/docs/bench/">Bench</a><a href="${repo}">GitHub</a></nav></header>
+<div class="shell"><div class="frame"><div class="layout">
 <details class="side" open><summary>Docs</summary><ul>${nav(page)}</ul></details>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
-</div>
+</div></div></div>
 <footer class="foot">Open source, MIT. Runs on your machine or your own Cloudflare account.</footer>
 </body>
 </html>

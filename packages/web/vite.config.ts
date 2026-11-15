@@ -12,7 +12,7 @@ const docsIndex = (): Plugin => ({
   configureServer(server) {
     server.middlewares.use((request, response, next) => {
       const path = (request.url ?? "").split("?")[0] ?? "";
-      if (!path.startsWith("/docs")) return next();
+      if (!path.startsWith("/docs") && !path.startsWith("/brand")) return next();
       const file = join(publicDir, path.endsWith("/") ? path : `${path}/`, "index.html");
       if (!existsSync(file)) return next();
       response.setHeader("content-type", "text/html; charset=utf-8");
