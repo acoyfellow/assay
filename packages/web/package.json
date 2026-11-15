@@ -9,7 +9,7 @@
     "dev": "bun run numbers && bun run docs && vite",
     "build": "bun run numbers && bun run docs && vite build",
     "preview": "vite preview --port 4174 --strictPort",
-    "deploy": "bun run build && npx wrangler@latest deploy"
+    "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {
     "@effect/platform-browser": "^4.1.4",
