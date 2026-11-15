@@ -69,16 +69,16 @@ const hero = (h: H, model: Model): Html =>
     [h.Class("mx-auto max-w-6xl px-3 pt-6 pb-10 sm:px-5 sm:pt-10")],
     [
       h.div(
-        [h.Class("rounded-[30px] bg-g0 p-2.5 shadow-shell sm:rounded-shell sm:p-3.5")],
+        [h.Class("rounded-[32px] bg-g0 p-3 shadow-shell sm:rounded-shell sm:p-4")],
         [
           h.div(
-            [h.Class("rounded-[22px] bg-g1 p-2 sm:rounded-well sm:p-3")],
+            [h.Class("contents")],
             [
               h.div(
-                [h.Class("grid gap-3 lg:grid-cols-[1fr_1.05fr]")],
+                [h.Class("grid gap-4 lg:grid-cols-[1fr_1fr] lg:gap-6")],
                 [
                   h.div(
-                    [h.Class("flex flex-col gap-5 rounded-card border border-g3 p-6 sm:p-9")],
+                    [h.Class("flex flex-col gap-6 px-5 pt-8 pb-4 sm:px-10 sm:pt-14 sm:pb-12")],
                     [
                       h.p([h.Class("text-[13px] font-medium text-[#d2691e]")], ["Runs on your machine"]),
                       h.h1(
@@ -123,7 +123,11 @@ const hero = (h: H, model: Model): Html =>
                     ],
                   ),
                   h.div(
-                    [h.Class("dark-card flex min-w-0 flex-col gap-5 rounded-card p-6 text-on-dark sm:p-9")],
+                    [
+                      h.Class(
+                        "dark-card flex min-w-0 flex-col gap-6 rounded-[24px] p-7 text-on-dark sm:p-12 lg:min-h-[520px]",
+                      ),
+                    ],
                     [
                       h.h2([h.Class("display text-[26px] leading-tight")], ["Give it to your agent"]),
                       h.p(
@@ -131,11 +135,7 @@ const hero = (h: H, model: Model): Html =>
                         ["Clone it, start the server, and your agent uses the CLI or the MCP tools."],
                       ),
                       h.div(
-                        [
-                          h.Class(
-                            "flex min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] p-1.5 pl-4",
-                          ),
-                        ],
+                        [h.Class("flex min-w-0 items-center gap-2 rounded-full bg-white/[0.05] p-1.5 pl-4")],
                         [
                           h.code(
                             [h.Class("min-w-0 flex-1 truncate font-mono text-[13px] text-on-dark-dim")],
@@ -154,13 +154,27 @@ const hero = (h: H, model: Model): Html =>
                         ],
                       ),
                       h.div([h.Class("grow")], []),
+                      h.pre(
+                        [h.Class("overflow-x-auto font-mono text-[13px] leading-[1.9] text-on-dark-dim")],
+                        [
+                          h.code(
+                            [],
+                            [
+                              "seat-2   stopped   6 turns   $0.0247\n",
+                              h.span([h.Class("text-on-dark")], ["grade    "]),
+                              h.span([h.Class("text-ok")], ["pass"]),
+                              "   server state matches",
+                            ],
+                          ),
+                        ],
+                      ),
                       h.div(
                         [h.Class("flex flex-wrap items-center justify-between gap-3")],
                         [
                           h.span(
                             [
                               h.Class(
-                                "inline-flex items-center gap-2.5 rounded-full border border-ok/15 bg-ok-deep px-4 py-2.5 text-[15px] text-ok",
+                                "inline-flex items-center gap-2.5 rounded-full bg-ok-deep px-4 py-2.5 text-[15px] text-ok",
                               ),
                             ],
                             [
@@ -192,11 +206,11 @@ const hero = (h: H, model: Model): Html =>
 
 const loopStep = (h: H, n: string, title: string, body: string): Html =>
   h.div(
-    [h.Class("rounded-card bg-g0 p-5 shadow-pill")],
+    [h.Class("rounded-[24px] bg-g0 p-7 sm:p-8")],
     [
       h.p([h.Class("font-mono text-xs text-g5")], [n]),
-      h.h3([h.Class("mt-2 text-[17px] font-medium")], [title]),
-      h.p([h.Class("mt-1 text-sm text-g6")], [body]),
+      h.h3([h.Class("mt-6 text-[18px] font-medium")], [title]),
+      h.p([h.Class("mt-2 text-[15px] text-g6")], [body]),
     ],
   );
 
@@ -214,7 +228,7 @@ const sectionHead = (h: H, quiet: string, point: string, body: string): Html =>
 
 const promises = (h: H): Html =>
   h.section(
-    [h.Class("mx-auto max-w-6xl px-5 py-12")],
+    [h.Class("mx-auto max-w-6xl px-5 py-16 sm:py-24")],
     [
       sectionHead(
         h,
@@ -223,7 +237,7 @@ const promises = (h: H): Html =>
         "If the rules stay the same, you can compare one round with the next.",
       ),
       h.div(
-        [h.Class("mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4")],
+        [h.Class("mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4")],
         [
           loopStep(
             h,
@@ -266,13 +280,13 @@ const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
 
 const surfaces = (h: H, model: Model): Html =>
   h.section(
-    [h.Class("mx-auto max-w-6xl px-5 py-12")],
+    [h.Class("mx-auto max-w-6xl px-5 py-16 sm:py-24")],
     [
       h.div(
-        [h.Class("grid gap-3 lg:grid-cols-[1fr_1.3fr]")],
+        [h.Class("grid gap-4 rounded-shell bg-g0 p-3 sm:p-4 lg:grid-cols-[1fr_1.3fr] lg:gap-6")],
         [
           h.div(
-            [h.Class("flex flex-col gap-4 rounded-card border border-g3 p-6 sm:p-9")],
+            [h.Class("flex flex-col gap-5 px-5 pt-8 pb-4 sm:px-10 sm:pt-12 sm:pb-10")],
             [
               h.h2(
                 [h.Class("display text-[30px] leading-[1.1]")],
@@ -295,18 +309,14 @@ const surfaces = (h: H, model: Model): Html =>
             ],
           ),
           h.div(
-            [h.Class("dark-card flex min-w-0 flex-col gap-4 rounded-card p-5 sm:p-7")],
+            [h.Class("dark-card flex min-w-0 flex-col gap-6 rounded-[24px] p-6 sm:p-10")],
             [
               h.div(
-                [h.Class("inline-flex self-start gap-1 rounded-full border border-white/10 p-1")],
+                [h.Class("inline-flex self-start gap-1 rounded-full bg-white/[0.05] p-1")],
                 [tab(h, model, "cli", "CLI"), tab(h, model, "mcp", "MCP")],
               ),
               h.pre(
-                [
-                  h.Class(
-                    "overflow-x-auto rounded-inset border border-white/10 bg-white/[0.02] p-5 font-mono text-[12.5px] leading-[1.75] text-on-dark-dim",
-                  ),
-                ],
+                [h.Class("overflow-x-auto font-mono text-[12.5px] leading-[1.85] text-on-dark-dim")],
                 [h.code([], [model.surface === "cli" ? cliCall : mcpCall])],
               ),
             ],
@@ -318,19 +328,19 @@ const surfaces = (h: H, model: Model): Html =>
 
 const armRow = (h: H, before: Arm, after: Arm): Html =>
   h.tr(
-    [h.Class("border-t border-g2")],
+    [],
     [
-      h.td([h.Class("px-5 py-3.5 font-medium")], [after.arm.toUpperCase()]),
-      h.td([h.Class("px-5 py-3.5 font-mono text-g6")], [`${before.passed}/${before.seats}`]),
-      h.td([h.Class("px-5 py-3.5 font-mono font-medium text-[#d2691e]")], [`${after.passed}/${after.seats}`]),
-      h.td([h.Class("px-5 py-3.5 font-mono text-g6")], [`${before.meanTurns} → ${after.meanTurns}`]),
-      h.td([h.Class("px-5 py-3.5 font-mono text-g6")], [`${before.meanCost} → ${after.meanCost}`]),
+      h.td([h.Class("px-8 py-4 text-[16px] font-medium")], [after.arm.toUpperCase()]),
+      h.td([h.Class("px-8 py-4 font-mono text-g6")], [`${before.passed}/${before.seats}`]),
+      h.td([h.Class("px-8 py-4 font-mono font-medium text-[#d2691e]")], [`${after.passed}/${after.seats}`]),
+      h.td([h.Class("px-8 py-4 font-mono text-g6")], [`${before.meanTurns} → ${after.meanTurns}`]),
+      h.td([h.Class("px-8 py-4 font-mono text-g6")], [`${before.meanCost} → ${after.meanCost}`]),
     ],
   );
 
 const bench = (h: H): Html =>
   h.section(
-    [h.Class("mx-auto max-w-6xl px-5 py-12")],
+    [h.Class("mx-auto max-w-6xl px-5 py-16 sm:py-24")],
     [
       sectionHead(
         h,
@@ -339,7 +349,7 @@ const bench = (h: H): Html =>
         `${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
       ),
       h.div(
-        [h.Class("mt-6 overflow-x-auto rounded-card bg-g0 shadow-pill")],
+        [h.Class("mt-10 overflow-x-auto rounded-[24px] bg-g0 py-4")],
         [
           h.table(
             [h.Class("w-full min-w-[520px] text-left text-sm"), h.DataAttribute("bench", "run1-vs-run2")],
@@ -350,7 +360,7 @@ const bench = (h: H): Html =>
                   h.tr(
                     [],
                     ["Surface", "Round 1 passed", "Round 2 passed", "Mean turns", "Mean cost"].map((label) =>
-                      h.th([h.Class("px-5 py-3.5 text-[13px] font-medium")], [label]),
+                      h.th([h.Class("px-8 pt-3 pb-4 text-[13px] font-normal text-g5")], [label]),
                     ),
                   ),
                 ],
@@ -367,7 +377,7 @@ const bench = (h: H): Html =>
         ],
       ),
       h.p(
-        [h.Class("mt-4 text-sm text-g6")],
+        [h.Class("mt-5 px-2 text-sm text-g6")],
         [
           h.span([h.Class("font-medium text-k1")], [`(${numbers.run1.total} → ${numbers.run2.total})`]),
           " total cost per round. ",
@@ -382,14 +392,10 @@ const bench = (h: H): Html =>
 
 const footer = (h: H): Html =>
   h.footer(
-    [h.Class("mx-auto mt-6 max-w-6xl px-5 pb-10")],
+    [h.Class("mx-auto mt-8 max-w-6xl px-5 pb-12")],
     [
       h.div(
-        [
-          h.Class(
-            "flex flex-wrap items-center justify-between gap-3 border-t border-g3 pt-6 text-sm text-g6",
-          ),
-        ],
+        [h.Class("flex flex-wrap items-center justify-between gap-3 text-sm text-g6")],
         [
           h.p([h.Class("flex items-center gap-2")], [logo(h, 16), "You run it. There is no hosted service."]),
           h.div(
