@@ -1,0 +1,32 @@
+:root {
+  --paper: #ffffff;
+  --wash: #f4f4f3;
+  --line: #e4e4e2;
+  --quiet: #9b9b97;
+  --graphite: #62625f;
+  --ink: #121212;
+  --signal: #f26b1d;
+  --signal-wash: #fdeee4;
+
+  --sans: "Google Sans Flex", "Helvetica Neue", Arial, sans-serif;
+  --code: "Google Sans Code", ui-monospace, Menlo, monospace;
+
+  --step-0: 13px;
+  --step-1: 15px;
+  --step-2: 17px;
+  --step-3: 22px;
+  --step-4: 30px;
+  --step-5: 44px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --space-7: 104px;
+
+  --radius: 6px;
+  --measure: 640px;
+  --page: 1040px;
+}
