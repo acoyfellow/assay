@@ -12,7 +12,12 @@ type Receipt = {
   readonly microUsd: number;
   readonly ms: number;
 };
-type Score = { readonly seats: number; readonly graded: number; readonly passed: number; readonly spentMicroUsd: number };
+type Score = {
+  readonly seats: number;
+  readonly graded: number;
+  readonly passed: number;
+  readonly spentMicroUsd: number;
+};
 
 const here = new URL(".", import.meta.url).pathname;
 const seatsPerArm = Number(process.env.SEATS ?? 5);
@@ -31,7 +36,8 @@ const ledger: { scores: Record<string, Score> } = existsSync(ledgerFile)
   : { scores: {} };
 
 const usd = (micro: number) => `$${(micro / 1e6).toFixed(4)}`;
-const mean = (values: ReadonlyArray<number>) => (values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0);
+const mean = (values: ReadonlyArray<number>) =>
+  values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
 
 const rows = (["cli", "mcp"] as const).map((arm) => {
   const mine = receipts.filter((receipt) => receipt.arm === arm);
@@ -43,7 +49,8 @@ const rows = (["cli", "mcp"] as const).map((arm) => {
   };
   const score = ledger.scores[arm];
   if (mine.length !== seatsPerArm) problems.push(`${arm}: ${mine.length} receipts, want ${seatsPerArm}`);
-  if (stopped.length !== mine.length) problems.push(`${arm}: ${mine.length - stopped.length} seats died and have no grade`);
+  if (stopped.length !== mine.length)
+    problems.push(`${arm}: ${mine.length - stopped.length} seats died and have no grade`);
   if (score === undefined) problems.push(`${arm}: no AssayScore in the ledger`);
   else
     for (const field of ["graded", "passed", "spentMicroUsd"] as const)
@@ -81,10 +88,15 @@ const claimOf = (seatDir: string): Claim => {
       return match?.[1] ? [match[1]] : [];
     });
   const first = targets[0] ?? null;
-  return { first, recovered: first?.includes("/") === true && targets.some((target) => !target.includes("/")) };
+  return {
+    first,
+    recovered: first?.includes("/") === true && targets.some((target) => !target.includes("/")),
+  };
 };
 const claims = (["cli", "mcp"] as const).map((arm) => {
-  const mine = receipts.filter((receipt) => receipt.arm === arm).map((receipt) => claimOf(`${receipt.seat}-try1`));
+  const mine = receipts
+    .filter((receipt) => receipt.arm === arm)
+    .map((receipt) => claimOf(`${receipt.seat}-try1`));
   const wrongFirst = mine.filter((claim) => claim.first?.includes("/"));
   return `| ${arm} | ${wrongFirst.length}/${mine.length} | ${wrongFirst.filter((claim) => claim.recovered).length}/${wrongFirst.length} |`;
 });

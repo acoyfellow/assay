@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "composite": true,
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "types": ["bun"]
+  },
+  "include": ["src", "src/numbers.json", "scripts", "vite.config.ts"]
+}

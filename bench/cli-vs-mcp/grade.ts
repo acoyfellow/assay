@@ -34,7 +34,13 @@ const expectedSeats: Record<string, SeatStatus> = {
 
 const read = async <A>(api: string, path: string, key: string): Promise<A> => {
   const child = Bun.spawn(
-    ["bun", new URL("../../packages/server/src/cli.ts", import.meta.url).pathname, ...path.split(" "), "--key", key],
+    [
+      "bun",
+      new URL("../../packages/server/src/cli.ts", import.meta.url).pathname,
+      ...path.split(" "),
+      "--key",
+      key,
+    ],
     { env: { ...process.env, ASSAY_URL: api }, stdout: "pipe", stderr: "pipe" },
   );
   const [out, code] = await Promise.all([new Response(child.stdout).text(), child.exited]);

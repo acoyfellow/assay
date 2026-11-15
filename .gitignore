@@ -5,3 +5,6 @@ dist
 .DS_Store
 .tmp
 *.tsbuildinfo
+packages/web/public/docs
+packages/web/public/llms.txt
+packages/web/src/numbers.json

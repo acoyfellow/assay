@@ -3,7 +3,12 @@ import { join } from "node:path";
 import { grade } from "./grade.ts";
 
 type Arm = "cli" | "mcp";
-type Usage = { readonly turns: number; readonly toolCalls: number; readonly microUsd: number; readonly lastText: string };
+type Usage = {
+  readonly turns: number;
+  readonly toolCalls: number;
+  readonly microUsd: number;
+  readonly lastText: string;
+};
 type SeatResult = Usage & {
   readonly arm: Arm;
   readonly seat: string;
@@ -25,7 +30,10 @@ const worstCaseMicroUsd = 200_000;
 const budgetMicroUsd = 1_000_000;
 const seatMinutes = 4;
 const maxAttempts = 2;
-const planHash = new Bun.CryptoHasher("sha256").update(readFileSync(join(here, "task.md"))).digest("hex").slice(0, 12);
+const planHash = new Bun.CryptoHasher("sha256")
+  .update(readFileSync(join(here, "task.md")))
+  .digest("hex")
+  .slice(0, 12);
 
 const surfaces: Record<Arm, string> = {
   cli: "Use the `assay` command in your shell. Run `assay --help` and `assay <subcommand> --help` to learn it.",
@@ -54,9 +62,16 @@ const freePort = (() => {
 })();
 
 const startServer = async (port: number) => {
-  const server = Bun.spawn(["bun", serveEntry], { env: { ...process.env, ASSAY_PORT: String(port) }, stdout: "ignore", stderr: "ignore" });
+  const server = Bun.spawn(["bun", serveEntry], {
+    env: { ...process.env, ASSAY_PORT: String(port) },
+    stdout: "ignore",
+    stderr: "ignore",
+  });
   for (let tries = 0; tries < 80; tries++) {
-    const up = await fetch(`http://localhost:${port}/health`).then((r) => r.ok, () => false);
+    const up = await fetch(`http://localhost:${port}/health`).then(
+      (r) => r.ok,
+      () => false,
+    );
     if (up) return server;
     await Bun.sleep(100);
   }
@@ -65,8 +80,16 @@ const startServer = async (port: number) => {
 };
 
 const assay = async (api: string, args: ReadonlyArray<string>): Promise<unknown> => {
-  const child = Bun.spawn(["bun", cliEntry, ...args], { env: { ...process.env, ASSAY_URL: api }, stdout: "pipe", stderr: "pipe" });
-  const [out, err, code] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited]);
+  const child = Bun.spawn(["bun", cliEntry, ...args], {
+    env: { ...process.env, ASSAY_URL: api },
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  const [out, err, code] = await Promise.all([
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+    child.exited,
+  ]);
   if (code !== 0) throw new Error(`assay ${args.join(" ")}: ${err.slice(0, 300)}`);
   return JSON.parse(out);
 };
@@ -131,57 +154,108 @@ const runSeat = async (ledger: string, arm: Arm, index: number): Promise<SeatRes
     }
     const { outcome } = attempt;
     const usage = spent;
-    const verdict = outcome === "stopped" ? await grade(api) : { passed: false, reason: `died ${attempt.number} times` };
+    const verdict =
+      outcome === "stopped" ? await grade(api) : { passed: false, reason: `died ${attempt.number} times` };
     if (outcome === "stopped") {
       await assay(ledger, [
-        "record-grade", "--target", `bench-${arm}/${seat}`, "--passed", String(verdict.passed), "--reason", verdict.reason,
+        "record-grade",
+        "--target",
+        `bench-${arm}/${seat}`,
+        "--passed",
+        String(verdict.passed),
+        "--reason",
+        verdict.reason,
       ]);
     }
-    const result: SeatResult = { arm, seat, outcome, attempts: attempt.number, ...usage, ...verdict, ms: Date.now() - started };
+    const result: SeatResult = {
+      arm,
+      seat,
+      outcome,
+      attempts: attempt.number,
+      ...usage,
+      ...verdict,
+      ms: Date.now() - started,
+    };
     writeFileSync(join(receipts, `${seat}.json`), JSON.stringify(result, null, 2));
-    console.log(`${seat} ${verdict.passed ? "PASS" : "FAIL"} attempts=${attempt.number} turns=${usage.turns} $${(usage.microUsd / 1e6).toFixed(4)} ${verdict.reason}`);
+    console.log(
+      `${seat} ${verdict.passed ? "PASS" : "FAIL"} attempts=${attempt.number} turns=${usage.turns} $${(usage.microUsd / 1e6).toFixed(4)} ${verdict.reason}`,
+    );
     return result;
   } finally {
     target.kill();
   }
 };
 
-const attemptSeat = async (ledger: string, arm: Arm, seat: string, api: string, port: number, number: number) => {
-    const { dir, agent, workspace } = prepareWorkspace(arm, `${seat}-try${number}`, api, port);
-    const prompt = readFileSync(join(here, "task.md"), "utf8").replace("{{SURFACE}}", surfaces[arm]);
-    const pi = Bun.spawn(
-      [
-        "pi", "-p", "--mode", "json", "--no-skills", "--no-session", "--approve",
-        ...extensions.flatMap((extension) => ["-e", extension]),
-        "--provider", provider, "--model", model,
-        "--tools", tools[arm],
-        prompt,
-      ],
-      {
-        cwd: workspace,
-        env: {
-          ...process.env,
-          ...providerEnv,
-          PI_CODING_AGENT_DIR: agent,
-          ASSAY_URL: api,
-          PATH: `${join(workspace, "bin")}:${process.env.PATH}`,
-        },
-        stdout: "pipe",
-        stderr: "pipe",
+const attemptSeat = async (
+  ledger: string,
+  arm: Arm,
+  seat: string,
+  api: string,
+  port: number,
+  number: number,
+) => {
+  const { dir, agent, workspace } = prepareWorkspace(arm, `${seat}-try${number}`, api, port);
+  const prompt = readFileSync(join(here, "task.md"), "utf8").replace("{{SURFACE}}", surfaces[arm]);
+  const pi = Bun.spawn(
+    [
+      "pi",
+      "-p",
+      "--mode",
+      "json",
+      "--no-skills",
+      "--no-session",
+      "--approve",
+      ...extensions.flatMap((extension) => ["-e", extension]),
+      "--provider",
+      provider,
+      "--model",
+      model,
+      "--tools",
+      tools[arm],
+      prompt,
+    ],
+    {
+      cwd: workspace,
+      env: {
+        ...process.env,
+        ...providerEnv,
+        PI_CODING_AGENT_DIR: agent,
+        ASSAY_URL: api,
+        PATH: `${join(workspace, "bin")}:${process.env.PATH}`,
       },
-    );
-    const killer = setTimeout(() => pi.kill(), seatMinutes * 60_000);
-    const [events, errors, code] = await Promise.all([new Response(pi.stdout).text(), new Response(pi.stderr).text(), pi.exited]);
-    clearTimeout(killer);
-    writeFileSync(join(dir, "events.jsonl"), events);
-    writeFileSync(join(dir, "stderr.txt"), errors);
-    const usage = usageOf(events);
-    const outcome: "stopped" | "died" = code === 0 ? "stopped" : "died";
-    await assay(ledger, [
-      "record-receipt", "--target", `bench-${arm}/${seat}`, "--assay-id", `bench-${arm}`, "--seat", seat,
-      "--plan-hash", planHash, "--outcome", outcome, "--turns", String(usage.turns), "--spent-micro-usd", String(usage.microUsd),
-    ]);
-    return { outcome, usage, number } as const;
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+  );
+  const killer = setTimeout(() => pi.kill(), seatMinutes * 60_000);
+  const [events, errors, code] = await Promise.all([
+    new Response(pi.stdout).text(),
+    new Response(pi.stderr).text(),
+    pi.exited,
+  ]);
+  clearTimeout(killer);
+  writeFileSync(join(dir, "events.jsonl"), events);
+  writeFileSync(join(dir, "stderr.txt"), errors);
+  const usage = usageOf(events);
+  const outcome: "stopped" | "died" = code === 0 ? "stopped" : "died";
+  await assay(ledger, [
+    "record-receipt",
+    "--target",
+    `bench-${arm}/${seat}`,
+    "--assay-id",
+    `bench-${arm}`,
+    "--seat",
+    seat,
+    "--plan-hash",
+    planHash,
+    "--outcome",
+    outcome,
+    "--turns",
+    String(usage.turns),
+    "--spent-micro-usd",
+    String(usage.microUsd),
+  ]);
+  return { outcome, usage, number } as const;
 };
 
 const seatPlans = (arm: Arm) =>
@@ -201,11 +275,20 @@ try {
   const arms: ReadonlyArray<Arm> = ["cli", "mcp"];
   for (const arm of arms) {
     await assay(ledger, [
-      "start-assay", "--target", `bench-${arm}`, "--plan-hash", planHash,
-      "--budget-micro-usd", String(budgetMicroUsd), "--seats", JSON.stringify(seatPlans(arm)),
+      "start-assay",
+      "--target",
+      `bench-${arm}`,
+      "--plan-hash",
+      planHash,
+      "--budget-micro-usd",
+      String(budgetMicroUsd),
+      "--seats",
+      JSON.stringify(seatPlans(arm)),
     ]);
   }
-  const jobs = arms.flatMap((arm) => Array.from({ length: seatsPerArm }, (_, i) => () => runSeat(ledger, arm, i + 1)));
+  const jobs = arms.flatMap((arm) =>
+    Array.from({ length: seatsPerArm }, (_, i) => () => runSeat(ledger, arm, i + 1)),
+  );
   const results: Array<SeatResult> = [];
   const parallel = Number(process.env.PARALLEL ?? 4);
   for (let i = 0; i < jobs.length; i += parallel) {
@@ -213,9 +296,14 @@ try {
   }
   await Bun.sleep(500);
   const ledgerScores = Object.fromEntries(
-    await Promise.all(arms.map(async (arm) => [arm, await assay(ledger, ["assay-score", "get", "--key", `bench-${arm}`])])),
+    await Promise.all(
+      arms.map(async (arm) => [arm, await assay(ledger, ["assay-score", "get", "--key", `bench-${arm}`])]),
+    ),
   );
-  writeFileSync(join(here, "ledger-scores.json"), JSON.stringify({ planHash, scores: ledgerScores }, null, 2));
+  writeFileSync(
+    join(here, "ledger-scores.json"),
+    JSON.stringify({ planHash, scores: ledgerScores }, null, 2),
+  );
   console.log(JSON.stringify(ledgerScores));
 } finally {
   ledgerServer.kill();
