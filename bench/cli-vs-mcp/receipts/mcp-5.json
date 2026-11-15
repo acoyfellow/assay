@@ -1,0 +1,13 @@
+{
+  "arm": "mcp",
+  "seat": "mcp-5",
+  "outcome": "stopped",
+  "attempts": 1,
+  "turns": 15,
+  "toolCalls": 20,
+  "microUsd": 45060,
+  "lastText": "Perfect! Here are the final results:\n\n**Assay job-7 Complete:**\n- **Seats passed:** 1 (alpha passed, beta failed)\n- **Total spent:** 33,000 micro-USD (12,000 from alpha + 21,000 from beta)\n\nThe assay has reached the finished state with all seats graded.\n\nDONE",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 37195
+}

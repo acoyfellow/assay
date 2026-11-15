@@ -1,0 +1,13 @@
+{
+  "arm": "cli",
+  "seat": "cli-5",
+  "outcome": "stopped",
+  "attempts": 1,
+  "turns": 19,
+  "toolCalls": 28,
+  "microUsd": 46079,
+  "lastText": "Perfect! I have successfully driven the assay server to the end state. Here's a summary of what was accomplished:\n\n## Summary\n\n**Step 1**: Started assay `job-7` with:\n- Plan hash: `plan-a`\n- Budget: 900,000 micro-USD\n- Two seats with 300,000 micro-USD worst-case budget each\n\n**Step 2**: Claimed both",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 44240
+}

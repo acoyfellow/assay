@@ -1,0 +1,23 @@
+{
+  "planHash": "0b685af104c3",
+  "scores": {
+    "cli": {
+      "planHash": "0b685af104c3",
+      "seats": 5,
+      "graded": 5,
+      "passed": 5,
+      "spentMicroUsd": 249909,
+      "budgetMicroUsd": 1000000,
+      "status": "finished"
+    },
+    "mcp": {
+      "planHash": "0b685af104c3",
+      "seats": 5,
+      "graded": 5,
+      "passed": 1,
+      "spentMicroUsd": 188677,
+      "budgetMicroUsd": 1000000,
+      "status": "finished"
+    }
+  }
+}

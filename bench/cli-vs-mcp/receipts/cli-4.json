@@ -1,0 +1,13 @@
+{
+  "arm": "cli",
+  "seat": "cli-4",
+  "outcome": "stopped",
+  "attempts": 1,
+  "turns": 20,
+  "toolCalls": 32,
+  "microUsd": 48714,
+  "lastText": "Perfect! All steps completed successfully. Here's the summary:\n\n## Final Status\n\n**Assay Score for `job-7`:**\n- **Seats passed: 1** (only alpha passed)\n- **Total spent: 33,000 micro-USD** (12,000 from alpha + 21,000 from beta)\n\n**Detailed breakdown:**\n- Seat `alpha`: Stopped after 4 turns, spent 12,",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 48687
+}

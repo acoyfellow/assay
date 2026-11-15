@@ -9,6 +9,7 @@ export const calls = [
   "RecordReceipt",
   "RecordGrade",
   "AssayScore.get",
+  "SeatStatus.get",
 ] as const;
 
 export const AssayInMemory = AssayModel.layer(AssayHandlers).pipe(Layer.provideMerge(Domain.InMemory));

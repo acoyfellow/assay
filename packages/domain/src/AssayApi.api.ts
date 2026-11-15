@@ -6,7 +6,7 @@ export class AssayApi extends Domain.Api(
   {
     model: AssayModel,
     commands: ["StartAssay", "ClaimSeat", "CancelAssay", "RecordReceipt", "RecordGrade"],
-    views: ["AssayScore"],
+    views: ["AssayScore", "SeatStatus"],
   },
   {
     description: "Run many agents on one goal and score each with a grader it never sees.",
