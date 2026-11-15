@@ -1,0 +1,5 @@
+node_modules
+.alchemy
+dist
+.wrangler
+.DS_Store
