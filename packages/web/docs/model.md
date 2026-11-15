@@ -4,7 +4,7 @@ description: The words assay uses, its commands, and the rules that refuse them.
 order: 3
 ---
 
-Assay is a domain model built with [@alchemy.run/domain](https://alchemy.run/domain). Every rule lives in one place, and the same model runs in memory for tests and on Durable Objects in production.
+Assay is a domain model built with [@alchemy.run/domain](https://alchemy.run/domain). Every rule is in one place. Today the model runs in memory, for tests and for the local server.
 
 ## Words
 
@@ -22,13 +22,13 @@ Assay is a domain model built with [@alchemy.run/domain](https://alchemy.run/dom
 
 | Command | Sent to | Refused when |
 |---|---|---|
-| `StartAssay` | assay id | already started; no seats; no budget; a seat twice |
+| `StartAssay` | assay id | already started; no seats; no budget; a seat listed twice |
 | `ClaimSeat` | assay id | not running; unknown seat; already claimed; over budget |
 | `RecordReceipt` | seat id | already stopped; a resumed seat with a different plan |
 | `RecordGrade` | seat id | no receipt yet; already graded |
 | `CancelAssay` | assay id | not running |
 
-Every refusal is a typed rejection with its own name, for example `OverBudget { remainingMicroUsd, neededMicroUsd }`. A refusal that comes from a wrong id says which id to use.
+Every refusal has its own name and fields, for example `OverBudget { remainingMicroUsd, neededMicroUsd }`. If you send a wrong id, the refusal names the right one.
 
 ## Reads
 
@@ -39,8 +39,8 @@ Every refusal is a typed rejection with its own name, for example `OverBudget { 
 
 ## What happens on its own
 
-When a seat is graded, a policy settles it on its assay: the hold is released, the real spend is charged, and the grade is counted. When the last seat settles, the assay finishes.
+When a seat is graded, its assay releases the hold, charges the real cost and counts the grade. When the last seat is done, the assay finishes.
 
 ## How it is checked
 
-Eleven stories run the whole model in memory, one per rule. Each story fails if any event, rejection or reply is not accounted for.
+Eleven tests run the model in memory, one per rule. A test fails if any event, refusal or reply is unexpected.

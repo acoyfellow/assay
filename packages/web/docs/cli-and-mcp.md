@@ -1,10 +1,10 @@
 ---
 title: CLI and MCP
-description: One Api, two surfaces. Hand your agent whichever it uses best.
+description: One API, two surfaces. Give your agent the one it uses best.
 order: 4
 ---
 
-Assay has one Api. The CLI and the MCP tools are both made from it, so they take the same inputs, return the same results and refuse the same things. Descriptions come from the model, so `--help` and the MCP tool schema say the same words.
+Assay has one API. The CLI and the MCP tools both come from it, so they take the same inputs and refuse the same things. `--help` and the MCP tool schema use the same words.
 
 ## CLI
 
@@ -25,7 +25,7 @@ bun packages/server/src/cli.ts --help
 | `assay-score get` | Read an assay's score |
 | `seat-status get` | Read one seat |
 
-Every flag has `--help`. A refusal prints its JSON to stderr and exits with code 1.
+A refusal prints JSON to stderr and exits with code 1.
 
 ## MCP
 
@@ -44,4 +44,4 @@ The tools are `AssayApi_StartAssay_send`, `AssayApi_ClaimSeat_send`, `AssayApi_R
 
 ## Which one
 
-We measured it with assay itself. See [the bench](/docs/bench/).
+After one fix, both passed the bench task 5 of 5. MCP used fewer turns. See [the bench](/docs/bench/).

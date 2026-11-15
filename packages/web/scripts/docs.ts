@@ -125,7 +125,7 @@ const shell = (page: Page, index: number, html: string) => `<!doctype html>
 <details class="side" open><summary>Docs</summary><ul>${nav(page)}</ul></details>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
 </div></div></div>
-<footer class="foot">Open source, MIT. Runs on your machine or your own Cloudflare account.</footer>
+<footer class="foot">You run it. There is no hosted service.</footer>
 </body>
 </html>
 `;
@@ -142,7 +142,7 @@ const llms = [
   "",
   "> Run many agents on one goal. Score each with a grader it never sees.",
   "",
-  "Open source. Runs on your machine or your own Cloudflare account. No hosted service, no free model calls.",
+  "Runs on your machine. There is no hosted service.",
   "",
   "## Docs",
   "",

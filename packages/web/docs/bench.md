@@ -1,17 +1,17 @@
 ---
 title: The bench
-description: CLI vs MCP, measured with assay. Ten seats per run, a hidden grader, receipts you can check.
+description: CLI vs MCP, measured with assay. Two rounds, one change between them.
 order: 5
 ---
 
-The first thing we measured with assay was assay. Which surface does an agent use better: the CLI or the MCP tools?
+Our first test with assay was of assay. Does an agent do better with the CLI or with the MCP tools?
 
 ## How it ran
 
 - {{seatsPerArm}} seats per arm, {{model}} on {{harness}}.
-- Each seat gets its own assay server and the same task: start an assay with two seats, claim both, record two receipts, grade them, and report the score.
-- A hidden grader reads that server after the agent stops. It checks the score and both seats.
-- Every receipt and grade is recorded in a separate assay ledger. The gate fails unless the ledger's score matches the receipts.
+- Each seat gets its own server and one task: start an assay with two seats, claim both, record two receipts, grade them, and report the score.
+- After the agent stops, a hidden grader reads that server and checks the score and both seats.
+- A second assay records every receipt and grade. The check fails if its score does not match the receipts.
 
 ## Run 1
 
@@ -19,21 +19,21 @@ The first thing we measured with assay was assay. Which surface does an agent us
 
 {{run1}}
 
-Almost every seat first sent `ClaimSeat` to a seat id. The CLI seats read `--help` and their exit code, and retried. The MCP seats moved on.
+Most seats first sent `ClaimSeat` to a seat id. CLI seats saw the exit code and tried again. MCP seats did not.
 
 ## Run 2
 
-We described each id in the model and made the refusal name the right id. Task, model and grader are the same.
+We added a description to each id, and made the refusal name the right id. The task, model and grader did not change.
 
 {{run2}}
 
-No seat used the wrong id this time. One sentence in the model closed the gap, and both arms got cheaper.
+No seat used the wrong id. Both surfaces passed 5 of 5 and cost less.
 
 ## What this does not show
 
-- {{seatsPerArm}} seats per arm is a first signal, not a verdict.
+- {{seatsPerArm}} seats per arm is a first signal, not proof.
 - One task, one model, one harness.
-- The task is now easy for both. The next bench needs a harder one.
+- Both surfaces now find the task easy. The next bench needs a harder task.
 
 ## Run it yourself
 

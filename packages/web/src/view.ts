@@ -80,31 +80,23 @@ const hero = (h: H, model: Model): Html =>
                   h.div(
                     [h.Class("flex flex-col gap-5 rounded-card border border-g3 p-6 sm:p-9")],
                     [
-                      h.p(
-                        [h.Class("text-[13px] font-medium text-[#d2691e]")],
-                        ["Open source · your machine or your Cloudflare account"],
-                      ),
+                      h.p([h.Class("text-[13px] font-medium text-[#d2691e]")], ["Runs on your machine"]),
                       h.h1(
                         [h.Class("display text-[40px] leading-[1.05] text-balance sm:text-[56px]")],
                         [
-                          h.span([h.Class("text-g5")], ["Evals tell you who wins. "]),
-                          "Assay makes the next round better.",
+                          h.span([h.Class("text-g5")], ["Evals pick a winner. "]),
+                          "Assay shows what to change next.",
                         ],
                       ),
                       h.p(
                         [h.Class("max-w-[44ch] text-[16px] text-g6 text-pretty")],
                         [
-                          "Run many agents on one goal. Grade each one with a check it cannot see. Change one thing, run again, keep what passes.",
+                          "Run many agents on one goal. A grader they cannot see checks each one. Change one thing and run again.",
                         ],
                       ),
                       h.div(
                         [h.Class("flex flex-wrap gap-2")],
-                        [
-                          chip(h, "Frozen plan"),
-                          chip(h, "Hidden grader", true),
-                          chip(h, "Budget held"),
-                          chip(h, "Receipts"),
-                        ],
+                        [chip(h, "Frozen plan"), chip(h, "Hidden grader", true), chip(h, "Hard budget")],
                       ),
                       h.div([h.Class("grow")], []),
                       h.div(
@@ -133,10 +125,10 @@ const hero = (h: H, model: Model): Html =>
                   h.div(
                     [h.Class("dark-card flex min-w-0 flex-col gap-5 rounded-card p-6 text-on-dark sm:p-9")],
                     [
-                      h.h2([h.Class("display text-[26px] leading-tight")], ["Hand it to your agent"]),
+                      h.h2([h.Class("display text-[26px] leading-tight")], ["Give it to your agent"]),
                       h.p(
                         [h.Class("text-[15px] text-on-dark-dim")],
-                        ["One line installs the CLI and the MCP tools. Your agent drives the rest."],
+                        ["Clone it, start the server, and your agent uses the CLI or the MCP tools."],
                       ),
                       h.div(
                         [
@@ -226,9 +218,9 @@ const promises = (h: H): Html =>
     [
       sectionHead(
         h,
-        "A loop, not a scoreboard. ",
-        "Each round earns its place.",
-        "A score alone tells you who won. The loop tells you what to change, and proves the change helped.",
+        "Four rules. ",
+        "Same rules every round.",
+        "If the rules stay the same, you can compare one round with the next.",
       ),
       h.div(
         [h.Class("mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4")],
@@ -236,26 +228,21 @@ const promises = (h: H): Html =>
           loopStep(
             h,
             "01",
-            "Freeze the plan",
-            "Every receipt names the plan it ran. Change the plan, start a new assay.",
+            "The plan is frozen",
+            "Each receipt names its plan. A new plan needs a new assay.",
           ),
-          loopStep(
-            h,
-            "02",
-            "Hold the budget",
-            "A seat starts only if its worst case still fits. Real spend replaces the hold.",
-          ),
+          loopStep(h, "02", "The budget is hard", "A seat starts only if its worst-case cost still fits."),
           loopStep(
             h,
             "03",
-            "Grade in secret",
-            "Each seat is graded once, after it stops, by a check it could not read or write.",
+            "The grader is hidden",
+            "Each seat is graded once, after it stops. It cannot read or change the grader.",
           ),
           loopStep(
             h,
             "04",
-            "Recompute, then change one thing",
-            "The score comes from receipts, never the agent's report. Then run the next round.",
+            "The score is recomputed",
+            "From receipts and grades, not from what the agent reports.",
           ),
         ],
       ),
@@ -294,7 +281,7 @@ const surfaces = (h: H, model: Model): Html =>
               h.p(
                 [h.Class("text-g6")],
                 [
-                  "The CLI and the MCP tools are both made from one domain model. They take the same inputs, refuse the same things, and say the same words. A wrong id gets a refusal that names the right one.",
+                  "The CLI and the MCP tools come from one model. Same inputs, same refusals, same words. If you send a wrong id, the refusal names the right one.",
                 ],
               ),
               h.div([h.Class("grow")], []),
@@ -347,9 +334,9 @@ const bench = (h: H): Html =>
     [
       sectionHead(
         h,
-        "We ran the loop on assay. ",
-        "One change closed the gap.",
-        `${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}, a hidden grader. In round 1, most MCP seats sent a command to the wrong id. In round 2, the model said which id each command takes.`,
+        "We tested assay with assay. ",
+        "One sentence fixed MCP.",
+        `${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
       ),
       h.div(
         [h.Class("mt-6 overflow-x-auto rounded-card bg-g0 shadow-pill")],
@@ -383,7 +370,7 @@ const bench = (h: H): Html =>
         [h.Class("mt-4 text-sm text-g6")],
         [
           h.span([h.Class("font-medium text-k1")], [`(${numbers.run1.total} → ${numbers.run2.total})`]),
-          " total spend per round. ",
+          " total cost per round. ",
           h.a(
             [h.Href("/docs/bench/"), h.Class("text-k1 underline underline-offset-[5px]")],
             ["Read the receipts →"],
@@ -404,10 +391,7 @@ const footer = (h: H): Html =>
           ),
         ],
         [
-          h.p(
-            [h.Class("flex items-center gap-2")],
-            [logo(h, 16), "MIT. You run it: no hosted service, no free model calls."],
-          ),
+          h.p([h.Class("flex items-center gap-2")], [logo(h, 16), "You run it. There is no hosted service."]),
           h.div(
             [h.Class("flex gap-5")],
             [
