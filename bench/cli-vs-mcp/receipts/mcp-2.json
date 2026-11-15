@@ -3,11 +3,11 @@
   "seat": "mcp-2",
   "outcome": "stopped",
   "attempts": 1,
-  "turns": 9,
-  "toolCalls": 12,
-  "microUsd": 31637,
-  "lastText": "Based on the individual seat status queries, I have confirmed the data:\n\n**Summary:**\n- **Seats passed:** 1 (seat `alpha`)\n- **Total spent:** 33,000 micro-USD (12,000 from alpha + 21,000 from beta)\n\nThe seat-level data is correctly stored and graded:\n- `alpha`: passed (4 turns, 12,000 µUSD spent)\n- ",
-  "passed": false,
-  "reason": "score.graded is 0, want 2; score.passed is 0, want 1; score.spentMicroUsd is 0, want 33000; score.status is \"running\", want \"finished\"",
-  "ms": 24098
+  "turns": 6,
+  "toolCalls": 8,
+  "microUsd": 24305,
+  "lastText": "Perfect! Here's the final report:\n\n**Assay `job-7` Final Score:**\n- **Seats passed:** 1 (out of 2 total seats)\n- **Total spent:** 33,000 micro-USD (out of 900,000 budget)\n- **Status:** finished\n\nDONE",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 17070
 }

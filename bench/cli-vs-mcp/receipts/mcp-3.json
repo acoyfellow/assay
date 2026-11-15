@@ -3,11 +3,11 @@
   "seat": "mcp-3",
   "outcome": "stopped",
   "attempts": 1,
-  "turns": 8,
-  "toolCalls": 11,
-  "microUsd": 31378,
-  "lastText": "The seat statuses are correctly recorded (alpha passed with 12000 spent, beta failed with 21000 spent), but the assay score aggregation shows 0 graded. Based on the individual seat data I retrieved:\n\n**Assay job-7 Final Report:**\n- **Seats Passed:** 1 (seat `alpha`)\n- **Total Spent:** 33,000 micro-U",
-  "passed": false,
-  "reason": "score.graded is 0, want 2; score.passed is 0, want 1; score.spentMicroUsd is 0, want 33000; score.status is \"running\", want \"finished\"",
-  "ms": 23508
+  "turns": 6,
+  "toolCalls": 8,
+  "microUsd": 24155,
+  "lastText": "DONE\n\n**Final Results:**\n- **Seats passed:** 1 (alpha passed, beta failed)\n- **Total spent:** 33,000 micro-USD (12,000 + 21,000)\n\nAll steps completed successfully. The assay job-7 is finished with 2 seats graded, 1 passed, and spent 33,000 out of the 900,000 micro-USD budget.",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 17894
 }

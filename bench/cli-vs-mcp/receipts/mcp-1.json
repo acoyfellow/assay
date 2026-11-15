@@ -3,11 +3,11 @@
   "seat": "mcp-1",
   "outcome": "stopped",
   "attempts": 1,
-  "turns": 11,
-  "toolCalls": 15,
-  "microUsd": 36828,
-  "lastText": "The assay score isn't reflecting the graded seats yet. Let me review what was completed:\n\n## Results:\n\n**Assay `job-7` Summary:**\n- **Seats Passed:** 1 (seat `alpha` passed)\n- **Total Spent:** 33,000 micro-USD (12,000 from alpha + 21,000 from beta)\n\n**Seat Details:**\n- **Seat `alpha`:** ✓ Passed (4 ",
-  "passed": false,
-  "reason": "score.graded is 0, want 2; score.passed is 0, want 1; score.spentMicroUsd is 0, want 33000; score.status is \"running\", want \"finished\"",
-  "ms": 25293
+  "turns": 6,
+  "toolCalls": 8,
+  "microUsd": 26712,
+  "lastText": "**DONE**\n\nAssay `job-7` final results:\n- **Seats passed**: 1 (out of 2 graded)\n- **Total spent**: 33,000 micro-USD (out of 900,000 micro-USD budget)\n\nThe assay is complete with:\n- Seat `alpha`: PASSED ✓\n- Seat `beta`: FAILED ✗\n- Status: finished",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 18897
 }

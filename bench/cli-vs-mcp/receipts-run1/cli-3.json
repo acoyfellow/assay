@@ -1,0 +1,13 @@
+{
+  "arm": "cli",
+  "seat": "cli-3",
+  "outcome": "stopped",
+  "attempts": 1,
+  "turns": 28,
+  "toolCalls": 31,
+  "microUsd": 58224,
+  "lastText": "Perfect! I have successfully driven the assay server to the end state. Let me summarize what was completed:\n\n1. ✅ Started an assay with:\n   - id: `job-7`\n   - plan hash: `plan-a`\n   - budget: 900000 micro-USD\n   - two seats (alpha and beta), each with shape `haiku-pi`, goal `cart-merge`, worst case ",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 61823
+}

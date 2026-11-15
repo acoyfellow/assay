@@ -148,7 +148,7 @@ it.effect("a seat is claimed once, and only while its worst case fits the budget
     Story.when(run, new ClaimSeat({ seat: "s3", runner: "local" })),
     Story.rejected(new OverBudget({ remainingMicroUsd: 50_000, neededMicroUsd: 100_000 })),
     Story.when(run, new ClaimSeat({ seat: "nope", runner: "local" })),
-    Story.rejected(new UnknownSeat({ seat: "nope" })),
+    Story.rejected(new UnknownSeat({ seat: "nope", seats: ["s1", "s2", "s3"] })),
   ),
 );
 
@@ -267,7 +267,9 @@ it.effect("a cancelled assay starts no more seats", () =>
     Story.then(run, new AssayCancelled({ reason: "budget review" })),
     Story.view(AssayScore, run, { status: "cancelled" }),
     Story.when(run, new ClaimSeat({ seat: "s1", runner: "local" })),
-    Story.rejected(new NotRunning()),
+    Story.rejected(
+      new NotRunning({ hint: 'No running assay "a-1". Start it with StartAssay first, or check the id.' }),
+    ),
   ),
 );
 
@@ -287,5 +289,17 @@ it.effect("a late grade for a cancelled assay is kept on the seat and not charge
       }),
     ),
     Story.then(run),
+  ),
+);
+
+it.effect("a claim sent to a seat id says to use the assay id", () =>
+  story(
+    Story.given(Assay.ref(AssayId.make("a-1/s1"))),
+    Story.when(Assay.ref(AssayId.make("a-1/s1")), new ClaimSeat({ seat: "s1", runner: "local" })),
+    Story.rejected(
+      new NotRunning({
+        hint: '"a-1/s1" is a seat id. Send this command to the assay id "a-1" and name the seat in the input.',
+      }),
+    ),
   ),
 );

@@ -44,8 +44,13 @@ export const AssayState = Schema.Union([
 export type AssayState = typeof AssayState.Type;
 type RunningState = Extract<AssayState, { _tag: "Running" }>;
 
-const runningFor = (state: AssayState): RunningState | NotRunning =>
-  state._tag === "Running" ? state : new NotRunning();
+const hintFor = (assayId: string): string =>
+  assayId.includes("/")
+    ? `"${assayId}" is a seat id. Send this command to the assay id "${assayId.split("/")[0]}" and name the seat in the input.`
+    : `No running assay "${assayId}". Start it with StartAssay first, or check the id.`;
+
+const runningFor = (state: AssayState, assayId: string): RunningState | NotRunning =>
+  state._tag === "Running" ? state : new NotRunning({ hint: hintFor(assayId) });
 
 const firstDuplicate = (seats: ReadonlyArray<SeatPlan>): string | null => {
   const seen = new Set<string>();
@@ -86,11 +91,11 @@ export class Assay extends Domain.Aggregate("Assay", {
         }),
       ];
     },
-    ClaimSeat: (assay, cmd) => {
-      const running = runningFor(assay);
+    ClaimSeat: (assay, cmd, ctx) => {
+      const running = runningFor(assay, ctx.id);
       if (running._tag !== "Running") return running;
       const slot = running.seats[cmd.seat];
-      if (slot === undefined) return new UnknownSeat({ seat: cmd.seat });
+      if (slot === undefined) return new UnknownSeat({ seat: cmd.seat, seats: Object.keys(running.seats) });
       if (slot.stage !== "open") return new AlreadyClaimed({ runner: slot.runner });
       const needed = slot.plan.worstCaseMicroUsd;
       const remaining = running.budgetMicroUsd - running.committedMicroUsd;
@@ -108,8 +113,8 @@ export class Assay extends Domain.Aggregate("Assay", {
         }),
       ];
     },
-    SettleSeat: (assay, cmd) => {
-      const running = runningFor(assay);
+    SettleSeat: (assay, cmd, ctx) => {
+      const running = runningFor(assay, ctx.id);
       if (running._tag !== "Running") return running;
       const slot = running.seats[cmd.seat];
       if (slot === undefined || slot.stage !== "claimed") return new NotClaimed({ seat: cmd.seat });
@@ -124,8 +129,8 @@ export class Assay extends Domain.Aggregate("Assay", {
         }),
       ];
     },
-    CancelAssay: (assay, cmd) => {
-      const running = runningFor(assay);
+    CancelAssay: (assay, cmd, ctx) => {
+      const running = runningFor(assay, ctx.id);
       if (running._tag !== "Running") return running;
       return [new AssayCancelled({ reason: cmd.reason })];
     },

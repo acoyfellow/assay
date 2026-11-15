@@ -3,11 +3,11 @@
   "seat": "cli-4",
   "outcome": "stopped",
   "attempts": 1,
-  "turns": 20,
-  "toolCalls": 32,
-  "microUsd": 48714,
-  "lastText": "Perfect! All steps completed successfully. Here's the summary:\n\n## Final Status\n\n**Assay Score for `job-7`:**\n- **Seats passed: 1** (only alpha passed)\n- **Total spent: 33,000 micro-USD** (12,000 from alpha + 21,000 from beta)\n\n**Detailed breakdown:**\n- Seat `alpha`: Stopped after 4 turns, spent 12,",
+  "turns": 16,
+  "toolCalls": 15,
+  "microUsd": 37439,
+  "lastText": "Perfect! Let me summarize the final state:\n\n**Assay Score for job-7:**\n- **Seats passed: 1** (seat alpha passed, seat beta failed)\n- **Total spent: 33,000 micro-USD** (12,000 from alpha + 21,000 from beta)\n- Status: finished\n- Total seats: 2\n- Graded seats: 2\n- Budget: 900,000 micro-USD\n\nDONE",
   "passed": true,
   "reason": "server state matches the end state",
-  "ms": 48687
+  "ms": 37968
 }

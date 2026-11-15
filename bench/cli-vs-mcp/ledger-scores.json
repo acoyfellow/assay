@@ -6,7 +6,7 @@
       "seats": 5,
       "graded": 5,
       "passed": 5,
-      "spentMicroUsd": 249909,
+      "spentMicroUsd": 169988,
       "budgetMicroUsd": 1000000,
       "status": "finished"
     },
@@ -14,8 +14,8 @@
       "planHash": "0b685af104c3",
       "seats": 5,
       "graded": 5,
-      "passed": 1,
-      "spentMicroUsd": 188677,
+      "passed": 5,
+      "spentMicroUsd": 123632,
       "budgetMicroUsd": 1000000,
       "status": "finished"
     }

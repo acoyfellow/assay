@@ -3,11 +3,11 @@
   "seat": "cli-3",
   "outcome": "stopped",
   "attempts": 1,
-  "turns": 28,
-  "toolCalls": 31,
-  "microUsd": 58224,
-  "lastText": "Perfect! I have successfully driven the assay server to the end state. Let me summarize what was completed:\n\n1. ✅ Started an assay with:\n   - id: `job-7`\n   - plan hash: `plan-a`\n   - budget: 900000 micro-USD\n   - two seats (alpha and beta), each with shape `haiku-pi`, goal `cart-merge`, worst case ",
+  "turns": 11,
+  "toolCalls": 17,
+  "microUsd": 26649,
+  "lastText": "Perfect! Let me report the results:\n\n**DONE**\n\nAssay `job-7` has completed with the following results:\n- **Seats passed:** 1 (seat alpha passed, seat beta failed)\n- **Total spent:** 33,000 micro-USD (12,000 from alpha + 21,000 from beta)\n- **Budget remaining:** 867,000 micro-USD (out of 900,000 tota",
   "passed": true,
   "reason": "server state matches the end state",
-  "ms": 61823
+  "ms": 28873
 }

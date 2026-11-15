@@ -1,0 +1,13 @@
+{
+  "arm": "cli",
+  "seat": "cli-2",
+  "outcome": "stopped",
+  "attempts": 1,
+  "turns": 22,
+  "toolCalls": 25,
+  "microUsd": 45785,
+  "lastText": "Perfect! Let me verify all the details:\n\n**Summary Report:**\n- **Seats passed:** 1 (seat alpha passed, seat beta failed)\n- **Total spent:** 33,000 micro-USD (12,000 from alpha + 21,000 from beta)\n\nAll operations completed successfully:\n1. ✅ Assay `job-7` started with plan hash `plan-a` and budget of",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 48363
+}

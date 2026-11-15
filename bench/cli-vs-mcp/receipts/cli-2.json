@@ -3,11 +3,11 @@
   "seat": "cli-2",
   "outcome": "stopped",
   "attempts": 1,
-  "turns": 22,
-  "toolCalls": 25,
-  "microUsd": 45785,
-  "lastText": "Perfect! Let me verify all the details:\n\n**Summary Report:**\n- **Seats passed:** 1 (seat alpha passed, seat beta failed)\n- **Total spent:** 33,000 micro-USD (12,000 from alpha + 21,000 from beta)\n\nAll operations completed successfully:\n1. ✅ Assay `job-7` started with plan hash `plan-a` and budget of",
+  "turns": 13,
+  "toolCalls": 18,
+  "microUsd": 30319,
+  "lastText": "Perfect! Let me report the final results:\n\n**DONE**\n\nSummary of assay `job-7`:\n- **Seats passed**: 1 (out of 2 total seats graded)\n- **Total spent**: 33,000 micro-USD (12,000 for alpha + 21,000 for beta)\n\nAdditional details:\n- Plan hash: `plan-a`\n- Budget: 900,000 micro-USD\n- Status: finished\n- All ",
   "passed": true,
   "reason": "server state matches the end state",
-  "ms": 48363
+  "ms": 34543
 }

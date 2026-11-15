@@ -12,6 +12,7 @@ export class SeatClaimed extends Domain.Event("SeatClaimed", {
 
 export class UnknownSeat extends Domain.Rejection("UnknownSeat", {
   seat: Schema.String,
+  seats: Schema.Array(Schema.String),
 }) {}
 export class AlreadyClaimed extends Domain.Rejection("AlreadyClaimed", {
   runner: Schema.String,

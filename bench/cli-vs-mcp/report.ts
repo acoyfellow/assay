@@ -103,10 +103,40 @@ const table = [
 
 const failures = rows.flatMap((row) => row.reasons.map((reason) => `- ${reason}`));
 
+const run1Dir = join(here, "receipts-run1");
+const run1: ReadonlyArray<Receipt> = existsSync(run1Dir)
+  ? readdirSync(run1Dir)
+      .filter((file) => /^(cli|mcp)-\d+\.json$/.test(file))
+      .map((file) => JSON.parse(readFileSync(join(run1Dir, file), "utf8")))
+  : [];
+if (run1.length === 0) problems.push("receipts-run1/ is missing");
+const passRate = (list: ReadonlyArray<Receipt>, arm: string) => {
+  const mine = list.filter((receipt) => receipt.arm === arm);
+  return `${mine.filter((receipt) => receipt.passed).length}/${mine.length}`;
+};
+const meanOf = (list: ReadonlyArray<Receipt>, arm: string, pick: (receipt: Receipt) => number) =>
+  mean(list.filter((receipt) => receipt.arm === arm).map(pick));
+const compare = [
+  "| Arm | Run 1 passed | Run 2 passed | Run 1 mean turns | Run 2 mean turns | Run 1 mean cost | Run 2 mean cost |",
+  "|---|---|---|---|---|---|---|",
+  ...(["cli", "mcp"] as const).map(
+    (arm) =>
+      `| ${arm} | ${passRate(run1, arm)} | ${passRate(receipts, arm)} | ${meanOf(run1, arm, (r) => r.turns).toFixed(1)} | ${meanOf(receipts, arm, (r) => r.turns).toFixed(1)} | ${usd(meanOf(run1, arm, (r) => r.microUsd))} | ${usd(meanOf(receipts, arm, (r) => r.microUsd))} |`,
+  ),
+];
+
 writeFileSync(
   join(here, "RESULT.md"),
   [
-    "# CLI vs MCP: first assay",
+    "# CLI vs MCP",
+    "",
+    "## Run 1 vs run 2",
+    "",
+    "Run 1: `target` had no description, and `NotRunning` said nothing. Run 2: `target` says which id it takes, and `NotRunning` names the right assay id when it gets a seat id. Task, model and grader are the same.",
+    "",
+    ...compare,
+    "",
+    "## Run 2",
     "",
     "Same task, same model (Claude Haiku 4.5 on Pi), same domain Api. Only the surface differs: the `assay` CLI made by `toCli`, or the MCP tools made by `toMcp`.",
     "A hidden grader reads the seat's own assay server after the agent stops. Every receipt and grade is recorded in a separate assay ledger, and its `AssayScore` is checked against the receipts.",
@@ -119,15 +149,13 @@ writeFileSync(
     "",
     ...(failures.length ? failures : ["None."]),
     "",
-    "## Why seats failed",
-    "",
-    "The task gives a seat id as `job-7/alpha`. Most seats first sent `ClaimSeat` with that seat id as its target, not the assay id `job-7`. The server refuses it with `NotRunning`, the seats are never charged to the assay, and its score stays at 0 graded.",
+    "## First claims in run 2",
     "",
     "| Arm | First claim used a seat id | Then retried with the assay id |",
     "|---|---|---|",
     ...claims,
     "",
-    "Both arms made the same first mistake. The difference is recovery: the CLI arm read `assay claim-seat --help` and its exit code, and retried. The MCP arm got `{\"_tag\":\"NotRunning\"}` and moved on. In both surfaces, `target` has no description, and `NotRunning` does not say the target is wrong.",
+    "Run 1's version of this table and its explanation are in `receipts-run1/RESULT.md`.",
     "",
     "## What this does not show",
     "",
@@ -139,6 +167,21 @@ writeFileSync(
 
 console.log(table.join("\n"));
 console.log(`total ${usd(total)}`);
+console.log(compare.join("\n"));
+for (const row of rows) {
+  const score = ledger.scores[row.arm];
+  const agrees =
+    score !== undefined &&
+    score.graded === row.seats &&
+    score.passed === row.passed &&
+    score.spentMicroUsd === row.totalMicroUsd;
+  console.log(
+    `check ${row.arm}: receipts ${row.seats}/${seatsPerArm}; ledger graded=${score?.graded} passed=${score?.passed} spent=${score?.spentMicroUsd}; receipts passed=${row.passed} spent=${row.totalMicroUsd}; agree=${agrees}`,
+  );
+}
+console.log(`check spend: ${usd(total)} <= ${usd(maxMicroUsd)} is ${total <= maxMicroUsd}`);
+console.log(`check run1 kept: ${run1.length} receipts`);
+console.log(`check problems: ${problems.length}`);
 if (problems.length) {
   for (const problem of problems) console.log(`PROBLEM ${problem}`);
   process.exit(1);

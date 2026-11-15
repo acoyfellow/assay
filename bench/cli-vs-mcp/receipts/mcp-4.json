@@ -3,11 +3,11 @@
   "seat": "mcp-4",
   "outcome": "stopped",
   "attempts": 1,
-  "turns": 14,
-  "toolCalls": 19,
-  "microUsd": 43774,
-  "lastText": "The score view may have a delay. Based on the seat statuses I retrieved, I can report the results:\n\n**DONE**\n\n## Final Assay Results for job-7\n\n- **Seats Passed**: 1 (seat `alpha` passed)\n- **Total Spent**: 33000 micro-USD (12000 from alpha + 21000 from beta)\n\nBoth seats completed:\n- **Seat alpha**:",
-  "passed": false,
-  "reason": "score.graded is 0, want 2; score.passed is 0, want 1; score.spentMicroUsd is 0, want 33000; score.status is \"running\", want \"finished\"",
-  "ms": 57742
+  "turns": 6,
+  "toolCalls": 8,
+  "microUsd": 24231,
+  "lastText": "Perfect! Here's the final report:\n\n**Assay job-7 Results:**\n- **Seats passed:** 1 (out of 2 graded)\n- **Total spent:** 33,000 micro-USD (out of 900,000 micro-USD budget)\n- **Status:** finished\n\nThe assay completed successfully with seat `alpha` passing all hidden tests and seat `beta` failing 2 hidd",
+  "passed": true,
+  "reason": "server state matches the end state",
+  "ms": 16275
 }
