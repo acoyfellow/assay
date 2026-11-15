@@ -125,7 +125,7 @@ const shell = (page: Page, index: number, html: string) => `<!doctype html>
 <details class="side" open><summary>Docs</summary><ul>${nav(page)}</ul></details>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
 </div></div></div>
-<footer class="foot">You run it. There is no hosted service.</footer>
+<footer class="foot"><a href="/">assay</a> · <a href="/llms.txt">llms.txt</a> · <a href="${repo}">GitHub</a></footer>
 </body>
 </html>
 `;
@@ -141,8 +141,6 @@ const llms = [
   "# assay",
   "",
   "> Run many agents on one goal. Score each with a grader it never sees.",
-  "",
-  "Runs on your machine. There is no hosted service.",
   "",
   "## Docs",
   "",

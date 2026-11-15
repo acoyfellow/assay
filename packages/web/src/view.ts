@@ -61,8 +61,11 @@ const nav = (h: H): Html =>
     ],
   );
 
-const chip = (h: H, label: string, tint = false): Html =>
-  h.span([h.Class(`${tint ? "pill-tint" : "pill"} rounded-full px-3.5 py-1.5 text-[13px] text-k1`)], [label]);
+const fact = (h: H, label: string): Html =>
+  h.li(
+    [h.Class("flex items-center gap-2 text-[14px] text-g6")],
+    [h.span([h.Class("size-1.5 bg-ok")], []), label],
+  );
 
 const hero = (h: H, model: Model): Html =>
   h.section(
@@ -80,7 +83,6 @@ const hero = (h: H, model: Model): Html =>
                   h.div(
                     [h.Class("flex flex-col gap-6 px-5 pt-8 pb-4 sm:px-10 sm:pt-14 sm:pb-12")],
                     [
-                      h.p([h.Class("text-[13px] font-medium text-[#d2691e]")], ["Runs on your machine"]),
                       h.h1(
                         [h.Class("display text-[40px] leading-[1.05] text-balance sm:text-[56px]")],
                         [
@@ -94,9 +96,9 @@ const hero = (h: H, model: Model): Html =>
                           "Run many agents on one goal. A grader they cannot see checks each one. Change one thing and run again.",
                         ],
                       ),
-                      h.div(
-                        [h.Class("flex flex-wrap gap-2")],
-                        [chip(h, "Frozen plan"), chip(h, "Hidden grader", true), chip(h, "Hard budget")],
+                      h.ul(
+                        [h.Class("m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0")],
+                        [fact(h, "Frozen plan"), fact(h, "Hidden grader"), fact(h, "Hard budget")],
                       ),
                       h.div([h.Class("grow")], []),
                       h.div(
@@ -402,7 +404,7 @@ const footer = (h: H): Html =>
       h.div(
         [h.Class("flex flex-wrap items-center justify-between gap-3 text-sm text-g6")],
         [
-          h.p([h.Class("flex items-center gap-2")], [logo(h, 16), "You run it. There is no hosted service."]),
+          h.p([h.Class("flex items-center gap-2")], [logo(h, 16), "assay"]),
           h.div(
             [h.Class("flex gap-5")],
             [

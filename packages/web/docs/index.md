@@ -24,7 +24,6 @@ You give it a plan: a list of **seats**. A seat is one agent, one goal, one work
 
 ## What it does not do
 
-- It does not run on our servers. You run it on your machine.
 - It does not give you a model. Your agents call the model you choose, for example through [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/).
 - It does not pick a winner. It gives you receipts and a score you can check.
 
