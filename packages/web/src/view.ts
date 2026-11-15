@@ -317,7 +317,12 @@ const surfaces = (h: H, model: Model): Html =>
               ),
               h.pre(
                 [h.Class("overflow-x-auto font-mono text-[12.5px] leading-[1.85] text-on-dark-dim")],
-                [h.code([], [model.surface === "cli" ? cliCall : mcpCall])],
+                [
+                  h.code(
+                    [h.DataAttribute("surface-call", model.surface)],
+                    [model.surface === "cli" ? cliCall : mcpCall],
+                  ),
+                ],
               ),
             ],
           ),

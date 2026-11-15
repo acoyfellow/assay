@@ -48,9 +48,9 @@ try {
       await page.goto(base, { waitUntil: "networkidle" });
       await page.getByRole("button", { name: "MCP", exact: true }).click();
       await page.waitForFunction(() =>
-        document.querySelector("pre code")?.textContent?.includes("AssayApi_"),
+        document.querySelector("[data-surface-call]")?.textContent?.includes("AssayApi_"),
       );
-      const shown = await page.textContent("pre code");
+      const shown = await page.textContent("[data-surface-call]");
       const ok = shown?.includes("AssayApi_ClaimSeat_send") === true;
       console.log(`toggle MCP shows tool call=${ok}`);
       if (!ok) problems.push("the CLI/MCP toggle does not switch");
