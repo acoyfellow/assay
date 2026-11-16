@@ -44,7 +44,11 @@ const writePlan = (overrides: Record<string, unknown>) => {
   return file;
 };
 
-const env = { ASSAY_PI_BIN: join(root, "packages/runner/test/fake/pi"), ASSAY_PI_PROVIDER: "fake" };
+const env = {
+  ASSAY_PI_BIN: join(root, "packages/runner/test/fake/pi"),
+  ASSAY_PI_PROVIDER: "fake",
+  ASSAY_DIRECT_PROVIDER: "1",
+};
 const events: ModeEvent[] = [];
 const mode = createMode({ root, home: join(work, "home"), env, onEvent: (event) => events.push(event) });
 

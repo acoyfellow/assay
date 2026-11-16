@@ -4,6 +4,7 @@ import { type Agent, startAgent } from "./agent.ts";
 import { type SeatView, startControl } from "./control.ts";
 import { addWorktree, commitSeat, diffStat, repoPath, seedRepo } from "./git.ts";
 import { decodePlan, type ExpandedSeat, expandSeats, type Plan, roundsOf } from "./Plan.ts";
+import { type Relay, startRelay, upstreamFromEnv } from "./relay.ts";
 import { isolation, sandboxed } from "./sandbox.ts";
 
 export type Receipt = {
@@ -101,19 +102,53 @@ const shell = async (command: string, cwd: string, env: Record<string, string>, 
   return { out, err, code };
 };
 
-const providerEnv = async (): Promise<Record<string, string>> => {
-  const command = process.env.ASSAY_PI_TOKEN_COMMAND;
-  const name = process.env.ASSAY_PI_TOKEN_ENV;
-  if (!command || !name) return {};
-  const token = (
-    await new Response(Bun.spawn(["sh", "-c", command], { stdout: "pipe" }).stdout).text()
-  ).trim();
-  return token ? { [name]: token } : {};
+const secretShaped = /(key|token|secret|password|credential|auth|cookie|session)/i;
+
+export const agentEnv = (extra: Record<string, string>): Record<string, string> => {
+  const keep = Object.entries(process.env).filter(
+    (entry): entry is [string, string] =>
+      typeof entry[1] === "string" && !secretShaped.test(entry[0]) && !entry[0].startsWith("ASSAY_UPSTREAM"),
+  );
+  return { ...Object.fromEntries(keep), ...extra };
 };
 
-const piCommand = (plan: Plan, seat: ExpandedSeat) => {
-  const extensions = (process.env.ASSAY_PI_EXTENSIONS ?? "").split(",").filter(Boolean);
-  const provider = plan.provider ?? process.env.ASSAY_PI_PROVIDER ?? "anthropic";
+type ModelAccess = { provider: string; extensions: ReadonlyArray<string>; relay: Relay | null };
+
+const relayProvider = "assay-relay";
+
+const writeRelayModels = (
+  agentDir: string,
+  relay: Relay,
+  seatKey: string,
+  models: ReadonlyArray<string>,
+  price: { input: number; output: number },
+) =>
+  writeFileSync(
+    join(agentDir, "models.json"),
+    JSON.stringify({
+      providers: {
+        [relayProvider]: {
+          baseUrl: relay.url,
+          api: "anthropic-messages",
+          apiKey: seatKey,
+          models: models.map((id) => ({
+            id,
+            contextWindow: 200000,
+            maxTokens: 32000,
+            cost: {
+              input: price.input,
+              output: price.output,
+              cacheRead: price.input / 10,
+              cacheWrite: price.input * 1.25,
+            },
+          })),
+        },
+      },
+    }),
+  );
+
+const piCommand = (plan: Plan, seat: ExpandedSeat, access: ModelAccess) => {
+  const { extensions, provider } = access;
   return [
     process.env.ASSAY_PI_BIN ?? "pi",
     "--mode",
@@ -180,6 +215,11 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
   const runDir = resolve(outRoot, assayId);
   mkdirSync(runDir, { recursive: true });
   const hidden = (plan.hidden ?? []).map((path) => resolve(planDir, path));
+  if (!upstreamFromEnv() && process.env.ASSAY_DIRECT_PROVIDER !== "1") {
+    throw new Error(
+      "no model relay: set ASSAY_UPSTREAM_URL and ASSAY_UPSTREAM_TOKEN_COMMAND so assay holds the key and agents never do. To let agents use their own provider login instead, set ASSAY_DIRECT_PROVIDER=1.",
+    );
+  }
   if (hidden.length > 0 && isolation() === "none") {
     const fix =
       process.platform === "linux" ? "install bubblewrap (apt install bubblewrap)" : "run on macOS or Linux";
@@ -242,7 +282,31 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
   const port = 9300 + Math.floor(Math.random() * 400);
   const api = `http://localhost:${port}/api`;
   const ledger = await startLedger(port);
-  const tokens = await providerEnv();
+  const upstream = upstreamFromEnv();
+  const relayPrice = {
+    input: Number(process.env.ASSAY_USD_PER_M_INPUT ?? 1),
+    output: Number(process.env.ASSAY_USD_PER_M_OUTPUT ?? 5),
+  };
+  const cardModels = [...new Set(seats.map((seat) => seat.model ?? plan.model))];
+  const relay = upstream
+    ? startRelay(
+        upstream,
+        {
+          models: cardModels,
+          maxTokens: Number(process.env.ASSAY_MAX_TOKENS ?? 16000),
+          budgetUsd: plan.budgetUsd,
+          usdPerMillion: relayPrice,
+        },
+        join(runDir, "relay.jsonl"),
+      )
+    : null;
+  const access: ModelAccess = relay
+    ? { provider: relayProvider, extensions: [], relay }
+    : {
+        provider: plan.provider ?? process.env.ASSAY_PI_PROVIDER ?? "anthropic",
+        extensions: (process.env.ASSAY_PI_EXTENSIONS ?? "").split(",").filter(Boolean),
+        relay: null,
+      };
 
   let claims: Promise<unknown> = Promise.resolve();
   const claimInOrder = (seat: ExpandedSeat) => {
@@ -307,17 +371,17 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
     await addWorktree(repo, worktree, base, branch);
     mkdirSync(join(seatDir, "agent"), { recursive: true });
     writeFileSync(join(seatDir, "agent", "settings.json"), JSON.stringify({ packages: [], extensions: [] }));
+    if (relay)
+      writeRelayModels(join(seatDir, "agent"), relay, relay.seatKey(seat.runId), cardModels, relayPrice);
     const prompt = readFileSync(resolve(planDir, seat.task), "utf8");
     const agent = startAgent({
-      command: sandboxed(piCommand(plan, seat), hidden),
+      command: sandboxed(piCommand(plan, seat, access), hidden),
       cwd: worktree,
-      env: {
-        ...(process.env as Record<string, string>),
-        ...tokens,
+      env: agentEnv({
         PI_CODING_AGENT_DIR: join(seatDir, "agent"),
         ASSAY_WORKSPACE: worktree,
         ASSAY_WRITABLE: seat.writable.join(","),
-      },
+      }),
       prompt,
       eventsFile: join(seatDir, "events.jsonl"),
       capUsd: plan.worstCaseUsdPerSeat,
@@ -419,7 +483,7 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
       ),
     ]);
     console.log(
-      `assay ${assayId}: ${seats.length} agents, hidden tests blocked by ${isolation()}, ${plan.parallel ?? 4} at a time, model ${plan.model}, control ${control.url}`,
+      `assay ${assayId}: ${seats.length} agents, hidden tests blocked by ${isolation()}, model calls via ${relay ? "relay (agents hold no key)" : "agent provider"}, ${plan.parallel ?? 4} at a time, model ${plan.model}, control ${control.url}`,
     );
     const receipts: Receipt[] = [];
     const passedTasks = new Set<string>();
@@ -465,6 +529,7 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
     return summary;
   } finally {
     control.stop();
+    relay?.stop();
     ledger.kill();
   }
 };

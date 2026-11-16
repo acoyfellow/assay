@@ -11,6 +11,12 @@ const plans = join(work, "tally");
 cpSync(join(here, "../../../examples/tally"), plans, { recursive: true });
 
 process.env.ASSAY_PI_BIN = join(here, "fake/pi");
+const fakeProvider = Bun.serve({
+  port: 0,
+  fetch: () => Response.json({ usage: { input_tokens: 0, output_tokens: 0 } }),
+});
+process.env.ASSAY_UPSTREAM_URL = `http://127.0.0.1:${fakeProvider.port}`;
+process.env.ASSAY_UPSTREAM_TOKEN_COMMAND = "echo gate-provider-secret";
 process.env.ASSAY_PI_PROVIDER = "fake";
 process.env.ASSAY_HOME = join(work, "home");
 
@@ -126,6 +132,7 @@ const runDir = summary.runDir;
 const cartTree = join(runDir, "cart-merge", "repo");
 const steerFile = join(cartTree, "steer.txt");
 const peekFile = join(cartTree, "peek.txt");
+const seenFile = join(cartTree, "..", "agent", "seen-secrets.txt");
 
 check("over-budget seat is skipped, run finishes", by["over-budget"]?.outcome === "skipped");
 check("killed seat is recorded as killed by a person", by["catalog-search"]?.killedBy === "person");
@@ -144,6 +151,11 @@ check(
 check(
   "hidden grader is unreadable by the agent",
   existsSync(peekFile) && readFileSync(peekFile, "utf8").startsWith("read-blocked"),
+);
+const seen = existsSync(seenFile) ? readFileSync(seenFile, "utf8") : "";
+check(
+  "the agent holds no provider key: not in its env, not in its models.json",
+  seen.includes("assay-relay") && seen.includes("assay-seat-") && !seen.includes("gate-provider-secret"),
 );
 const score = summary.score as { seats: number; passed: number; skipped: number; status: string };
 console.log(JSON.stringify(score));

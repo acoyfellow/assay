@@ -33,6 +33,9 @@ const work = async () => {
   const burn = Number(directive("burn") ?? "0");
 
   if (peek) writeFileSync("peek.txt", tryRead(peek));
+  const agentDir = process.env.PI_CODING_AGENT_DIR ?? "";
+  const models = agentDir && existsSync(join(agentDir, "models.json")) ? readFileSync(join(agentDir, "models.json"), "utf8") : "";
+  writeFileSync(join(agentDir || ".", "seen-secrets.txt"), `${JSON.stringify(process.env)}\n${models}`);
   const ramble = Number(directive("ramble") ?? "0");
   for (let index = 0; index < ramble && !aborted; index++) {
     emit({
