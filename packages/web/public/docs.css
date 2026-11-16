@@ -1,3 +1,4 @@
+@font-face { font-family: "Allo"; src: url("/fonts/Allo.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
 :root {
   --g0: #ffffff;
   --g1: #f3f3f2;
@@ -12,8 +13,8 @@
   --k2: #080809;
   --on-dark-dim: #9a9a97;
   --ok: #ffa45c;
-  --sans: "Google Sans Flex", "Helvetica Neue", Arial, sans-serif;
-  --mono: "Google Sans Code", ui-monospace, Menlo, monospace;
+  --sans: "Allo", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--g2); color: var(--k1); font: 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -41,7 +42,7 @@ a:hover { text-decoration-color: var(--k1); }
 
 .prose { min-width: 0; padding: 16px clamp(0px, 3vw, 32px) 24px; }
 .prose > * { max-width: 720px; }
-.prose h1 { font-size: clamp(32px, 5vw, 44px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 400; font-variation-settings: "wght" 380, "opsz" 96; margin: 0 0 10px; }
+.prose h1 { font-size: clamp(32px, 5vw, 44px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 400; font-variation-settings: "wght" 380, "opsz" 32; margin: 0 0 10px; }
 .lede { color: var(--g6); font-size: 18px; margin: 0 0 32px; }
 .prose h2 { font-size: 24px; font-weight: 400; letter-spacing: -0.02em; margin: 44px 0 12px; }
 .prose h3 { font-size: 18px; font-weight: 500; margin: 28px 0 8px; }

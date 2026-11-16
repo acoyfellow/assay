@@ -9,7 +9,7 @@ Tell the runner how Pi reaches your model:
 | Variable | Means |
 |---|---|
 | `ASSAY_PI_PROVIDER` | The Pi provider, for example `anthropic` or a Cloudflare AI Gateway provider. Required. |
-| `ASSAY_PI_MODEL` | The model. Default `claude-haiku-4-5`. |
+| `ASSAY_PI_MODEL` | The model. Default `claude-haiku-4-5`, the model the recorded runs used. |
 | `ASSAY_PI_EXTENSIONS` | Pi extensions to load, comma-separated, if your provider is one. |
 | `ASSAY_PI_TOKEN_COMMAND` | A shell command that prints a token, if your provider needs one minted. |
 | `ASSAY_PI_TOKEN_ENV` | The variable the provider reads that token from. |

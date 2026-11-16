@@ -1,7 +1,7 @@
 {
   "name": "best-of-n",
   "repo": "../../tally/seed",
-  "model": "claude-haiku-4-5",
+  "model": "claude-haiku-5-5",
   "parallel": 5,
   "minutesPerSeat": 8,
   "worstCaseUsdPerSeat": 0.15,

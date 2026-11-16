@@ -4,7 +4,7 @@ import { type Agent, startAgent } from "./agent.ts";
 import { type SeatView, startControl } from "./control.ts";
 import { addWorktree, commitSeat, diffStat, repoPath, seedRepo } from "./git.ts";
 import { decodePlan, type ExpandedSeat, expandSeats, type Plan, roundsOf } from "./Plan.ts";
-import { sandboxed } from "./sandbox.ts";
+import { isolation, sandboxed } from "./sandbox.ts";
 
 export type Receipt = {
   seat: string;
@@ -172,13 +172,24 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
   const planFile = resolve(planPath);
   const planDir = dirname(planFile);
   const planText = readFileSync(planFile, "utf8");
-  const plan = decodePlan(JSON.parse(planText));
+  const decoded = decodePlan(JSON.parse(planText));
+  const plan: Plan = process.env.ASSAY_MODEL ? { ...decoded, model: process.env.ASSAY_MODEL } : decoded;
   const seats = expandSeats(plan);
   const planHash = new Bun.CryptoHasher("sha256").update(planText).digest("hex").slice(0, 12);
   const assayId = `${plan.name}-${new Date().toISOString().replace(/[-:.]/g, "").slice(0, 17)}`;
   const runDir = resolve(outRoot, assayId);
   mkdirSync(runDir, { recursive: true });
   const hidden = (plan.hidden ?? []).map((path) => resolve(planDir, path));
+  if (hidden.length > 0 && isolation() === "none") {
+    const fix =
+      process.platform === "linux" ? "install bubblewrap (apt install bubblewrap)" : "run on macOS or Linux";
+    if (process.env.ASSAY_ALLOW_READABLE_TESTS !== "1") {
+      throw new Error(
+        `hidden tests cannot be hidden on this machine: no sandbox-exec or bwrap found. To fix, ${fix}. To run anyway with tests the agents can read, set ASSAY_ALLOW_READABLE_TESTS=1.`,
+      );
+    }
+    console.log("WARNING: agents can read the hidden tests on this machine (ASSAY_ALLOW_READABLE_TESTS=1)");
+  }
   const repo = repoPath(runDir);
   const base = await seedRepo(resolve(planDir, plan.repo), repo);
 
@@ -408,7 +419,7 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
       ),
     ]);
     console.log(
-      `fleet ${assayId}: ${seats.length} agents, ${plan.parallel ?? 4} at a time, model ${plan.model}, control ${control.url}`,
+      `assay ${assayId}: ${seats.length} agents, hidden tests blocked by ${isolation()}, ${plan.parallel ?? 4} at a time, model ${plan.model}, control ${control.url}`,
     );
     const receipts: Receipt[] = [];
     const passedTasks = new Set<string>();
@@ -440,7 +451,7 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
     const score = await ledgerMust(api, ["assay-score", "get", "--key", assayId]);
     const summary: FleetSummary = { assayId, planHash, base, runDir, score, receipts };
     writeFileSync(
-      join(runDir, "fleet.json"),
+      join(runDir, "assay.json"),
       JSON.stringify({ ...summary, planDir, test: plan.test ?? "" }, null, 2),
     );
     const ran = receipts.filter((receipt) => !receipt.gradeOutput.startsWith("not needed"));

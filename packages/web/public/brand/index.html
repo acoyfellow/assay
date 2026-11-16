@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>assay · brand</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&amp;family=Google+Sans+Code:wght@300..800&amp;display=swap">
+<link rel="preload" href="/fonts/Allo.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/tokens.css">
 <style>
+@font-face { font-family: "Allo"; src: url("/fonts/Allo.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--paper); color: var(--ink); font: var(--step-1)/1.6 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 a { color: var(--ink); text-underline-offset: 3px; }
@@ -89,7 +89,7 @@ html, body { background: var(--g2); color: var(--k1); }
 .frame { background: var(--g0); border-radius: 40px; padding: 24px 32px; box-shadow: 0 40px 80px -40px rgba(10,10,12,.18); }
 header { border-bottom: 0; padding: 8px 0 24px; }
 section { border-bottom: 1px solid var(--g2); }
-h2 { font-size: 22px; font-weight: 400; letter-spacing: -0.02em; font-variation-settings: "wght" 380, "opsz" 96; }
+h2 { font-size: 22px; font-weight: 400; letter-spacing: -0.02em; font-variation-settings: "wght" 380, "opsz" 32; }
 .plate { background: var(--g1); border-radius: 16px; }
 .plate.ink, .pat.ink { background: linear-gradient(180deg, var(--k0), var(--k2)); }
 .sw div i { border-radius: 14px; border-color: var(--g3); }
@@ -103,7 +103,7 @@ code { background: var(--g1); border-radius: 8px; }
 .tag { border-radius: 999px; padding: 4px 12px; background: var(--g1); }
 .tag.pass { background: var(--ok-deep); color: var(--ok); }
 .tag i { border-radius: 2px; }
-.two { font-variation-settings: "wght" 380, "opsz" 96; font-weight: 400; letter-spacing: -0.03em; }
+.two { font-variation-settings: "wght" 380, "opsz" 32; font-weight: 400; letter-spacing: -0.03em; }
 .two span { color: var(--g5); }
 .shellbox { background: var(--g2); border-radius: 28px; padding: 20px; }
 .shellbox > div { background: var(--g0); border-radius: 24px; padding: 16px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; box-shadow: 0 40px 80px -40px rgba(10,10,12,.18); }
@@ -235,7 +235,7 @@ code { background: var(--g1); border-radius: 8px; }
     <div class="shellbox"><div><div class="l"><span class="two" style="font-size:26px;line-height:1.1"><span>Spin up a fleet</span> of coding agents.</span></div><div class="r"></div></div></div>
     <div class="row" style="align-items:center"><a class="btn" href="#">Quick start</a><a class="btn line" href="#">Read the docs</a><a href="#">See the bench</a></div>
     <div class="row" style="align-items:center;gap:var(--space-2)"><span class="tag pass"><i></i>pass</span><span class="tag"><i></i>fail</span><span class="tag"><i></i>running</span><span class="tag">6 agents</span></div>
-    <pre><b>$ assay-fleet</b> run plan.json
+    <pre><b>$ assay</b> run plan.json
 cart-merge-1   <em>pass</em>   11 turns  $0.0433
 catalog-search-1  fail  17 turns  $0.0864</pre>
     <p style="margin:0">Inline code looks like <code>plan.json</code>. Links are ink and underlined.</p>

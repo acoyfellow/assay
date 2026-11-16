@@ -20,8 +20,8 @@ A recipe is a folder you can run as is, then copy for your own repo. Every recip
 Your tests fail. Three agents each try a fix. Each can only write under `src/`, so none can pass by changing a test.
 
 ```sh
-bun packages/fleet/src/cli.ts run examples/recipes/fix-the-build/plan.json
-bun packages/fleet/src/cli.ts land runs/fix-the-build-<id>
+bun assay run examples/recipes/fix-the-build/plan.json
+bun assay land runs/fix-the-build-<id>
 ```
 
 ```json
@@ -40,8 +40,8 @@ On your repo: set `repo`, set `grade` and `test` to your test command, and set `
 One agent per ticket, all at once. `land` puts every passing ticket on one branch and runs the whole suite.
 
 ```sh
-bun packages/fleet/src/cli.ts run examples/recipes/backlog/plan.json
-bun packages/fleet/src/cli.ts land runs/backlog-<id>
+bun assay run examples/recipes/backlog/plan.json
+bun assay land runs/backlog-<id>
 ```
 
 ```json
@@ -61,7 +61,7 @@ On your repo: one markdown file per ticket, one acceptance test per ticket in `c
 Five cheap tries at one hard task. `land` keeps the passing diff with the fewest changed lines.
 
 ```sh
-bun packages/fleet/src/cli.ts run examples/recipes/best-of-n/plan.json
+bun assay run examples/recipes/best-of-n/plan.json
 ```
 
 ```json
@@ -73,22 +73,22 @@ bun packages/fleet/src/cli.ts run examples/recipes/best-of-n/plan.json
 Same task, same grader, one seat per model. Compare PASS, turns and cost.
 
 ```sh
-bun packages/fleet/src/cli.ts run examples/recipes/model-bakeoff/plan.json
+bun assay run examples/recipes/model-bakeoff/plan.json
 ```
 
 ```json
 {
   "repeat": 2,
   "seats": [
-    { "id": "haiku", "model": "claude-haiku-4-5", "task": "…", "grade": "…" },
-    { "id": "sonnet", "model": "claude-sonnet-4-5", "task": "…", "grade": "…" }
+    { "id": "haiku", "model": "claude-haiku-5-5", "task": "…", "grade": "…" },
+    { "id": "sonnet", "model": "claude-sonnet-5-5", "task": "…", "grade": "…" }
   ]
 }
 ```
 
 Do not `land` a bakeoff. Every seat edits the same file, so only one lands and the rest conflict.
 
-In our last run both models passed 2/2. Sonnet spent $0.22 in 19 turns; Haiku spent $0.31 in 34. On this task the bigger model was cheaper. Two tries per model is a hint, not a result. Use more repeats before you decide.
+In our last run (Haiku 4.5 and Sonnet 4.5) both models passed 2/2. Sonnet spent $0.22 in 19 turns; Haiku spent $0.31 in 34. On this task the bigger model was cheaper. Two tries per model is a hint, not a result. Use more repeats before you decide.
 
 ## Write a grader
 

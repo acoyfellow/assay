@@ -32,7 +32,7 @@ Tell assay which Pi provider to use, then run the plan:
 
 ```sh
 export ASSAY_PI_PROVIDER=anthropic
-bun packages/fleet/src/cli.ts run examples/tally/plan.json
+bun assay run examples/tally/plan.json
 ```
 
 The plan runs each task twice, six agents at once. Each agent works in its own git worktree, at the same commit. A line prints as each agent stops and its hidden test runs:
@@ -55,11 +55,11 @@ That is a real run. Yours will differ. An agent that spends more than `worstCase
 While the fleet runs, open a second terminal:
 
 ```sh
-bun packages/fleet/src/cli.ts ps
-bun packages/fleet/src/cli.ts watch cart-merge-1
-bun packages/fleet/src/cli.ts steer catalog-search-1 "run node --test before you stop"
-bun packages/fleet/src/cli.ts steer --all "do not edit package.json"
-bun packages/fleet/src/cli.ts kill discount-cap-2
+bun assay ps
+bun assay watch cart-merge-1
+bun assay steer catalog-search-1 "run node --test before you stop"
+bun assay steer --all "do not edit package.json"
+bun assay kill discount-cap-2
 ```
 
 `ps` shows each agent's stage, turns, spend and last tool. A steer reaches the agent after its current step. Steers and kills are written to the seat's receipt.
@@ -67,7 +67,7 @@ bun packages/fleet/src/cli.ts kill discount-cap-2
 ## 5. Land the work
 
 ```sh
-bun packages/fleet/src/cli.ts land runs/tally-real-20261116T13344878
+bun assay land runs/tally-real-20261116T13344878
 ```
 
 ```text
@@ -99,7 +99,7 @@ Point `repo` at your code and add a seat per task:
 {
   "name": "my-fixes",
   "repo": "../my-app",
-  "model": "claude-haiku-4-5",
+  "model": "claude-haiku-5-5",
   "parallel": 4,
   "budgetUsd": 5,
   "worstCaseUsdPerSeat": 0.5,
@@ -117,6 +117,8 @@ Point `repo` at your code and add a seat per task:
 ```
 
 Paths in the plan are relative to the plan file. Agents cannot read folders listed in `hidden` (on macOS this uses `sandbox-exec`). A `writable` entry that ends in `/` allows a whole folder. Add `"repeat": 3` to run every seat three times.
+
+Model names change. Set `ASSAY_MODEL` to run any plan on another model without editing it. Seats that name their own `model` keep it.
 
 If your provider needs a token minted, set `ASSAY_PI_TOKEN_COMMAND` and `ASSAY_PI_TOKEN_ENV`. To load Pi extensions, set `ASSAY_PI_EXTENSIONS`.
 

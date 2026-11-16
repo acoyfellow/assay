@@ -1,7 +1,7 @@
 {
   "name": "model-bakeoff",
   "repo": "../../tally/seed",
-  "model": "claude-haiku-4-5",
+  "model": "claude-haiku-5-5",
   "parallel": 4,
   "minutesPerSeat": 8,
   "worstCaseUsdPerSeat": 0.4,
@@ -15,14 +15,14 @@
       "task": "../../tally/tasks/cart-merge.md",
       "writable": ["src/cart.ts", "test/cart.test.ts"],
       "grade": "sh \"$ASSAY_PLAN_DIR/../../tally/grade.sh\" cart-merge",
-      "model": "claude-haiku-4-5"
+      "model": "claude-haiku-5-5"
     },
     {
       "id": "sonnet",
       "task": "../../tally/tasks/cart-merge.md",
       "writable": ["src/cart.ts", "test/cart.test.ts"],
       "grade": "sh \"$ASSAY_PLAN_DIR/../../tally/grade.sh\" cart-merge",
-      "model": "claude-sonnet-4-5"
+      "model": "claude-sonnet-5-5"
     }
   ]
 }

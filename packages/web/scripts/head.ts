@@ -3,7 +3,7 @@ export const site = {
   name: "assay",
   title: "assay · spin up a fleet of coding agents",
   description:
-    "Write a plan, run one command, and get a fleet of coding agents. Each gets its own copy of your repo. A test it can't see checks the work.",
+    "Spin up a fleet of coding agents from a chat or one command. Each gets its own copy of your repo, a test it can't see checks the work, and the passing work lands on a branch.",
   repo: "https://github.com/acoyfellow/assay",
   author: "Jordan Coeyman",
   x: "@acoyfellow",

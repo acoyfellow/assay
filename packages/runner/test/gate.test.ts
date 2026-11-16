@@ -6,7 +6,7 @@ import { land } from "../src/land.ts";
 import { runFleet } from "../src/run.ts";
 
 const here = new URL(".", import.meta.url).pathname;
-const work = mkdtempSync(join(tmpdir(), "assay-fleet-gate-"));
+const work = mkdtempSync(join(tmpdir(), "assay-gate-"));
 const plans = join(work, "tally");
 cpSync(join(here, "../../../examples/tally"), plans, { recursive: true });
 
@@ -43,10 +43,10 @@ const plan = {
   name: "gate",
   repo: "seed",
   model: "fake-model",
-  parallel: 5,
+  parallel: 6,
   minutesPerSeat: 1,
   worstCaseUsdPerSeat: 0.2,
-  budgetUsd: 0.9,
+  budgetUsd: 1.0,
   hidden: ["hidden", "reference"],
   test: "node --test",
   seats: [
@@ -78,6 +78,7 @@ const plan = {
       "src/catalog.ts",
       "catalog-search",
     ),
+    seat("catalog-ramble", task("gate-ramble", ["fake-ramble: 400"]), "src/catalog.ts", "catalog-search"),
     seat("over-budget", task("gate-over", ["fake-wait: 100"]), "src/catalog.ts", "catalog-search"),
   ],
 };
@@ -102,17 +103,17 @@ const waitFor = async (predicate: () => Promise<boolean>, ms: number) => {
 const running = runFleet(planPath, join(work, "runs"));
 
 const working = async () => {
-  const ps = await fleetCli(["ps"]);
+  const ps = await fleetCli(["status"]);
   return (ps.out.match(/ working /g) ?? []).length >= 3;
 };
 check("ps shows the agents working", await waitFor(working, 10000));
-console.log((await fleetCli(["ps"])).out.trim());
+console.log((await fleetCli(["status"])).out.trim());
 
 const steered = await fleetCli(["steer", "cart-merge", "also add a changelog line"]);
 check("steer reaches one seat", steered.code === 0 && steered.out.includes('"steered":["cart-merge"]'));
-const killed = await fleetCli(["kill", "catalog-search"]);
+const killed = await fleetCli(["stop", "catalog-search"]);
 check("kill stops one seat", killed.code === 0 && killed.out.includes('"killed":"catalog-search"'));
-const noSuch = await fleetCli(["kill", "nobody"]);
+const noSuch = await fleetCli(["stop", "nobody"]);
 check(
   "kill of an unknown seat is refused and names the seats",
   noSuch.code !== 0 && noSuch.err.includes("cart-merge"),
@@ -129,6 +130,11 @@ const peekFile = join(cartTree, "peek.txt");
 check("over-budget seat is skipped, run finishes", by["over-budget"]?.outcome === "skipped");
 check("killed seat is recorded as killed by a person", by["catalog-search"]?.killedBy === "person");
 check("spend cap stops a seat past its hold", by["catalog-burn"]?.killedBy === "spend cap");
+const ramble = by["catalog-ramble"];
+check(
+  "spend cap stops one long turn before it ends",
+  ramble?.killedBy === "spend cap" && ramble.turns === 0 && ramble.usd > 0.2 && ramble.usd < 0.4,
+);
 check("the other seats finish and pass", cart?.passed === true && by["discount-cap"]?.passed === true);
 check("steer is counted on the receipt", cart?.steers === 1);
 check(
@@ -143,7 +149,7 @@ const score = summary.score as { seats: number; passed: number; skipped: number;
 console.log(JSON.stringify(score));
 check(
   "ledger score matches receipts",
-  score.seats === 5 && score.passed === 2 && score.skipped === 1 && score.status === "finished",
+  score.seats === 6 && score.passed === 2 && score.skipped === 1 && score.status === "finished",
 );
 check(
   "each seat commits on its own branch off the pinned commit",
@@ -161,6 +167,6 @@ check(
 
 const failed = results.filter(([, ok]) => !ok);
 console.log(
-  failed.length === 0 ? "FLEET GATE PASS" : `FLEET GATE FAIL: ${failed.map(([name]) => name).join(", ")}`,
+  failed.length === 0 ? "RUNNER GATE PASS" : `RUNNER GATE FAIL: ${failed.map(([name]) => name).join(", ")}`,
 );
 process.exit(failed.length === 0 ? 0 : 1);

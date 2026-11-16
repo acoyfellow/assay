@@ -46,6 +46,9 @@ export const startAgent = (options: AgentOptions): Agent => {
   let steerCount = 0;
   let settled = false;
   const usage: AgentUsage = { turns: 0, toolCalls: 0, usd: 0, lastTool: "", lastText: "" };
+  const fallbackUsdPerOutputToken = 5 / 1_000_000;
+  const stream = { chars: 0, baseUsd: 0, usdPerOutputToken: fallbackUsdPerOutputToken };
+  const streamingUsd = () => usage.usd + stream.baseUsd + (stream.chars / 4) * stream.usdPerOutputToken;
   const listeners = new Set<(event: unknown) => void>();
 
   const send = (record: Record<string, unknown>) => {
@@ -83,7 +86,22 @@ export const startAgent = (options: AgentOptions): Agent => {
           content?: Array<{ type: string; text?: string }>;
         }
       | undefined;
+    if (event.type === "message_update") {
+      const update = event as {
+        usage?: { cost?: { total?: number } };
+        assistantMessageEvent?: { delta?: string };
+      };
+      stream.baseUsd = update.usage?.cost?.total ?? stream.baseUsd;
+      stream.chars += update.assistantMessageEvent?.delta?.length ?? 0;
+      if (streamingUsd() > options.capUsd) kill("spend cap");
+    }
     if (event.type === "message_end" && message?.role === "assistant") {
+      const ended = message.usage as
+        | { output?: number; cost?: { output?: number; total?: number } }
+        | undefined;
+      if (ended?.output && ended.cost?.output) stream.usdPerOutputToken = ended.cost.output / ended.output;
+      stream.chars = 0;
+      stream.baseUsd = 0;
       usage.turns += 1;
       usage.usd += message.usage?.cost?.total ?? 0;
       const text = (message.content ?? [])
@@ -141,7 +159,7 @@ export const startAgent = (options: AgentOptions): Agent => {
   return {
     pid: child.pid,
     state: () => status.state,
-    usage: () => ({ ...usage }),
+    usage: () => ({ ...usage, usd: Math.max(usage.usd, streamingUsd()) }),
     steers: () => steerCount,
     steer: (message) => {
       if (status.state !== "working") return;

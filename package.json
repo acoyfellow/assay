@@ -2,17 +2,20 @@
   "name": "assay",
   "private": true,
   "type": "module",
-  "description": "Spin up a fleet of coding agents. Each gets its own copy of your repo. A test it never saw checks the work.",
+  "description": "Spin up a fleet of coding agents. Each gets its own copy of your repo, a test it never saw checks the work, and the passing work lands on a branch.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/acoyfellow/assay.git"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "check": "tsc -b && biome check .",
     "test": "bun run --filter '*' test",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "assay": "bun packages/runner/src/cli.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

@@ -5,8 +5,8 @@
 **Grader:** one acceptance test per ticket, in `checks/`, hidden from the agents.
 
 ```sh
-bun packages/fleet/src/cli.ts run examples/recipes/backlog/plan.json
-bun packages/fleet/src/cli.ts land runs/backlog-<id>
+bun assay run examples/recipes/backlog/plan.json
+bun assay land runs/backlog-<id>
 ```
 
 Each ticket is a seat. `writable` keeps each agent to its own files, so the diffs do not clash. `land` puts one passing diff per ticket on `assay/<run>` and runs the whole test suite.

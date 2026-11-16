@@ -54,7 +54,7 @@ const why = (tried: ReadonlyArray<Receipt>) =>
 
 export const land = async (runPath: string): Promise<LandReceipt> => {
   const runDir = resolve(runPath);
-  const fleet = JSON.parse(readFileSync(join(runDir, "fleet.json"), "utf8")) as FleetFile;
+  const fleet = JSON.parse(readFileSync(join(runDir, "assay.json"), "utf8")) as FleetFile;
   const repo = repoPath(runDir);
   const branch = `assay/${fleet.assayId}`;
   const landDir = join(runDir, "land");

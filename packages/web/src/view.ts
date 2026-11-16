@@ -11,6 +11,31 @@ type Arm = (typeof numbers.run2.arms)[number];
 
 const repo = "https://github.com/acoyfellow/assay";
 
+const piCall = [
+  "you  /assay both tickets, 2 tries each,",
+  "     2 rounds, under $0.60",
+  "",
+  "pi   ASSAY CONTRACT · tally-tickets",
+  "     shipping-free  writes src/shipping.ts",
+  "     tax-regions    writes src/tax.ts",
+  "     agents   4 per round, 2 rounds",
+  "     cost     at most $0.56",
+  "     hidden   checks, reference",
+  "     graders  proven",
+  "     Type go to start.",
+  "",
+  "you  go",
+  "you  tell them all to run the tests",
+  "pi   → assay_steer all · steered 4",
+  "",
+  "     shipping-free-1  PASS  $0.0018",
+  "     tax-regions-1    PASS  $0.0015",
+  "     branch assay/tally-tickets",
+  "     2/2 tasks, tests pass",
+  "",
+  "you  /assay-off",
+].join("\n");
+
 const cliCall = [
   "$ assay claim-seat --target job-7 --seat alpha --runner local",
   '{ "reply": { "reservedMicroUsd": 300000 } }',
@@ -133,12 +158,12 @@ const hero = (h: H, model: Model): Html =>
                         "display m-0 text-[40px] leading-[1.05] font-normal text-balance sm:text-[52px]",
                       ),
                     ],
-                    [h.span([h.Class("text-g5")], ["Spin up a fleet "]), "of coding agents."],
+                    [h.span([h.Class("text-g5")], ["Coding agents, "]), "checked by tests they never see."],
                   ),
                   h.p(
                     [h.Class("m-0 max-w-[40ch] text-[16px] text-g6 text-pretty")],
                     [
-                      "One plan, one command. Each agent gets its own copy of your repo. A test it never saw checks the work.",
+                      "Run many coding agents on your repo. Each one is graded by a hidden test it cannot read or change. Only work that passes lands on your branch.",
                     ],
                   ),
                   phaseList(h, model.clock),
@@ -325,7 +350,7 @@ const getStarted = (h: H, model: Model): Html =>
 const planExample = `{
   "name": "tally",
   "repo": "seed",
-  "model": "claude-haiku-4-5",
+  "model": "claude-haiku-5-5",
   "parallel": 6,
   "repeat": 2,
   "budgetUsd": 6,
@@ -341,55 +366,65 @@ const planExample = `{
 }`;
 
 const howItWorks = (h: H): Html =>
-  band(h, "How it works.", " Four parts.", "A plan, a budget, a hidden grader, and one receipt per agent.", [
-    h.ol(
-      [h.Class("m-0 mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4")],
-      [
+  band(
+    h,
+    "How it works.",
+    " Four parts.",
+    "A plan, a budget, a hidden test per task, and one receipt per agent.",
+    [
+      h.ol(
+        [h.Class("m-0 mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4")],
         [
-          "plan",
-          "Write a plan",
-          "A repo, a model, and a list of tasks. Each task names the files the agent may change and the command that grades it.",
-        ],
-        ["budget", "Set a budget", "Each agent starts only if its worst-case cost still fits. Run 6 or 60."],
-        [
-          "grader",
-          "Grade in secret",
-          "When an agent stops, assay runs your grade command in its copy. The agent never saw it.",
-        ],
-        [
-          "receipt",
-          "Read the receipts",
-          "One receipt per agent: what it did, what it cost, and whether it passed. The score is added up from those.",
-        ],
-      ].map(([drawing, title, body]) => rule(h, drawing as Drawing, title as string, body as string)),
-    ),
-    h.div(
-      [h.Class("mt-4 grid gap-4 rounded-shell bg-g0 p-3 sm:p-4 lg:grid-cols-[1fr_1.3fr] lg:gap-6")],
-      [
-        h.div(
-          [h.Class("flex flex-col gap-4 px-5 pt-8 pb-4 sm:px-10 sm:pt-12 sm:pb-10")],
           [
-            h.h3(
-              [h.Class("display m-0 text-[30px] leading-[1.1] font-normal")],
-              [h.span([h.Class("text-g5")], ["One file. "]), "The whole run."],
-            ),
-            h.p(
-              [h.Class("m-0 text-g6")],
-              ["Paths are relative to the plan. A writable entry that ends in / allows a whole folder."],
-            ),
+            "plan",
+            "Write a plan",
+            "A repo, a model, and a list of tasks. Each task names the files the agent may change and the command that grades it.",
           ],
-        ),
-        h.pre(
           [
-            h.Class(
-              "dark-card m-0 overflow-x-auto rounded-[24px] p-6 font-mono text-[12.5px] leading-[1.75] text-on-dark-dim sm:p-10",
-            ),
+            "budget",
+            "Set a budget",
+            "Each agent starts only if its worst-case cost still fits. Run 6 or 60.",
           ],
-          [h.code([], [planExample])],
-        ),
-      ],
-    ),
-  ]);
+          [
+            "grader",
+            "Grade in secret",
+            "When an agent stops, assay runs a test it could not read in a clean copy of its work.",
+          ],
+          [
+            "receipt",
+            "Read the receipts",
+            "One receipt per agent: what it did, what it cost, and whether it passed. The score is added up from those.",
+          ],
+        ].map(([drawing, title, body]) => rule(h, drawing as Drawing, title as string, body as string)),
+      ),
+      h.div(
+        [h.Class("mt-4 grid gap-4 rounded-shell bg-g0 p-3 sm:p-4 lg:grid-cols-[1fr_1.3fr] lg:gap-6")],
+        [
+          h.div(
+            [h.Class("flex flex-col gap-4 px-5 pt-8 pb-4 sm:px-10 sm:pt-12 sm:pb-10")],
+            [
+              h.h3(
+                [h.Class("display m-0 text-[30px] leading-[1.1] font-normal")],
+                [h.span([h.Class("text-g5")], ["One file. "]), "The whole run."],
+              ),
+              h.p(
+                [h.Class("m-0 text-g6")],
+                ["Paths are relative to the plan. A writable entry that ends in / allows a whole folder."],
+              ),
+            ],
+          ),
+          h.pre(
+            [
+              h.Class(
+                "dark-card m-0 overflow-x-auto rounded-[24px] p-6 font-mono text-[12.5px] leading-[1.75] text-on-dark-dim sm:p-10",
+              ),
+            ],
+            [h.code([], [planExample])],
+          ),
+        ],
+      ),
+    ],
+  );
 
 const band = (h: H, quiet: string, point: string, body: string, content: readonly Html[]): Html =>
   h.section(
@@ -419,6 +454,8 @@ const rule = (h: H, drawing: Drawing, title: string, body: string): Html =>
     ],
   );
 
+const surfaceCall: Record<Surface, string> = { pi: piCall, cli: cliCall, mcp: mcpCall };
+
 const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
   h.button(
     [
@@ -432,6 +469,75 @@ const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
       ),
     ],
     [label],
+  );
+
+const versusRows = [
+  ["Who says the work is done", "The agent, about itself", "A test the agent never saw"],
+  [
+    "Can the agent game the check",
+    "Yes. It can read and edit the tests.",
+    "No. The tests are hidden and it can only write its own files.",
+  ],
+  [
+    "Is the check any good",
+    "Nobody checks",
+    "Proven first: the untouched repo fails, a known good fix passes",
+  ],
+  ["Money", "Spent until it stops", "Budget set before go, a cap per agent, stopped mid-turn"],
+  ["What you get", "A message saying it worked", "A branch with only passing work, and your tests run on it"],
+] as const;
+
+const versus = (h: H): Html =>
+  band(
+    h,
+    "Not just subagents.",
+    " A referee they can't see.",
+    "Every assay agent is a normal coding agent. The difference is who decides it worked.",
+    [
+      h.div(
+        [h.Class("mt-10 overflow-x-auto rounded-[24px] bg-g0 py-4")],
+        [
+          h.table(
+            [
+              h.Class("w-full min-w-[620px] border-collapse text-left text-[15px]"),
+              h.DataAttribute("versus", "subagents"),
+            ],
+            [
+              h.thead(
+                [],
+                [
+                  h.tr(
+                    [],
+                    ["", "Subagents", "assay"].map((label) =>
+                      h.th([h.Class("px-8 pt-3 pb-4 text-[13px] font-normal text-g5")], [label]),
+                    ),
+                  ),
+                ],
+              ),
+              h.tbody(
+                [],
+                versusRows.map(([question, plain, ours]) =>
+                  h.tr(
+                    [h.Class("border-t border-g2 align-top")],
+                    [
+                      h.td([h.Class("px-8 py-4 font-medium")], [question]),
+                      h.td([h.Class("px-8 py-4 text-g6")], [plain]),
+                      h.td([h.Class("px-8 py-4")], [ours]),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      h.p(
+        [h.Class("mt-6 mb-0 px-2 text-[15px] text-g6")],
+        [
+          "Use plain subagents when there is nothing to test: design, writing, research. Use assay when the work has a test, or you can write one.",
+        ],
+      ),
+    ],
   );
 
 const recipeCards = [
@@ -527,21 +633,18 @@ const surfaces = (h: H, model: Model): Html =>
             [
               h.h2(
                 [h.Class("display m-0 text-[30px] leading-[1.1] font-normal")],
-                [h.span([h.Class("text-g5")], ["Drive it "]), "from an agent."],
+                [h.span([h.Class("text-g5")], ["Run it "]), "from a chat."],
               ),
               h.p(
                 [h.Class("m-0 text-g6")],
                 [
-                  "The CLI and the MCP tools come from one model. Same inputs, same refusals, same words. If an agent sends a wrong id, the refusal names the right one.",
+                  "In Pi, talk about the work and type /fleet. Your agent drafts the plan and the hidden tests, proves the tests, and shows a contract card. Nothing runs before you type go. Then you steer the agents in plain words, the work lands on a branch, and only /assay-off ends it.",
                 ],
               ),
               h.div([h.Class("grow")], []),
               h.a(
-                [
-                  h.Href("/docs/cli-and-mcp/"),
-                  h.Class("text-[15px] text-k1 underline underline-offset-[5px]"),
-                ],
-                ["CLI and MCP reference"],
+                [h.Href("/docs/pi/"), h.Class("text-[15px] text-k1 underline underline-offset-[5px]")],
+                ["assay in Pi"],
               ),
             ],
           ),
@@ -550,16 +653,11 @@ const surfaces = (h: H, model: Model): Html =>
             [
               h.div(
                 [h.Class("inline-flex self-start gap-1 rounded-full bg-white/[0.05] p-1")],
-                [tab(h, model, "cli", "CLI"), tab(h, model, "mcp", "MCP")],
+                [tab(h, model, "pi", "Pi chat"), tab(h, model, "cli", "CLI"), tab(h, model, "mcp", "MCP")],
               ),
               h.pre(
                 [h.Class("m-0 overflow-x-auto font-mono text-[12.5px] leading-[1.85] text-on-dark-dim")],
-                [
-                  h.code(
-                    [h.DataAttribute("surface-call", model.surface)],
-                    [model.surface === "cli" ? cliCall : mcpCall],
-                  ),
-                ],
+                [h.code([h.DataAttribute("surface-call", model.surface)], [surfaceCall[model.surface]])],
               ),
             ],
           ),
@@ -667,7 +765,15 @@ export const view = (model: Model, h: H): Html =>
       nav(h),
       h.main(
         [],
-        [hero(h, model), getStarted(h, model), recipes(h), howItWorks(h), surfaces(h, model), bench(h)],
+        [
+          hero(h, model),
+          versus(h),
+          surfaces(h, model),
+          getStarted(h, model),
+          recipes(h),
+          howItWorks(h),
+          bench(h),
+        ],
       ),
       footer(h),
     ],

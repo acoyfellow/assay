@@ -33,6 +33,15 @@ const work = async () => {
   const burn = Number(directive("burn") ?? "0");
 
   if (peek) writeFileSync("peek.txt", tryRead(peek));
+  const ramble = Number(directive("ramble") ?? "0");
+  for (let index = 0; index < ramble && !aborted; index++) {
+    emit({
+      type: "message_update",
+      usage: { cost: { total: 0.001 } },
+      assistantMessageEvent: { type: "text_delta", delta: "x".repeat(4000) },
+    });
+    await Bun.sleep(5);
+  }
   const deadline = Date.now() + waitMs;
   while (Date.now() < deadline && !aborted) {
     if (burn > 0) turn(burn);

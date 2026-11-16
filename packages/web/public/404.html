@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Not found · assay</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&amp;display=swap">
+<link rel="preload" href="/fonts/Allo.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/tokens.css">
 <style>
-html, body { margin: 0; height: 100%; background: #ececeb; color: #111112; font: 16px/1.6 "Google Sans Flex", "Helvetica Neue", Arial, sans-serif; }
+@font-face { font-family: "Allo"; src: url("/fonts/Allo.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+html, body { margin: 0; height: 100%; background: #ececeb; color: #111112; font: 16px/1.6 "Allo", "Helvetica Neue", Arial, sans-serif; }
 main { min-height: 100%; display: grid; place-items: center; padding: 24px; }
 .panel { background: #fff; border-radius: 40px; padding: 56px 64px; text-align: center; box-shadow: 0 40px 80px -40px rgba(10, 10, 12, 0.18); }
 img { image-rendering: pixelated; }
-h1 { margin: 16px 0 6px; font-size: 36px; font-weight: 400; font-variation-settings: "wght" 380, "opsz" 96; letter-spacing: -0.03em; }
+h1 { margin: 16px 0 6px; font-size: 36px; font-weight: 400; font-variation-settings: "wght" 380, "opsz" 32; letter-spacing: -0.03em; }
 h1 span { color: #a3a3a0; }
 p { margin: 0; color: #6e6e6b; }
 a { color: #111112; text-underline-offset: 4px; }

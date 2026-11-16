@@ -6,7 +6,7 @@ import { createMode, type ModeEvent, renderCard } from "../src/mode.ts";
 const here = new URL(".", import.meta.url).pathname;
 const root = resolve(here, "../../..");
 const work = mkdtempSync(join(tmpdir(), "assay-pi-gate-"));
-const recipe = join(work, "fleet");
+const recipe = join(work, "assay");
 cpSync(join(root, "examples/recipes/backlog"), recipe, { recursive: true });
 cpSync(join(root, "examples/tally/seed"), join(work, "seed"), { recursive: true });
 
@@ -44,7 +44,7 @@ const writePlan = (overrides: Record<string, unknown>) => {
   return file;
 };
 
-const env = { ASSAY_PI_BIN: join(root, "packages/fleet/test/fake/pi"), ASSAY_PI_PROVIDER: "fake" };
+const env = { ASSAY_PI_BIN: join(root, "packages/runner/test/fake/pi"), ASSAY_PI_PROVIDER: "fake" };
 const events: ModeEvent[] = [];
 const mode = createMode({ root, home: join(work, "home"), env, onEvent: (event) => events.push(event) });
 
@@ -102,9 +102,9 @@ const shippingWorking = async () => {
   const rows = await mode.ps();
   return Array.isArray(rows) && rows.some((row) => row.seat === "shipping-free" && row.stage === "working");
 };
-check("fleet_ps shows the agent working", await waitFor(shippingWorking, 10000));
+check("assay_status shows the agent working", await waitFor(shippingWorking, 10000));
 const steered = await mode.steer("shipping-free", "add the free-shipping function now");
-check("fleet_steer reaches the agent", steered.ok && JSON.stringify(steered.body).includes("shipping-free"));
+check("assay_steer reaches the agent", steered.ok && JSON.stringify(steered.body).includes("shipping-free"));
 
 await mode.done();
 check("the fleet lands on its own after it stops", await waitFor(() => mode.phase() === "landed", 30000));

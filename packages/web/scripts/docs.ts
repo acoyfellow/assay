@@ -37,8 +37,8 @@ type RecipeLand = { landed: number; tasks: unknown[]; test: { passed: boolean } 
 const recipesDir = join(web, "../../examples/recipes");
 const recipeRow = (name: string) => {
   const receipts = join(recipesDir, name, "receipts");
-  if (!existsSync(join(receipts, "fleet.json"))) return `| ${name} | not run yet | | | |`;
-  const fleet: RecipeFleet = JSON.parse(readFileSync(join(receipts, "fleet.json"), "utf8"));
+  if (!existsSync(join(receipts, "assay.json"))) return `| ${name} | not run yet | | | |`;
+  const fleet: RecipeFleet = JSON.parse(readFileSync(join(receipts, "assay.json"), "utf8"));
   const land: RecipeLand = JSON.parse(readFileSync(join(receipts, "land.json"), "utf8"));
   const passed = fleet.receipts.filter((receipt) => receipt.passed).length;
   const spent = fleet.receipts.reduce((total, receipt) => total + receipt.usd, 0);
@@ -159,8 +159,7 @@ ${headTags({
     ...(page.url === "/docs/" ? [] : [{ name: page.title, path: page.url }]),
   ]),
 })}
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&amp;family=Google+Sans+Code:wght@300..800&amp;display=swap">
+<link rel="preload" href="/fonts/Allo.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/docs.css">
 </head>
 <body>
@@ -185,7 +184,7 @@ pages.forEach((page, index) => {
 const llms = [
   "# assay",
   "",
-  "> Spin up a fleet of coding agents. Each gets its own copy of your repo, and a test it never saw checks the work.",
+  "> Spin up a fleet of coding agents. Each gets its own copy of your repo, a test it never saw checks the work, and the passing work lands on a branch. In Pi: talk, type /fleet, check the contract card, type go, steer in plain words, /assay-off to end.",
   "",
   "## Docs",
   "",

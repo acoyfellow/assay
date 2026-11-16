@@ -4,4 +4,4 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$root"
 
 echo "== fleet: fake RPC agents, steer, kill, spend cap, skip, hidden grader, land"
-bun packages/fleet/test/gate.test.ts
+bun packages/runner/test/gate.test.ts

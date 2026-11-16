@@ -46,6 +46,8 @@ try {
     }
     if (width === 375) {
       await page.goto(base, { waitUntil: "networkidle" });
+      const first = await page.textContent("[data-surface-call]");
+      if (!first?.includes("ASSAY CONTRACT")) problems.push("the Pi chat tab is not shown first");
       await page.getByRole("button", { name: "MCP", exact: true }).click();
       await page.waitForFunction(() =>
         document.querySelector("[data-surface-call]")?.textContent?.includes("AssayApi_"),

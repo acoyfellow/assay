@@ -1,9 +1,9 @@
 {
-  "name": "@assay/fleet",
+  "name": "@assay/runner",
   "private": true,
   "type": "module",
   "bin": {
-    "assay-fleet": "./src/cli.ts"
+    "assay": "./src/cli.ts"
   },
   "scripts": {
     "test": "bun test/plan.test.ts"

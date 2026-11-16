@@ -59,9 +59,9 @@ const names = (commands?.data?.commands ?? []).map((command) => command.name);
 child.kill();
 await read.catch(() => {});
 
-const want = ["fleet", "fleet-off", "fleet-card"];
+const want = ["assay", "assay-off", "assay-card"];
 const missing = want.filter((name) => !names.includes(name));
-console.log(`commands: ${names.filter((name) => name.startsWith("fleet")).join(", ")}`);
+console.log(`commands: ${names.filter((name) => name.startsWith("assay")).join(", ")}`);
 if (errors.length) console.log(`extension errors: ${errors.join("; ")}`);
 const ok = missing.length === 0 && errors.length === 0;
 console.log(ok ? "LOAD PASS: pi loads the extension" : `LOAD FAIL: missing ${missing.join(", ")}`);

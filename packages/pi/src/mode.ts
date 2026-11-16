@@ -1,7 +1,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { decodePlan, expandRound, type Plan, roundsOf } from "../../fleet/src/Plan.ts";
+import { decodePlan, expandRound, type Plan, roundsOf } from "../../runner/src/Plan.ts";
 
 export type Phase = "idle" | "drafting" | "carded" | "running" | "landed" | "off";
 
@@ -80,7 +80,7 @@ export const worstCase = (plan: Plan) => {
 
 export const renderCard = (card: Card) =>
   [
-    `FLEET CONTRACT · ${card.name}`,
+    `ASSAY CONTRACT · ${card.name}`,
     "",
     ...card.tasks.map(
       (task) =>
@@ -102,8 +102,8 @@ export const renderCard = (card: Card) =>
 export const createMode = (options: ModeOptions) => {
   const emit = options.onEvent ?? (() => {});
   const env = { ...process.env, ...options.env, ASSAY_HOME: options.home };
-  const fleetCli = join(options.root, "packages/fleet/src/cli.ts");
-  const recipesTest = join(options.root, "packages/fleet/test/recipes.test.ts");
+  const runnerCli = join(options.root, "packages/runner/src/cli.ts");
+  const recipesTest = join(options.root, "packages/runner/test/recipes.test.ts");
   let phase: Phase = "idle";
   let card: Card | null = null;
   let run: Run | null = null;
@@ -118,9 +118,9 @@ export const createMode = (options: ModeOptions) => {
   const control = async (path: string, init?: RequestInit) => {
     const url = controlUrl();
     if (phase !== "running" || !url)
-      return { ok: false, body: { error: `no fleet is running (phase ${phase})` } };
+      return { ok: false, body: { error: `no assay is running (phase ${phase})` } };
     const response = await fetch(`${url}${path}`, init).catch(() => null);
-    if (!response) return { ok: false, body: { error: "the fleet is not answering" } };
+    if (!response) return { ok: false, body: { error: "the assay is not answering" } };
     return { ok: response.ok, body: (await response.json()) as unknown };
   };
 
@@ -132,7 +132,7 @@ export const createMode = (options: ModeOptions) => {
     });
 
   const start = () => {
-    if (phase === "off") return { ok: false, reason: "fleet mode is off. Start again with /fleet." };
+    if (phase === "off") return { ok: false, reason: "assay mode is off. Start again with /assay." };
     phase = "drafting";
     card = null;
     return { ok: true, reason: "" };
@@ -179,13 +179,13 @@ export const createMode = (options: ModeOptions) => {
     const current = run;
     if (!current || phase !== "running") return;
     const summary =
-      current.out.split("\n").find((line) => line.startsWith("done:")) ?? `fleet exited ${code}`;
-    if (!existsSync(join(current.runDir, "fleet.json"))) {
+      current.out.split("\n").find((line) => line.startsWith("done:")) ?? `assay exited ${code}`;
+    if (!existsSync(join(current.runDir, "assay.json"))) {
       phase = "landed";
       emit({ kind: "landed", land: null, summary });
       return;
     }
-    await capture("bun", [fleetCli, "land", current.runDir], options.root, env);
+    await capture("bun", [runnerCli, "land", current.runDir], options.root, env);
     const landFile = join(current.runDir, "land.json");
     landResult = existsSync(landFile)
       ? {
@@ -204,7 +204,7 @@ export const createMode = (options: ModeOptions) => {
       return { ok: false, reason: "the graders are not proven. Fix them and draw the card again." };
     const out = join(options.home, "runs");
     mkdirSync(out, { recursive: true });
-    const child = spawn("bun", [fleetCli, "run", card.plan, "--out", out], {
+    const child = spawn("bun", [runnerCli, "run", card.plan, "--out", out], {
       cwd: options.root,
       env,
       stdio: ["ignore", "pipe", "pipe"],
@@ -221,7 +221,7 @@ export const createMode = (options: ModeOptions) => {
       for (const line of text.split("\n").filter(Boolean)) {
         const runDir = line.match(/run in (.+)$/)?.[1];
         if (runDir) current.runDir = runDir.trim();
-        const fleet = line.match(/^fleet (\S+):/)?.[1];
+        const fleet = line.match(/^assay (\S+):/)?.[1];
         if (fleet && !current.runDir) current.runDir = join(out, fleet);
         emit({ kind: "line", text: line });
       }

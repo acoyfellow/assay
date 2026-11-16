@@ -1,6 +1,6 @@
 import * as Schema from "effect/Schema";
 
-export const Surface = Schema.Literals(["cli", "mcp"]);
+export const Surface = Schema.Literals(["pi", "cli", "mcp"]);
 export type Surface = typeof Surface.Type;
 
 export const Model = Schema.Struct({

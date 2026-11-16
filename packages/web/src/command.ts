@@ -19,7 +19,7 @@ export const installSteps = [
   {
     id: "provider",
     title: "Choose a model provider",
-    body: "Agents run with Pi. Any provider Pi supports works.",
+    body: "Agents run with Pi. Any provider Pi supports works. Prefer chat? Run pi -e packages/pi/src/index.ts and type /fleet instead of the steps below.",
     lines: ["export ASSAY_PI_PROVIDER=anthropic"],
     output: [],
   },
@@ -27,7 +27,7 @@ export const installSteps = [
     id: "run",
     title: "Start the fleet",
     body: "Six agents, three coding tasks, each in its own git worktree. A line prints as each agent stops and its hidden test runs.",
-    lines: ["bun packages/fleet/src/cli.ts run examples/tally/plan-real.json"],
+    lines: ["bun assay run examples/tally/plan-real.json"],
     output: [
       out("dim", "fleet tally-real: 6 agents, 6 at a time, model claude-haiku-4-5"),
       out("fail", "catalog-search-1  FAIL   7 turns  $0.0536   38s  steered 1"),
@@ -43,20 +43,14 @@ export const installSteps = [
     id: "steer",
     title: "Watch and steer, from a second terminal",
     body: "See every agent while it works. Send one a message mid-task, or stop it. The others keep going.",
-    lines: [
-      "bun packages/fleet/src/cli.ts ps",
-      'bun packages/fleet/src/cli.ts steer catalog-search-1 "run node --test before you stop"',
-    ],
+    lines: ["bun assay ps", 'bun assay steer catalog-search-1 "run node --test before you stop"'],
     output: [
       out("dim", "seat              stage    turns   spend  last tool"),
       out("plain", "cart-merge-1      working      4  $0.0196  read"),
       out("plain", "catalog-search-1  working      2  $0.0106  read"),
       out("plain", "discount-cap-2    working      4  $0.0186  bash"),
       out("dim", "…"),
-      out(
-        "command",
-        'bun packages/fleet/src/cli.ts steer catalog-search-1 "run node --test before you stop"',
-      ),
+      out("command", 'bun assay steer catalog-search-1 "run node --test before you stop"'),
       out("pass", '{"steered":["catalog-search-1"],"steers":1}'),
     ],
   },
@@ -64,7 +58,7 @@ export const installSteps = [
     id: "land",
     title: "Land the work",
     body: "One passing diff per task goes on one branch, then the full test suite runs on it.",
-    lines: ["bun packages/fleet/src/cli.ts land runs/tally-real-…"],
+    lines: ["bun assay land runs/tally-real-…"],
     output: [
       out("pass", "LAND  cart-merge      passed, 93 lines, $0.0638"),
       out("fail", "SKIP  catalog-search  no passing seat"),
