@@ -81,6 +81,27 @@ const nav = (h: H): Html =>
     ],
   );
 
+const playOverlay = (h: H, playing: boolean): Html =>
+  h.span(
+    [
+      h.AriaHidden(true),
+      h.Class(
+        `pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${playing ? "opacity-0" : "opacity-100"}`,
+      ),
+    ],
+    [
+      h.span(
+        [h.Class("flex size-16 items-center justify-center rounded bg-ink")],
+        [
+          h.svg(
+            [h.ViewBox("0 0 12 12"), h.Width("24"), h.Height("24"), h.ShapeRendering("crispEdges")],
+            [h.path([h.D("M3 1 L11 6 L3 11 Z"), h.Fill("var(--color-paper)")], [])],
+          ),
+        ],
+      ),
+    ],
+  );
+
 const hero = (h: H, model: Model): Html =>
   h.section(
     [h.Class("border-b border-line")],
@@ -130,31 +151,27 @@ const hero = (h: H, model: Model): Html =>
           h.figure(
             [h.Class("m-0 min-w-0"), h.DataAttribute("figure", "fleet-run")],
             [
-              h.div(
-                [h.Class("border-t border-ink pt-5")],
-                [heroStage(h, model.clock, false), heroStage(h, model.clock, true)],
-              ),
-              h.figcaption(
-                [h.Class("mt-4 flex items-start justify-between gap-6 text-[13px] text-graphite")],
+              h.button(
                 [
-                  h.span(
-                    [],
-                    [
-                      h.b([h.Class("font-medium text-ink")], ["Figure 1. "]),
-                      `A real run, replayed faster. ${numbers.fleet.agents} Haiku agents on three coding tasks, each task twice. ${numbers.fleet.passed} passed. ${numbers.fleet.usd}, ${numbers.fleet.seconds} seconds.`,
-                    ],
+                  h.Type("button"),
+                  h.OnClick(Message.ToggledPlay()),
+                  h.DataAttribute("control", "play"),
+                  h.DataAttribute("playing", String(model.playing)),
+                  h.AriaLabel(model.playing ? "Pause the replay" : "Play the replay"),
+                  h.Class(
+                    "group relative block w-full cursor-pointer appearance-none border-0 border-t border-ink bg-transparent p-0 pt-5 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink",
                   ),
-                  h.button(
+                ],
+                [
+                  h.div(
                     [
-                      h.Type("button"),
-                      h.OnClick(Message.ToggledPlay()),
-                      h.DataAttribute("control", "play"),
                       h.Class(
-                        "shrink-0 cursor-pointer border-0 bg-transparent p-0 font-mono text-[12px] text-ink underline underline-offset-[3px]",
+                        `transition-[filter,opacity] duration-300 ${model.playing ? "" : "opacity-40 grayscale"}`,
                       ),
                     ],
-                    [model.playing ? "pause" : "play"],
+                    [heroStage(h, model.clock, false), heroStage(h, model.clock, true)],
                   ),
+                  playOverlay(h, model.playing),
                 ],
               ),
             ],
