@@ -1,0 +1,4 @@
+{
+  "haiku": [{ "from": "../../tally/reference/src/cart.ts", "to": "src/cart.ts" }],
+  "sonnet": [{ "from": "../../tally/reference/src/cart.ts", "to": "src/cart.ts" }]
+}

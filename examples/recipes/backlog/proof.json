@@ -1,0 +1,4 @@
+{
+  "shipping-free": [{ "from": "reference/src/shipping.ts", "to": "src/shipping.ts" }],
+  "tax-regions": [{ "from": "reference/src/tax.ts", "to": "src/tax.ts" }]
+}

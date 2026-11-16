@@ -1,0 +1,21 @@
+{
+  "fleet": "fix-the-build-20261116T14525347",
+  "branch": "assay/fix-the-build-20261116T14525347",
+  "base": "ec7d019a2309ae610a520490eeaca6400d7cff86",
+  "head": "c2b21be22e251846ea2678e64ef99005c85cc939",
+  "tasks": [
+    {
+      "task": "fix",
+      "seat": "fix-3",
+      "sha": "14a12c85b3b7eb6c85e48b3b859f9eb19859f014",
+      "applied": true,
+      "reason": "passed, 4 lines, $0.0336"
+    }
+  ],
+  "landed": 1,
+  "test": {
+    "command": "node --test",
+    "passed": true,
+    "output": "tiply rounds halves away from zero (0.089125ms)\n✔ sum, compare and equals (0.094125ms)\n✔ format writes two decimals and the symbol (0.079125ms)\n✔ parse reads at most two decimals (0.141167ms)\n✔ one line per invoice, then the total, amounts without a symbol (0.589917ms)\n✔ an empty report is a zero total (0.063458ms)\n✔ mixed currencies are refused (0.192959ms)\n✔ flat shipping by region (0.643625ms)\n✔ sales tax by region, rounded to cents (0.588459ms)\n✔ a region with no rate is refused (0.171708ms)\nℹ tests 23\nℹ suites 0\nℹ pass 23\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 84.777166"
+  }
+}

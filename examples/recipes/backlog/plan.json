@@ -1,0 +1,35 @@
+{
+  "name": "backlog",
+  "repo": "../../tally/seed",
+  "model": "claude-haiku-4-5",
+  "parallel": 4,
+  "minutesPerSeat": 6,
+  "worstCaseUsdPerSeat": 0.15,
+  "budgetUsd": 0.6,
+  "repeat": 2,
+  "hidden": [
+    "checks",
+    "reference"
+  ],
+  "test": "node --test",
+  "seats": [
+    {
+      "id": "shipping-free",
+      "task": "tasks/shipping-free.md",
+      "writable": [
+        "src/shipping.ts",
+        "test/shipping.test.ts"
+      ],
+      "grade": "sh \"$ASSAY_PLAN_DIR/check.sh\" shipping-free"
+    },
+    {
+      "id": "tax-regions",
+      "task": "tasks/tax-regions.md",
+      "writable": [
+        "src/tax.ts",
+        "test/tax.test.ts"
+      ],
+      "grade": "sh \"$ASSAY_PLAN_DIR/check.sh\" tax-regions"
+    }
+  ]
+}

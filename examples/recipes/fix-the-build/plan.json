@@ -1,0 +1,20 @@
+{
+  "name": "fix-the-build",
+  "repo": "seed",
+  "model": "claude-haiku-4-5",
+  "parallel": 3,
+  "minutesPerSeat": 6,
+  "worstCaseUsdPerSeat": 0.15,
+  "budgetUsd": 0.5,
+  "repeat": 3,
+  "hidden": ["reference"],
+  "test": "node --test",
+  "seats": [
+    {
+      "id": "fix",
+      "task": "tasks/fix.md",
+      "writable": ["src/"],
+      "grade": "node --test"
+    }
+  ]
+}

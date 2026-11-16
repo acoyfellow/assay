@@ -1,0 +1,71 @@
+{
+  "assayId": "fix-the-build-20261116T14525347",
+  "planHash": "a07352986eb7",
+  "base": "ec7d019a2309ae610a520490eeaca6400d7cff86",
+  "runDir": ".tmp/runs/fix-the-build-20261116T14525347",
+  "score": {
+    "planHash": "a07352986eb7",
+    "seats": 3,
+    "graded": 3,
+    "passed": 3,
+    "skipped": 0,
+    "spentMicroUsd": 105523,
+    "budgetMicroUsd": 500000,
+    "status": "finished"
+  },
+  "receipts": [
+    {
+      "seat": "fix-1",
+      "task": "fix",
+      "outcome": "stopped",
+      "killedBy": "",
+      "passed": true,
+      "gradeOutput": "e per invoice, then the total, amounts without a symbol (2.093875ms)\n✔ an empty report is a zero total (0.111291ms)\n✔ mixed currencies are refused (0.220375ms)\n✔ flat shipping by region (0.705792ms)\n✔ sales tax by region, rounded to cents (1.236625ms)\n✔ a region with no rate is refused (0.189917ms)\nℹ tests 23\nℹ suites 0\nℹ pass 23\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 181.792667",
+      "turns": 11,
+      "toolCalls": 10,
+      "steers": 0,
+      "usd": 0.0343,
+      "ms": 27112,
+      "branch": "seat/fix-1",
+      "sha": "9df388e0bef722f098d77d8927090cb4304a1ae8",
+      "changedLines": 4,
+      "lastText": "Perfect! All tests are now passing. \n\n## Summary\n\nThe issue was in the `taxFor` function in `src/tax.ts`. It was using `Math.floor()` to calculate tax, which always rounds down. However, tax should be rounded to the nearest cent using \"round half away from zero\" logic, consistent with how other mone"
+    },
+    {
+      "seat": "fix-2",
+      "task": "fix",
+      "outcome": "stopped",
+      "killedBy": "",
+      "passed": true,
+      "gradeOutput": "ne per invoice, then the total, amounts without a symbol (0.542333ms)\n✔ an empty report is a zero total (0.058084ms)\n✔ mixed currencies are refused (0.192166ms)\n✔ flat shipping by region (0.641958ms)\n✔ sales tax by region, rounded to cents (0.563416ms)\n✔ a region with no rate is refused (0.160959ms)\nℹ tests 23\nℹ suites 0\nℹ pass 23\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 86.434458",
+      "turns": 14,
+      "toolCalls": 13,
+      "steers": 0,
+      "usd": 0.0376,
+      "ms": 32206,
+      "branch": "seat/fix-2",
+      "sha": "3e305ce3a01294231e94498944b23d80ee4da6f7",
+      "changedLines": 4,
+      "lastText": "## Summary\n\nFixed the failing tests by correcting the tax calculation rounding. The issue was in `src/tax.ts`:\n\n**Problem:** The `taxFor` function was using `Math.floor()` which always rounds down, but the tests expected \"round half away from zero\" behavior (e.g., 144.9275 → 145, not 144).\n\n**Soluti"
+    },
+    {
+      "seat": "fix-3",
+      "task": "fix",
+      "outcome": "stopped",
+      "killedBy": "",
+      "passed": true,
+      "gradeOutput": "e per invoice, then the total, amounts without a symbol (1.091958ms)\n✔ an empty report is a zero total (0.063542ms)\n✔ mixed currencies are refused (0.195833ms)\n✔ flat shipping by region (1.572375ms)\n✔ sales tax by region, rounded to cents (0.642875ms)\n✔ a region with no rate is refused (0.189625ms)\nℹ tests 23\nℹ suites 0\nℹ pass 23\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 220.856208",
+      "turns": 11,
+      "toolCalls": 10,
+      "steers": 0,
+      "usd": 0.0336,
+      "ms": 27132,
+      "branch": "seat/fix-3",
+      "sha": "14a12c85b3b7eb6c85e48b3b859f9eb19859f014",
+      "changedLines": 4,
+      "lastText": "Perfect! All tests pass now. The issue was in the `src/tax.ts` file where the `taxFor` function was using `Math.floor()` to round tax calculations instead of the proper `roundHalfAway()` function. \n\nThe fix:\n- Changed `Math.floor(amount.cents * (rate / 100))` to `roundHalfAway(amount.cents * (rate /"
+    }
+  ],
+  "planDir": "~/assay/examples/recipes/fix-the-build",
+  "test": "node --test"
+}

@@ -1,0 +1,28 @@
+{
+  "fleet": "model-bakeoff-20261116T14541670",
+  "branch": "assay/model-bakeoff-20261116T14541670",
+  "base": "6825c2517679e71c4ca4b189376829e9159fc2fa",
+  "head": "271f20477b66128b738305cf17b26fd90f021ce3",
+  "tasks": [
+    {
+      "task": "haiku",
+      "seat": "haiku-2",
+      "sha": "808a692dde6a9d78037d6f1e7011af243199fcd8",
+      "applied": true,
+      "reason": "passed, 81 lines, $0.2449"
+    },
+    {
+      "task": "sonnet",
+      "seat": "sonnet-2",
+      "sha": "0fa6218d7b577cd9bbc95bd501d312a0f36f71a0",
+      "applied": false,
+      "reason": "conflict: error: could not apply 0fa6218... assay seat sonnet-2\nhint: After resolving the conflicts, mark them with\nhint: \"git add/rm <pathspec>\", then run\nhint: \"git che"
+    }
+  ],
+  "landed": 1,
+  "test": {
+    "command": "node --test",
+    "passed": true,
+    "output": "tiply rounds halves away from zero (0.091875ms)\n✔ sum, compare and equals (0.098458ms)\n✔ format writes two decimals and the symbol (0.073666ms)\n✔ parse reads at most two decimals (0.153041ms)\n✔ one line per invoice, then the total, amounts without a symbol (1.609125ms)\n✔ an empty report is a zero total (0.085042ms)\n✔ mixed currencies are refused (0.224041ms)\n✔ flat shipping by region (0.672625ms)\n✔ sales tax by region, rounded to cents (0.552917ms)\n✔ a region with no rate is refused (0.158583ms)\nℹ tests 28\nℹ suites 0\nℹ pass 28\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.084333"
+  }
+}

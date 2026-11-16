@@ -1,0 +1,21 @@
+{
+  "fleet": "best-of-n-20261116T14541469",
+  "branch": "assay/best-of-n-20261116T14541469",
+  "base": "73bd598242550135e87f9451359775b8616f39fc",
+  "head": "026fc6d7c677d9a77a25354d21f46538577dcb2c",
+  "tasks": [
+    {
+      "task": "discount-cap",
+      "seat": "discount-cap-5",
+      "sha": "17901d4753464e7b136f561c6e92d36788d62500",
+      "applied": true,
+      "reason": "passed, 97 lines, $0.0538"
+    }
+  ],
+  "landed": 1,
+  "test": {
+    "command": "node --test",
+    "passed": true,
+    "output": "tiply rounds halves away from zero (0.087209ms)\n✔ sum, compare and equals (0.095709ms)\n✔ format writes two decimals and the symbol (0.072709ms)\n✔ parse reads at most two decimals (0.142708ms)\n✔ one line per invoice, then the total, amounts without a symbol (0.947917ms)\n✔ an empty report is a zero total (0.081167ms)\n✔ mixed currencies are refused (0.218792ms)\n✔ flat shipping by region (0.662666ms)\n✔ sales tax by region, rounded to cents (0.602875ms)\n✔ a region with no rate is refused (0.167416ms)\nℹ tests 33\nℹ suites 0\nℹ pass 33\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 96.131666"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "best-of-n",
+  "repo": "../../tally/seed",
+  "model": "claude-haiku-4-5",
+  "parallel": 5,
+  "minutesPerSeat": 8,
+  "worstCaseUsdPerSeat": 0.15,
+  "budgetUsd": 0.75,
+  "repeat": 5,
+  "hidden": ["../../tally/hidden", "../../tally/reference"],
+  "test": "node --test",
+  "seats": [
+    {
+      "id": "discount-cap",
+      "task": "../../tally/tasks/discount-cap.md",
+      "writable": ["src/discount.ts", "test/discount.test.ts"],
+      "grade": "sh \"$ASSAY_PLAN_DIR/../../tally/grade.sh\" discount-cap"
+    }
+  ]
+}

@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
 set -u
 task="$1"
+here="$(cd "$(dirname "$0")" && pwd)"
 mkdir -p test/accept
-cp "$ASSAY_PLAN_DIR/hidden/fixtures.ts" "$ASSAY_PLAN_DIR/hidden/$task.test.ts" test/accept/
+cp "$here/hidden/fixtures.ts" "$here/hidden/$task.test.ts" test/accept/
 node --test --test-reporter=dot "test/accept/$task.test.ts"
 hidden=$?
 rm -rf test/accept

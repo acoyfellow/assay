@@ -1,4 +1,4 @@
-import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { marked } from "marked";
 import { docJsonLd, headTags, site, swRegister } from "./head.ts";
@@ -30,8 +30,39 @@ const armTable = (arms: ReadonlyArray<ArmNumbers>) =>
     ),
   ].join("\n");
 
+type RecipeReceipt = { passed: boolean; usd: number; ms: number };
+type RecipeFleet = { receipts: RecipeReceipt[] };
+type RecipeLand = { landed: number; tasks: unknown[]; test: { passed: boolean } };
+
+const recipesDir = join(web, "../../examples/recipes");
+const recipeRow = (name: string) => {
+  const receipts = join(recipesDir, name, "receipts");
+  if (!existsSync(join(receipts, "fleet.json"))) return `| ${name} | not run yet | | | |`;
+  const fleet: RecipeFleet = JSON.parse(readFileSync(join(receipts, "fleet.json"), "utf8"));
+  const land: RecipeLand = JSON.parse(readFileSync(join(receipts, "land.json"), "utf8"));
+  const passed = fleet.receipts.filter((receipt) => receipt.passed).length;
+  const spent = fleet.receipts.reduce((total, receipt) => total + receipt.usd, 0);
+  const seconds = Math.max(...fleet.receipts.map((receipt) => receipt.ms)) / 1000;
+  const landed =
+    name === "model-bakeoff"
+      ? "compare only, not landed"
+      : `${land.landed}/${land.tasks.length} tasks, tests ${land.test.passed ? "pass" : "fail"}`;
+  return `| ${name} | ${passed}/${fleet.receipts.length} | $${spent.toFixed(2)} | ${Math.round(seconds)}s | ${landed} |`;
+};
+const recipeRuns = () =>
+  [
+    "Last real run of each, with Haiku on a laptop. The receipts are in each recipe's `receipts/` folder.",
+    "",
+    "| Recipe | Agents passed | Spent | Wall time | Landed |",
+    "|---|---|---|---|---|",
+    ...readdirSync(recipesDir)
+      .filter((name) => existsSync(join(recipesDir, name, "plan.json")))
+      .map(recipeRow),
+  ].join("\n");
+
 const fill = (text: string) =>
   text
+    .replaceAll("{{recipeRuns}}", recipeRuns())
     .replaceAll("{{seatsPerArm}}", String(numbers.seatsPerArm))
     .replaceAll("{{model}}", numbers.model)
     .replaceAll("{{harness}}", numbers.harness)

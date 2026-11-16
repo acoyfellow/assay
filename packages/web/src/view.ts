@@ -434,6 +434,87 @@ const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
     [label],
   );
 
+const recipeCards = [
+  {
+    href: "/docs/recipes/#fix-the-build",
+    title: "Fix the build",
+    when: "Tests are red.",
+    how: "3 agents race a fix. None can touch the tests. Smallest passing diff lands.",
+    run: "3/3 passed · $0.11 · 32s",
+  },
+  {
+    href: "/docs/recipes/#clear-a-backlog",
+    title: "Clear a backlog",
+    when: "Several small tickets.",
+    how: "One agent per ticket, all at once. Every passing ticket lands on one branch.",
+    run: "4/4 passed · 2 tickets landed · $0.13",
+  },
+  {
+    href: "/docs/recipes/#best-of-n",
+    title: "Best of N",
+    when: "A task is hard for a cheap model.",
+    how: "5 cheap tries at one task. Keep the best one that passes.",
+    run: "5/5 passed · $0.42 · 104s",
+  },
+  {
+    href: "/docs/recipes/#model-bakeoff",
+    title: "Model bakeoff",
+    when: "Is the cheap model good enough?",
+    how: "Same task, same hidden test, one seat per model. Compare pass rate and cost.",
+    run: "Sonnet $0.22 · Haiku $0.31 · both 2/2",
+  },
+] as const;
+
+const recipeCard = (h: H, card: (typeof recipeCards)[number]): Html =>
+  h.li(
+    [h.Class("min-w-0")],
+    [
+      h.a(
+        [
+          h.Href(card.href),
+          h.Class("flex h-full flex-col gap-3 rounded-[24px] bg-g0 p-6 text-k1 no-underline sm:p-7"),
+        ],
+        [
+          h.p([h.Class("m-0 text-[13px] text-g5")], [card.when]),
+          h.h3([h.Class("m-0 text-[20px] font-medium")], [card.title]),
+          h.p([h.Class("m-0 flex-1 text-[15px] text-g6")], [card.how]),
+          card.run
+            ? h.span(
+                [h.Class("w-fit rounded-full bg-ok-deep px-3 py-1 font-mono text-[12px] text-ok")],
+                [`last run: ${card.run}`],
+              )
+            : h.span(
+                [h.Class("w-fit rounded-full bg-g1 px-3 py-1 font-mono text-[12px] text-g6")],
+                ["plan + grader checked"],
+              ),
+        ],
+      ),
+    ],
+  );
+
+const recipes = (h: H): Html =>
+  band(
+    h,
+    "Recipes.",
+    " Run one today.",
+    "Each recipe is a folder with a plan, tasks and a grader. A check proves every grader fails the untouched repo and passes a good fix. Run it as is, then copy it for your repo, or hand the page to your agent.",
+    [
+      h.ul(
+        [h.Class("m-0 mt-10 grid list-none gap-4 p-0 sm:grid-cols-2")],
+        recipeCards.map((card) => recipeCard(h, card)),
+      ),
+      h.p(
+        [h.Class("mt-6 mb-0 px-2 text-[15px]")],
+        [
+          h.a(
+            [h.Href("/docs/recipes/"), h.Class("text-k1 underline underline-offset-[5px]")],
+            ["All recipes, how to write a grader, and a prompt for your agent"],
+          ),
+        ],
+      ),
+    ],
+  );
+
 const surfaces = (h: H, model: Model): Html =>
   h.section(
     [h.Class("mx-auto max-w-6xl px-5 py-16 sm:py-24")],
@@ -584,7 +665,10 @@ export const view = (model: Model, h: H): Html =>
     [],
     [
       nav(h),
-      h.main([], [hero(h, model), getStarted(h, model), howItWorks(h), surfaces(h, model), bench(h)]),
+      h.main(
+        [],
+        [hero(h, model), getStarted(h, model), recipes(h), howItWorks(h), surfaces(h, model), bench(h)],
+      ),
       footer(h),
     ],
   );
