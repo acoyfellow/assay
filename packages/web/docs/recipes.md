@@ -112,10 +112,10 @@ Rules that make a grader worth trusting:
 Give a coding agent this page and `/llms.txt`, then ask:
 
 ```text
-Read https://assay.coey.dev/docs/recipes/. Copy examples/recipes/backlog to fleet/.
+Read https://assay.coey.dev/docs/recipes/. Copy examples/recipes/backlog to assay/.
 Point repo at this project. Turn these tickets into tasks and checks: <tickets>.
-Write fleet/proof.json with a known good fix per seat.
-Run bash proof/recipes-gate.sh fleet until it passes. Do not start the fleet.
+Write assay/proof.json with a known good fix per seat.
+Run bash proof/recipes-gate.sh assay until it passes. Do not start it.
 ```
 
-The agent writes the plan and graders, and proves the graders work. You start the fleet and land the branch.
+The agent writes the plan and graders, and proves the graders work. You start it and land the branch.

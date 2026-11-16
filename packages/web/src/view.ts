@@ -166,6 +166,12 @@ const hero = (h: H, model: Model): Html =>
                       "Run many coding agents on your repo. Each one is graded by a hidden test it cannot read or change. Only work that passes lands on your branch.",
                     ],
                   ),
+                  h.ul(
+                    [h.Class("m-0 flex list-none flex-wrap gap-2 p-0"), h.DataAttribute("facts", "hero")],
+                    heroFacts.map((fact) =>
+                      h.li([h.Class("rounded-full bg-g1 px-3.5 py-1.5 text-[13px] text-k1")], [fact]),
+                    ),
+                  ),
                   phaseList(h, model.clock),
                   h.div([h.Class("grow")], []),
                   h.div(
@@ -329,7 +335,7 @@ const getStarted = (h: H, model: Model): Html =>
     h,
     "Get started.",
     " What you will see.",
-    "Real output from one run on a laptop: six Haiku agents, one steered mid-task, two tasks landed on a branch, 74 cents.",
+    "Real output from one run on a laptop: six Haiku agents, every model call through the relay, all three tasks landed on a branch, 24 cents.",
     [
       h.ol(
         [h.Class("m-0 mt-10 grid list-none gap-4 p-0")],
@@ -471,6 +477,12 @@ const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
     [label],
   );
 
+const heroFacts = [
+  "Tests hidden from agents",
+  "Agents hold no keys",
+  "Runs on your machine or a container",
+] as const;
+
 const versusRows = [
   ["Who says the work is done", "The agent, about itself", "A test the agent never saw"],
   [
@@ -482,6 +494,11 @@ const versusRows = [
     "Is the check any good",
     "Nobody checks",
     "Proven first: the untouched repo fails, a known good fix passes",
+  ],
+  [
+    "Who holds the model key",
+    "The agent",
+    "Only the relay. Agents get a seat key that works for the card's models, inside the budget.",
   ],
   ["Money", "Spent until it stops", "Budget set before go, a cap per agent, stopped mid-turn"],
   ["What you get", "A message saying it worked", "A branch with only passing work, and your tests run on it"],
@@ -638,7 +655,7 @@ const surfaces = (h: H, model: Model): Html =>
               h.p(
                 [h.Class("m-0 text-g6")],
                 [
-                  "In Pi, talk about the work and type /fleet. Your agent drafts the plan and the hidden tests, proves the tests, and shows a contract card. Nothing runs before you type go. Then you steer the agents in plain words, the work lands on a branch, and only /assay-off ends it.",
+                  "In Pi, talk about the work and type /assay. Your agent writes the tasks and the hidden tests, proves the tests work, and shows you a contract. Nothing runs before you type go. You steer in plain words. Only passing work lands, and only /assay-off ends it.",
                 ],
               ),
               h.div([h.Class("grow")], []),
@@ -690,7 +707,7 @@ const bench = (h: H): Html =>
     h,
     "One early test.",
     " CLI or MCP?",
-    `Before the fleet runner existed: can an agent drive the ledger itself? ${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
+    `Before the runner existed: can an agent drive the ledger itself? ${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
     [
       h.div(
         [h.Class("mt-10 overflow-x-auto rounded-[24px] bg-g0 py-4")],

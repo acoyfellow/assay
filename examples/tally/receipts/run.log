@@ -1,0 +1,8 @@
+assay tally-real-20261116T21244485: 6 agents, hidden tests blocked by sandbox-exec, model calls via relay (agents hold no key), 6 at a time, model claude-haiku-5-5, control http://127.0.0.1:56772
+catalog-search-2          PASS    7 turns  $0.0356  22s
+cart-merge-1              PASS    4 turns  $0.0288  23s
+cart-merge-2              PASS    7 turns  $0.0374  24s
+discount-cap-1            PASS    5 turns  $0.0398  25s
+catalog-search-1          PASS    8 turns  $0.0406  26s
+discount-cap-2            PASS    6 turns  $0.0593  39s
+done: 3/3 tasks passed, 6/6 agents passed, $0.2415 spent, run in runs/tally-real-20261116T21244485

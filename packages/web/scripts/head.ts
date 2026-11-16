@@ -1,14 +1,15 @@
 export const site = {
   origin: "https://assay.coey.dev",
   name: "assay",
-  title: "assay · spin up a fleet of coding agents",
+  title: "assay · coding agents, checked by tests they never see",
   description:
-    "Spin up a fleet of coding agents from a chat or one command. Each gets its own copy of your repo, a test it can't see checks the work, and the passing work lands on a branch.",
+    "Coding agents, checked by tests they never see. Agents hold no keys. Only passing work lands on your branch. Runs on your machine or in a container.",
   repo: "https://github.com/acoyfellow/assay",
   author: "Jordan Coeyman",
   x: "@acoyfellow",
   image: "/og.png",
-  imageAlt: "assay. Spin up a fleet of coding agents. A grid of agents, some passed, some failed.",
+  imageAlt:
+    "assay. Coding agents, checked by tests they never see. A grid of agents, some passed, some failed.",
 } as const;
 
 const escapeAttribute = (value: string) =>

@@ -23,7 +23,20 @@ export type Card = {
   readonly hidden: ReadonlyArray<string>;
   readonly landTest: string;
   readonly graders: { readonly passed: boolean; readonly lines: ReadonlyArray<string> };
+  readonly keys: "relay" | "direct" | "missing";
 };
+
+export const keysOf = (env: Record<string, string | undefined>): Card["keys"] =>
+  env.ASSAY_UPSTREAM_URL ? "relay" : env.ASSAY_DIRECT_PROVIDER === "1" ? "direct" : "missing";
+
+const keysLine = (keys: Card["keys"]) =>
+  keys === "relay"
+    ? "held by assay. Agents get a seat key that only works through the relay"
+    : keys === "direct"
+      ? "WARNING: agents use their own provider login (ASSAY_DIRECT_PROVIDER=1)"
+      : "NO RELAY. Set ASSAY_UPSTREAM_URL and ASSAY_UPSTREAM_TOKEN_COMMAND before go";
+
+const canGo = (card: Card) => card.graders.passed && card.keys !== "missing";
 
 export type SeatRow = {
   readonly seat: string;
@@ -92,11 +105,14 @@ export const renderCard = (card: Card) =>
     `  cost       at most ${money(card.worstCaseUsd)} (budget ${money(card.budgetUsd)}, ${money(card.worstCaseUsdPerAgent)} cap per agent)`,
     `  hidden     ${card.hidden.length ? card.hidden.join(", ") : "nothing. Agents can read every file"}`,
     `  land test  ${card.landTest || "none"}`,
+    `  keys       ${keysLine(card.keys)}`,
     `  graders    ${card.graders.passed ? "proven: untouched repo fails, known good fix passes" : "NOT PROVEN, fix before go"}`,
     "",
-    card.graders.passed
+    canGo(card)
       ? "Type go to start. Nothing runs before that."
-      : "go is locked until the graders are proven.",
+      : card.graders.passed
+        ? "go is locked until the relay is set up."
+        : "go is locked until the graders are proven.",
   ].join("\n");
 
 export const createMode = (options: ModeOptions) => {
@@ -169,6 +185,7 @@ export const createMode = (options: ModeOptions) => {
       hidden: plan.hidden ?? [],
       landTest: plan.test ?? "",
       graders: { passed: proof.code === 0, lines },
+      keys: keysOf(env),
     };
     phase = "carded";
     emit({ kind: "card", card });
@@ -202,6 +219,12 @@ export const createMode = (options: ModeOptions) => {
       return { ok: false, reason: `nothing to start (phase ${phase}). Draw a card first.` };
     if (!card.graders.passed)
       return { ok: false, reason: "the graders are not proven. Fix them and draw the card again." };
+    if (card.keys === "missing")
+      return {
+        ok: false,
+        reason:
+          "no model relay, so agents would need a key. Set ASSAY_UPSTREAM_URL and ASSAY_UPSTREAM_TOKEN_COMMAND.",
+      };
     const out = join(options.home, "runs");
     mkdirSync(out, { recursive: true });
     const child = spawn("bun", [runnerCli, "run", card.plan, "--out", out], {

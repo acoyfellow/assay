@@ -59,7 +59,7 @@ export const spentAt = (clock: number) =>
   lanes.reduce((total, lane) => total + lane.usd * laneProgress(clock, lane), 0);
 
 export const heldAt = (clock: number) => {
-  const worstCase = 0.4;
+  const worstCase = numbers.fleet.worstCaseUsdPerSeat;
   return lanes.reduce((total, lane, index) => {
     if (laneShown(clock, index) <= 0) return total;
     return total + (graded(clock, lane) ? 0 : worstCase);

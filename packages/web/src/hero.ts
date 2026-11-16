@@ -58,10 +58,10 @@ const planCard = (h: H, clock: number): Html => {
   const shown = planShown(clock);
   const rows: ReadonlyArray<[string, string]> = [
     ["repo", "seed/"],
-    ["model", "haiku-4.5"],
+    ["model", numbers.fleet.model],
     ["tasks", "3 × 2"],
     ["parallel", String(numbers.fleet.agents)],
-    ["budget", "$6.00"],
+    ["budget", `$${numbers.fleet.budgetUsd.toFixed(2)}`],
   ];
   return h.g(
     [h.Opacity(String(shown)), h.Transform(`translate(0 ${(1 - shown) * 10})`)],
@@ -196,7 +196,7 @@ const columnHeads = (h: H, clock: number): Html =>
 
 const budgetTop = 334;
 const budgetWidth = 640;
-const budgetScale = 6;
+const budgetScale = numbers.fleet.budgetUsd;
 
 const budgetBar = (h: H, clock: number, left: number): Html => {
   const held = heldAt(clock);
@@ -207,7 +207,7 @@ const budgetBar = (h: H, clock: number, left: number): Html => {
   return h.g(
     [h.Opacity(String(planShown(clock)))],
     [
-      label(h, left, budgetTop - 8, "budget $6.00", quiet, 11),
+      label(h, left, budgetTop - 8, `budget $${numbers.fleet.budgetUsd.toFixed(2)}`, quiet, 11),
       label(
         h,
         640,

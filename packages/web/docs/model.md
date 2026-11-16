@@ -4,7 +4,7 @@ description: The words assay uses, its commands, and the rules that refuse them.
 order: 3
 ---
 
-The fleet runner keeps its books in a domain model built with [Alchemy Domain](https://alchemy.run/domain) (`@alchemy.run/domain`). Every rule about budgets, receipts and grades lives in `packages/domain`. `assay run` starts a local copy of it for each run. The CLI and the MCP server are both generated from the same `AssayApi`, so they cannot drift apart.
+The runner keeps its books in a domain model built with [Alchemy Domain](https://alchemy.run/domain) (`@alchemy.run/domain`). Every rule about budgets, receipts and grades lives in `packages/domain`. `assay run` starts a local copy of it for each run. The CLI and the MCP server are both generated from the same `AssayApi`, so they cannot drift apart.
 
 A command is a class. Its input, its events, its refusals and its reply are all typed:
 

@@ -53,9 +53,15 @@ const totalUsd = (receipts: ReadonlyArray<Receipt>) =>
 
 type FleetReceipt = { seat: string; passed: boolean; turns: number; usd: number; ms: number };
 const fleetRun = JSON.parse(
-  readFileSync(new URL("../../../examples/tally/runs/first-run.json", import.meta.url), "utf8"),
+  readFileSync(new URL("../../../examples/tally/receipts/assay.json", import.meta.url), "utf8"),
 ) as { receipts: FleetReceipt[] };
+const tallyPlan = JSON.parse(
+  readFileSync(new URL("../../../examples/tally/plan-real.json", import.meta.url), "utf8"),
+) as { budgetUsd: number; worstCaseUsdPerSeat: number };
 const fleet = {
+  model: "haiku-5.5",
+  budgetUsd: tallyPlan.budgetUsd,
+  worstCaseUsdPerSeat: tallyPlan.worstCaseUsdPerSeat,
   agents: fleetRun.receipts.length,
   passed: fleetRun.receipts.filter((receipt) => receipt.passed).length,
   usd: `$${fleetRun.receipts.reduce((sum, receipt) => sum + receipt.usd, 0).toFixed(2)}`,

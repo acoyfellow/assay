@@ -1,35 +1,35 @@
 {
-  "fleet": "tally-real-20261116T13344878",
-  "branch": "assay/tally-real-20261116T13344878",
-  "base": "c859b0d88dc5bac2b524e8604306b6d08207640d",
-  "head": "80eaf353e20fe8bbd35e57be7a214a7acdcb586d",
+  "fleet": "tally-real-20261116T21244485",
+  "branch": "assay/tally-real-20261116T21244485",
+  "base": "e54ff676692209a67ae67509598312a654d8f944",
+  "head": "a5c6e65a70759d3c8889063f437ab26a6efe7b05",
   "tasks": [
     {
       "task": "cart-merge",
-      "seat": "cart-merge-1",
-      "sha": "d200bfc79b81620337c63d1a723e9fe48231a6c9",
+      "seat": "cart-merge-2",
+      "sha": "2c1f4da7b9fe4135b30fb9b90e5d223cb76e61ab",
       "applied": true,
-      "reason": "passed, 93 lines, $0.0638"
+      "reason": "passed, 59 lines, $0.0374"
     },
     {
       "task": "catalog-search",
-      "seat": null,
-      "sha": null,
-      "applied": false,
-      "reason": "no passing seat: catalog-search-1 fail: hidden=1 existing=0; catalog-search-2 killed by spend cap"
+      "seat": "catalog-search-1",
+      "sha": "5a35f76cba949a2211b27b7eab43e35c61533aa0",
+      "applied": true,
+      "reason": "passed, 49 lines, $0.0406"
     },
     {
       "task": "discount-cap",
-      "seat": "discount-cap-1",
-      "sha": "f063eb1ad9ea52e39fe6104eb98170c7f9b6d266",
+      "seat": "discount-cap-2",
+      "sha": "ba7c79258c4e35dd63bedf69c00260a53c7c2141",
       "applied": true,
-      "reason": "passed, 139 lines, $0.1370"
+      "reason": "passed, 75 lines, $0.0593"
     }
   ],
-  "landed": 2,
+  "landed": 3,
   "test": {
     "command": "node --test",
     "passed": true,
-    "output": "tiply rounds halves away from zero (0.082833ms)\n✔ sum, compare and equals (0.091709ms)\n✔ format writes two decimals and the symbol (0.071083ms)\n✔ parse reads at most two decimals (0.136333ms)\n✔ one line per invoice, then the total, amounts without a symbol (1.310292ms)\n✔ an empty report is a zero total (0.063917ms)\n✔ mixed currencies are refused (0.193916ms)\n✔ flat shipping by region (0.608959ms)\n✔ sales tax by region, rounded to cents (0.572708ms)\n✔ a region with no rate is refused (0.159333ms)\nℹ tests 41\nℹ suites 0\nℹ pass 41\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.565583"
+    "output": "tiply rounds halves away from zero (0.085833ms)\n✔ sum, compare and equals (0.094875ms)\n✔ format writes two decimals and the symbol (0.073333ms)\n✔ parse reads at most two decimals (0.152792ms)\n✔ one line per invoice, then the total, amounts without a symbol (0.542958ms)\n✔ an empty report is a zero total (0.059875ms)\n✔ mixed currencies are refused (0.188084ms)\n✔ flat shipping by region (0.820875ms)\n✔ sales tax by region, rounded to cents (0.583208ms)\n✔ a region with no rate is refused (0.168083ms)\nℹ tests 36\nℹ suites 0\nℹ pass 36\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 87.263708"
   }
 }

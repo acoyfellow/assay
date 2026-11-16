@@ -4,7 +4,7 @@ description: An early test. Do agents drive the assay ledger better through the 
 order: 5
 ---
 
-An early test, run before the fleet runner existed. Does an agent drive the assay ledger better with the CLI or with the MCP tools?
+An early test, run before the runner existed. Does an agent drive the assay ledger better with the CLI or with the MCP tools?
 
 ## How it ran
 

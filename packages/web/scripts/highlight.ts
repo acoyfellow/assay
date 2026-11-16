@@ -71,7 +71,7 @@ const textRules: ReadonlyArray<Rule> = [
   [/\b(?:PASS|LAND|pass)\b/, "pass"],
   [/\b(?:FAIL|SKIP|fail)\b|killed by [\w ]+/, "fail"],
   [/\$\d+(?:\.\d+)?/, "number"],
-  [new RegExp(`${lineStart}(?:fleet|done|branch)\\b.*`), "head"],
+  [new RegExp(`${lineStart}(?:assay|fleet|done|branch)\\b.*`), "head"],
 ];
 
 const rulesFor: Record<Lang, ReadonlyArray<Rule>> = {

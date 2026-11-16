@@ -31,14 +31,14 @@ const armTable = (arms: ReadonlyArray<ArmNumbers>) =>
   ].join("\n");
 
 type RecipeReceipt = { passed: boolean; usd: number; ms: number };
-type RecipeFleet = { receipts: RecipeReceipt[] };
+type RecipeRun = { receipts: RecipeReceipt[] };
 type RecipeLand = { landed: number; tasks: unknown[]; test: { passed: boolean } };
 
 const recipesDir = join(web, "../../examples/recipes");
 const recipeRow = (name: string) => {
   const receipts = join(recipesDir, name, "receipts");
   if (!existsSync(join(receipts, "assay.json"))) return `| ${name} | not run yet | | | |`;
-  const fleet: RecipeFleet = JSON.parse(readFileSync(join(receipts, "assay.json"), "utf8"));
+  const fleet: RecipeRun = JSON.parse(readFileSync(join(receipts, "assay.json"), "utf8"));
   const land: RecipeLand = JSON.parse(readFileSync(join(receipts, "land.json"), "utf8"));
   const passed = fleet.receipts.filter((receipt) => receipt.passed).length;
   const spent = fleet.receipts.reduce((total, receipt) => total + receipt.usd, 0);
@@ -184,7 +184,7 @@ pages.forEach((page, index) => {
 const llms = [
   "# assay",
   "",
-  "> Spin up a fleet of coding agents. Each gets its own copy of your repo, a test it never saw checks the work, and the passing work lands on a branch. In Pi: talk, type /fleet, check the contract card, type go, steer in plain words, /assay-off to end.",
+  "> Coding agents, checked by tests they never see. Agents hold no model keys: a relay adds the token outside them. Only passing work lands on your branch. Runs on your machine or in a Linux container.",
   "",
   "## Docs",
   "",

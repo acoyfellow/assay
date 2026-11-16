@@ -1,7 +1,7 @@
 import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { createMode, type ModeEvent, renderCard } from "../src/mode.ts";
+import { type Card, createMode, type ModeEvent, renderCard } from "../src/mode.ts";
 
 const here = new URL(".", import.meta.url).pathname;
 const root = resolve(here, "../../..");
@@ -50,6 +50,12 @@ const env = {
   ASSAY_DIRECT_PROVIDER: "1",
 };
 const events: ModeEvent[] = [];
+const lockedMode = createMode({
+  root,
+  home: join(work, "locked-home"),
+  env: { ASSAY_PI_BIN: env.ASSAY_PI_BIN, ASSAY_DIRECT_PROVIDER: "", ASSAY_UPSTREAM_URL: "" },
+  onEvent: () => {},
+});
 const mode = createMode({ root, home: join(work, "home"), env, onEvent: (event) => events.push(event) });
 
 const goodPlan = writePlan({ rounds: 2, parallel: 2, worstCaseUsdPerSeat: 0.1, budgetUsd: 1 });
@@ -72,6 +78,16 @@ check(
   prepared.text.includes("checks, reference") && prepared.text.includes("node --test"),
 );
 check("card proves the graders", card?.graders.passed === true && prepared.text.includes("proven"));
+lockedMode.start();
+await lockedMode.prepare(goodPlan);
+const lockedGo = lockedMode.go();
+check(
+  "go is locked when agents would need a key",
+  !lockedGo.ok &&
+    (lockedMode.card()?.keys ?? "") === "missing" &&
+    renderCard(lockedMode.card() as Card).includes("NO RELAY"),
+);
+await lockedMode.off();
 check("no agent has run before go", !existsSync(join(work, "home", "runs")) && mode.phase() === "carded");
 
 const broken = join(recipe, "plan-broken.json");
