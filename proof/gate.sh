@@ -17,6 +17,6 @@ bun packages/server/test/e2e.ts
 
 echo "== fleet plan and fake fleet run"
 bun packages/fleet/test/plan.test.ts
-bun packages/fleet/test/fleet.test.ts
+bash proof/fleet-gate.sh
 
 echo "GATE PASS"

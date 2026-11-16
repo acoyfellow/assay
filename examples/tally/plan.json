@@ -7,6 +7,8 @@
   "worstCaseUsdPerSeat": 0.4,
   "budgetUsd": 6,
   "repeat": 2,
+  "hidden": ["hidden", "reference"],
+  "test": "node --test",
   "seats": [
     {
       "id": "cart-merge",

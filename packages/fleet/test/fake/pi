@@ -1,13 +1,77 @@
 #!/usr/bin/env bun
-import { copyFileSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const fixDir = process.env.FAKE_FIX_DIR ?? "";
-if ((process.env.ASSAY_WRITABLE ?? "").includes("cart.ts")) copyFileSync(join(fixDir, "src/cart.ts"), "src/cart.ts");
-console.log(JSON.stringify({ type: "tool_execution_start", toolName: "write" }));
-console.log(
-  JSON.stringify({
+const emit = (event: Record<string, unknown>) => process.stdout.write(`${JSON.stringify(event)}\n`);
+const turn = (usd: number, text = "working") =>
+  emit({
     type: "message_end",
-    message: { role: "assistant", stopReason: "stop", usage: { cost: { total: 0.01 } }, content: [{ type: "text", text: "done" }] },
-  }),
-);
+    message: { role: "assistant", stopReason: "stop", usage: { cost: { total: usd } }, content: [{ type: "text", text }] },
+  });
+
+const steers: string[] = [];
+let aborted = false;
+let prompt = "";
+
+const directive = (name: string) => prompt.match(new RegExp(`^fake-${name}: (.*)$`, "m"))?.[1]?.trim();
+
+const tryRead = (path: string) => {
+  emit({ type: "tool_execution_start", toolName: "read" });
+  try {
+    readFileSync(path, "utf8");
+    return "read-ok";
+  } catch (error) {
+    return `read-blocked ${(error as NodeJS.ErrnoException).code}`;
+  }
+};
+
+const work = async () => {
+  const fixFrom = directive("fix");
+  const fixTo = directive("to");
+  const peek = directive("peek");
+  const waitMs = Number(directive("wait") ?? "0");
+  const burn = Number(directive("burn") ?? "0");
+
+  if (peek) writeFileSync("peek.txt", tryRead(peek));
+  const deadline = Date.now() + waitMs;
+  while (Date.now() < deadline && !aborted) {
+    if (burn > 0) turn(burn);
+    await Bun.sleep(100);
+  }
+  if (aborted) return;
+  if (steers.length > 0) writeFileSync("steer.txt", steers.join("\n"));
+  if (fixFrom && fixTo && existsSync(fixFrom)) {
+    emit({ type: "tool_execution_start", toolName: "write" });
+    copyFileSync(fixFrom, join(process.cwd(), fixTo));
+  }
+  turn(0.01, "done");
+  emit({ type: "agent_end", messages: [], willRetry: false });
+  emit({ type: "agent_settled", aborted: false });
+};
+
+const decoder = new TextDecoder();
+let buffer = "";
+for await (const chunk of Bun.stdin.stream()) {
+  buffer += decoder.decode(chunk, { stream: true });
+  let newline = buffer.indexOf("\n");
+  while (newline >= 0) {
+    const record = JSON.parse(buffer.slice(0, newline));
+    buffer = buffer.slice(newline + 1);
+    if (record.type === "prompt") {
+      prompt = String(record.message);
+      emit({ id: record.id, type: "response", command: "prompt", success: true, data: { disposition: "started" } });
+      emit({ type: "agent_start" });
+      void work();
+    }
+    if (record.type === "steer") {
+      steers.push(String(record.message));
+      emit({ type: "response", command: "steer", success: true, data: { disposition: "queued" } });
+    }
+    if (record.type === "abort") {
+      aborted = true;
+      emit({ type: "response", command: "abort", success: true });
+      emit({ type: "agent_settled", aborted: true });
+    }
+    newline = buffer.indexOf("\n");
+  }
+}

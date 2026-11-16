@@ -26,6 +26,12 @@ export const Plan = Schema.Struct({
   worstCaseUsdPerSeat: Schema.Number,
   budgetUsd: Schema.Number,
   repeat: Schema.optional(Schema.Number).annotate({ description: "Run every seat this many times." }),
+  hidden: Schema.optional(Schema.Array(Schema.String)).annotate({
+    description: "Folders, relative to the plan, that agents can never read. Put graders and answers here.",
+  }),
+  test: Schema.optional(Schema.String).annotate({
+    description: "Full test command run on the landed branch. Exit 0 means the branch is good.",
+  }),
   seats: Schema.Array(Seat),
 });
 export type Plan = typeof Plan.Type;
