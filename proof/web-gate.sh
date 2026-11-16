@@ -24,4 +24,7 @@ for _ in $(seq 1 50); do curl -sf http://localhost:4174/ > /dev/null && break; s
 echo "== routes, numbers, screenshots"
 bun packages/web/test/pages.ts
 
+echo "== hero plays, pauses, rests"
+BASE_URL=http://localhost:4174 bun packages/web/test/hero.ts
+
 echo "WEB GATE PASS"

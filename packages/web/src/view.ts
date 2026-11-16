@@ -1,5 +1,6 @@
 import type { Html, HtmlBuilder } from "foldkit/html";
 import { installLine } from "./command.ts";
+import { heroStage, phaseList } from "./hero.ts";
 import { Message } from "./message.ts";
 import type { Model, Surface } from "./model.ts";
 import numbers from "./numbers.json";
@@ -80,82 +81,91 @@ const nav = (h: H): Html =>
     ],
   );
 
-type FleetSeat = (typeof numbers.fleet.seats)[number];
-
-const fleetCell = (h: H, seat: FleetSeat): Html =>
-  h.li(
-    [h.Class("flex items-center gap-3 border-b border-line py-2.5 font-mono text-[13px]")],
-    [
-      h.span([h.Class(seat.passed ? "size-2 shrink-0 bg-signal" : "size-2 shrink-0 border border-ink")], []),
-      h.span([h.Class("min-w-0 flex-1 truncate text-ink")], [seat.seat]),
-      h.span(
-        [h.Class(seat.passed ? "w-10 text-signal" : "w-10 text-graphite")],
-        [seat.passed ? "pass" : "fail"],
-      ),
-      h.span([h.Class("hidden w-16 text-right text-graphite sm:inline")], [`${seat.turns} turns`]),
-      h.span([h.Class("w-16 text-right text-graphite")], [seat.cost]),
-      h.span([h.Class("w-10 text-right text-graphite")], [`${seat.seconds}s`]),
-    ],
-  );
-
-const fleetFigure = (h: H): Html =>
-  h.figure(
-    [h.Class("m-0 border-t border-ink pt-4"), h.DataAttribute("figure", "fleet-run")],
-    [
-      h.pre(
-        [h.Class("m-0 overflow-x-auto font-mono text-[13px] text-graphite")],
-        [h.code([], [`$ assay-fleet run examples/tally/plan.json`])],
-      ),
-      h.ul(
-        [h.Class("mt-3 mb-0 list-none p-0")],
-        numbers.fleet.seats.map((seat) => fleetCell(h, seat)),
-      ),
-      h.figcaption(
-        [h.Class("mt-3 text-[13px] text-graphite")],
-        [
-          h.b([h.Class("font-medium text-ink")], ["Figure 1. "]),
-          `A real run. ${numbers.fleet.agents} agents at once on three coding tasks in a small shop repo, each task twice. ${numbers.fleet.passed} passed the hidden tests. ${numbers.fleet.usd} total, ${numbers.fleet.seconds} seconds.`,
-        ],
-      ),
-    ],
-  );
-
 const hero = (h: H, model: Model): Html =>
   h.section(
-    [h.Class("mx-auto max-w-page px-6 pt-16 pb-20 sm:pt-24")],
+    [h.Class("border-b border-line")],
     [
       h.div(
-        [h.Class("max-w-measure")],
         [
-          h.h1(
-            [
-              h.Class(
-                "m-0 text-[36px] leading-[1.08] font-medium tracking-[-0.025em] text-balance sm:text-[44px]",
-              ),
-            ],
-            ["Spin up a fleet of coding agents."],
+          h.Class(
+            "mx-auto grid max-w-page grid-cols-1 items-start gap-12 px-6 pt-16 pb-16 sm:pt-20 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-14",
           ),
-          h.p(
-            [h.Class("mt-6 mb-0 text-[17px] text-graphite text-pretty")],
-            [
-              "Write a plan, run one command. Each agent gets its own copy of your repo and can only write the files you allow. When it stops, a test it never saw checks the work.",
-            ],
-          ),
+        ],
+        [
           h.div(
-            [h.Class("mt-8 flex flex-wrap items-center gap-4")],
+            [],
             [
-              h.a(
+              h.h1(
                 [
-                  h.Href("/docs/quick-start/"),
-                  h.Class("rounded bg-ink px-[18px] py-2.5 text-[15px] font-medium text-paper no-underline"),
+                  h.Class(
+                    "m-0 text-[36px] leading-[1.08] font-medium tracking-[-0.025em] text-balance sm:text-[44px]",
+                  ),
                 ],
-                ["Quick start"],
+                ["Spin up a fleet of coding agents."],
               ),
-              h.a([h.Href("/docs/"), h.Class("text-[15px]")], ["Read the docs"]),
+              h.p(
+                [h.Class("mt-6 mb-0 text-[17px] text-graphite text-pretty")],
+                [
+                  "One plan, one command. Each agent gets its own copy of your repo. A test it never saw checks the work.",
+                ],
+              ),
+              phaseList(h, model.clock),
+              h.div(
+                [h.Class("mt-8 flex flex-wrap items-center gap-4")],
+                [
+                  h.a(
+                    [
+                      h.Href("/docs/quick-start/"),
+                      h.Class(
+                        "rounded bg-ink px-[18px] py-2.5 text-[15px] font-medium text-paper no-underline",
+                      ),
+                    ],
+                    ["Quick start"],
+                  ),
+                  h.a([h.Href("/docs/"), h.Class("text-[15px]")], ["Read the docs"]),
+                ],
+              ),
             ],
           ),
+          h.figure(
+            [h.Class("m-0 min-w-0"), h.DataAttribute("figure", "fleet-run")],
+            [
+              h.div(
+                [h.Class("border-t border-ink pt-5")],
+                [heroStage(h, model.clock, false), heroStage(h, model.clock, true)],
+              ),
+              h.figcaption(
+                [h.Class("mt-4 flex items-start justify-between gap-6 text-[13px] text-graphite")],
+                [
+                  h.span(
+                    [],
+                    [
+                      h.b([h.Class("font-medium text-ink")], ["Figure 1. "]),
+                      `A real run, replayed faster. ${numbers.fleet.agents} Haiku agents on three coding tasks, each task twice. ${numbers.fleet.passed} passed. ${numbers.fleet.usd}, ${numbers.fleet.seconds} seconds.`,
+                    ],
+                  ),
+                  h.button(
+                    [
+                      h.Type("button"),
+                      h.OnClick(Message.ToggledPlay()),
+                      h.DataAttribute("control", "play"),
+                      h.Class(
+                        "shrink-0 cursor-pointer border-0 bg-transparent p-0 font-mono text-[12px] text-ink underline underline-offset-[3px]",
+                      ),
+                    ],
+                    [model.playing ? "pause" : "play"],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      h.div(
+        [h.Class("mx-auto max-w-page px-6 pb-14")],
+        [
           h.div(
-            [h.Class("mt-8 flex min-w-0 items-center gap-2 rounded bg-wash py-1.5 pr-1.5 pl-4")],
+            [h.Class("flex min-w-0 max-w-measure items-center gap-2 rounded bg-wash py-1.5 pr-1.5 pl-4")],
             [
               h.code([h.Class("min-w-0 flex-1 truncate font-mono text-[13px] text-graphite")], [installLine]),
               h.button(
@@ -172,7 +182,6 @@ const hero = (h: H, model: Model): Html =>
           ),
         ],
       ),
-      h.div([h.Class("mt-16 max-w-measure")], [fleetFigure(h)]),
     ],
   );
 
