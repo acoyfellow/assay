@@ -35,34 +35,63 @@ export ASSAY_PI_PROVIDER=anthropic
 bun packages/fleet/src/cli.ts run examples/tally/plan.json
 ```
 
-The plan runs each task twice, six agents at once:
+The plan runs each task twice, six agents at once. Each agent works in its own git worktree, at the same commit. A line prints as each agent stops and its hidden test runs:
 
 ```text
-fleet tally-20261116T013423: 6 agents, 6 at a time, model claude-haiku-4-5
-cart-merge-2             PASS   10 turns  $0.0460  54s
-cart-merge-1             PASS   11 turns  $0.0433  54s
-discount-cap-1           PASS   13 turns  $0.0485  65s
-discount-cap-2           FAIL   11 turns  $0.0833  86s
-catalog-search-1         FAIL   17 turns  $0.0864  95s
-catalog-search-2         FAIL   18 turns  $0.1401  131s
-done: 3/6 passed, $0.4475 spent
+fleet tally-real: 6 agents, 6 at a time, model claude-haiku-4-5
+catalog-search-1  FAIL   7 turns  $0.0536   38s  steered 1
+cart-merge-2      PASS  13 turns  $0.0593   49s
+cart-merge-1      PASS  13 turns  $0.0638   55s
+discount-cap-1    PASS  18 turns  $0.1370  115s
+catalog-search-2  FAIL  17 turns  $0.1502  120s  killed by spend cap
+discount-cap-2    FAIL  17 turns  $0.2723  286s  killed by spend cap
+done: 3/6 passed, $0.7362 spent
 ```
 
-That is a real run. Yours will differ.
+That is a real run. Yours will differ. An agent that spends more than `worstCaseUsdPerSeat` is stopped. A seat that would go over `budgetUsd` is skipped, not started.
 
-## 4. Read the results
+## 4. Watch and steer
 
-Each agent has a folder under `runs/<fleet id>/`:
+While the fleet runs, open a second terminal:
+
+```sh
+bun packages/fleet/src/cli.ts ps
+bun packages/fleet/src/cli.ts watch cart-merge-1
+bun packages/fleet/src/cli.ts steer catalog-search-1 "run node --test before you stop"
+bun packages/fleet/src/cli.ts steer --all "do not edit package.json"
+bun packages/fleet/src/cli.ts kill discount-cap-2
+```
+
+`ps` shows each agent's stage, turns, spend and last tool. A steer reaches the agent after its current step. Steers and kills are written to the seat's receipt.
+
+## 5. Land the work
+
+```sh
+bun packages/fleet/src/cli.ts land runs/tally-real-20261116T13344878
+```
+
+```text
+LAND  cart-merge      passed, 93 lines, $0.0638
+SKIP  catalog-search  no passing seat
+LAND  discount-cap    passed, 139 lines, $0.1370
+branch assay/tally-real-20261116T13344878: 2/3 tasks, tests pass
+```
+
+For each task, `land` takes the passing seat with the smallest diff, puts it on branch `assay/<run>`, and runs the plan's `test` command on the result. The branch is in `runs/<run>/repo.git`.
+
+## 6. Read the results
+
+Each agent has a folder under `runs/<run>/`:
 
 | File | What it holds |
 |---|---|
-| `repo/` | The agent's copy, with its changes |
-| `receipt.json` | Outcome, turns, cost, time, and the grader's output |
+| `repo/` | The agent's git worktree, committed on branch `seat/<seat>` |
+| `receipt.json` | Outcome, turns, steers, cost, time, diff size, and the grader's output |
 | `events.jsonl` | Everything the agent did |
 
-`runs/<fleet id>/fleet.json` holds every receipt and the score.
+`fleet.json` holds every receipt and the score. `land.json` holds what was landed and the test result.
 
-## 5. Write your own plan
+## 7. Write your own plan
 
 Point `repo` at your code and add a seat per task:
 
@@ -74,6 +103,8 @@ Point `repo` at your code and add a seat per task:
   "parallel": 4,
   "budgetUsd": 5,
   "worstCaseUsdPerSeat": 0.5,
+  "hidden": ["graders"],
+  "test": "npm test",
   "seats": [
     {
       "id": "fix-login",
@@ -85,7 +116,7 @@ Point `repo` at your code and add a seat per task:
 }
 ```
 
-Paths in the plan are relative to the plan file. A `writable` entry that ends in `/` allows a whole folder. Add `"repeat": 3` to run every seat three times.
+Paths in the plan are relative to the plan file. Agents cannot read folders listed in `hidden` (on macOS this uses `sandbox-exec`). A `writable` entry that ends in `/` allows a whole folder. Add `"repeat": 3` to run every seat three times.
 
 If your provider needs a token minted, set `ASSAY_PI_TOKEN_COMMAND` and `ASSAY_PI_TOKEN_ENV`. To load Pi extensions, set `ASSAY_PI_EXTENSIONS`.
 

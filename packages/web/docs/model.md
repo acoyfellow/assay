@@ -4,7 +4,31 @@ description: The words assay uses, its commands, and the rules that refuse them.
 order: 3
 ---
 
-The fleet runner keeps its books in a domain model built with [@alchemy.run/domain](https://alchemy.run/domain). Every rule about budgets, receipts and grades is in one place. `assay-fleet run` starts a local copy of it for each run.
+The fleet runner keeps its books in a domain model built with [Alchemy Domain](https://alchemy.run/domain) (`@alchemy.run/domain`). Every rule about budgets, receipts and grades lives in `packages/domain`. `assay-fleet run` starts a local copy of it for each run. The CLI and the MCP server are both generated from the same `AssayApi`, so they cannot drift apart.
+
+A command is a class. Its input, its events, its refusals and its reply are all typed:
+
+```ts
+export class ClaimSeat extends Domain.Command(
+  "ClaimSeat",
+  {
+    target: AssayId,
+    input: { seat: Schema.String, runner: Schema.String },
+    events: [SeatClaimed],
+    rejects: [NotRunning, UnknownSeat, AlreadyClaimed, OverBudget],
+    reply: { reservedMicroUsd: MicroUsd },
+  },
+  { description: "Reserve a seat's worst-case cost from the budget so a runner may start it." },
+) {}
+```
+
+| File | Kind |
+|---|---|
+| `Assay/Assay.aggregate.ts` | The assay: plan, budget, holds, seats |
+| `Seat/Seat.aggregate.ts` | One seat: receipt, grade |
+| `Seat/SeatSettlement.policy.ts` | When a seat is graded, settle it on its assay |
+| `Assay/AssayScore.view.ts`, `Seat/SeatStatus.view.ts` | Reads |
+| `AssayApi.api.ts` | What the CLI and MCP expose |
 
 You can also drive the model yourself, from the CLI or over MCP, if you write your own runner. See [CLI and MCP](/docs/cli-and-mcp/).
 
@@ -26,7 +50,8 @@ You can also drive the model yourself, from the CLI or over MCP, if you write yo
 |---|---|---|
 | `StartAssay` | assay id | already started; no seats; no budget; a seat listed twice |
 | `ClaimSeat` | assay id | not running; unknown seat; already claimed; over budget |
-| `RecordReceipt` | seat id | already stopped; a resumed seat with a different plan |
+| `SkipSeat` | assay id | not running; seat already claimed or skipped |
+| `RecordReceipt` | seat id | already stopped (outcome is stopped, died or killed, with turns, steers and spend); a resumed seat with a different plan |
 | `RecordGrade` | seat id | no receipt yet; already graded |
 | `CancelAssay` | assay id | not running |
 
@@ -36,8 +61,8 @@ Every refusal has its own name and fields, for example `OverBudget { remainingMi
 
 | Read | Key | Holds |
 |---|---|---|
-| `AssayScore` | assay id | seats, graded, passed, spent, budget, status |
-| `SeatStatus` | seat id | stage, attempts, turns, spent, passed, reason |
+| `AssayScore` | assay id | seats, graded, passed, skipped, spent, budget, status |
+| `SeatStatus` | seat id | stage, attempts, turns, steers, spent, passed, reason |
 
 ## What happens on its own
 
@@ -45,4 +70,4 @@ When a seat is graded, its assay releases the hold, charges the real cost and co
 
 ## How it is checked
 
-Eleven tests run the model in memory, one per rule. A test fails if any event, refusal or reply is unexpected.
+Thirteen story tests run the model in memory, one per rule. They are written with Alchemy Domain's `Story` helpers: given these events, when this command, then exactly these events, or this refusal. A test fails if any event, refusal or reply is unexpected.

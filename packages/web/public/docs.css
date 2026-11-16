@@ -70,3 +70,20 @@ th { color: var(--g5); font-weight: 400; font-size: 13px; }
   .side summary { display: block; cursor: pointer; padding: 6px 12px; font-size: 14px; color: var(--g6); }
   .prose { padding: 8px 6px 16px; }
 }
+
+.prose pre.code { position: relative; color: #d6d6d3; }
+.prose pre.code .lang { position: absolute; top: 12px; right: 18px; font: 11px/1 var(--mono); color: #6e6e6b; letter-spacing: 0.04em; text-transform: uppercase; }
+.t-comment { color: #6e6e6b; font-style: italic; }
+.t-string { color: #b8d4a8; }
+.t-key { color: #f0f0ee; }
+.t-number { color: #ffa45c; }
+.t-keyword { color: #c4a7e7; }
+.t-type { color: #8fc1e3; }
+.t-fn { color: #f0f0ee; }
+.t-var { color: #8fc1e3; }
+.t-cmd { color: #ffa45c; }
+.t-flag { color: #c4a7e7; }
+.t-punct { color: #8a8a87; }
+.t-pass { color: #ffa45c; font-weight: 500; }
+.t-fail { color: #7a7a77; }
+.t-head { color: #f0f0ee; }

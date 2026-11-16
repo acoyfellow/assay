@@ -2,6 +2,7 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "nod
 import { join } from "node:path";
 import { marked } from "marked";
 import { docJsonLd, headTags, site, swRegister } from "./head.ts";
+import { highlight, languageOf } from "./highlight.ts";
 import type { ArmNumbers } from "./numbers.ts";
 
 type Page = {
@@ -79,6 +80,10 @@ marked.use({
     heading({ tokens, depth }) {
       const text = this.parser.parseInline(tokens);
       return `<h${depth} id="${slugify(text)}">${text}</h${depth}>`;
+    },
+    code({ text, lang }) {
+      const language = languageOf(lang, text);
+      return `<pre class="code" data-lang="${language}"><span class="lang">${language === "text" ? "output" : language}</span><code>${highlight(text, language)}</code></pre>`;
     },
     table(token) {
       const head = token.header.map((cell) => `<th>${this.parser.parseInline(cell.tokens)}</th>`).join("");
