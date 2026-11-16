@@ -1,0 +1,28 @@
+{
+  "fleet": "tally-tickets-20261116T19300991",
+  "branch": "assay/tally-tickets-20261116T19300991",
+  "base": "7586478d2784059a3db380463319e5bca6574b62",
+  "head": "b2f33233d72c52be1240937cc9c476ead482a8c1",
+  "tasks": [
+    {
+      "task": "shipping-free",
+      "seat": "shipping-free-1",
+      "sha": "6db0e7dad8f899f63b886f3aec5f1da6fa088c72",
+      "applied": true,
+      "reason": "passed, 20 lines, $0.0018"
+    },
+    {
+      "task": "tax-regions",
+      "seat": "tax-regions-1",
+      "sha": "a4fb575411294ef224956032f9123a577983e64a",
+      "applied": true,
+      "reason": "passed, 5 lines, $0.0015"
+    }
+  ],
+  "landed": 2,
+  "test": {
+    "command": "node --test",
+    "passed": true,
+    "output": "tiply rounds halves away from zero (0.086667ms)\n✔ sum, compare and equals (0.095958ms)\n✔ format writes two decimals and the symbol (0.072791ms)\n✔ parse reads at most two decimals (0.161583ms)\n✔ one line per invoice, then the total, amounts without a symbol (1.217833ms)\n✔ an empty report is a zero total (0.077375ms)\n✔ mixed currencies are refused (0.19625ms)\n✔ flat shipping by region (0.636958ms)\n✔ sales tax by region, rounded to cents (0.599417ms)\n✔ a region with no rate is refused (0.167125ms)\nℹ tests 25\nℹ suites 0\nℹ pass 25\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 102.848125"
+  }
+}

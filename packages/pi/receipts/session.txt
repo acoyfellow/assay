@@ -1,0 +1,120 @@
+
+you: I have a small shop checkout repo here. Two tickets: free shipping on orders of $50 or more (any region, unknown region still throws), and add WA 6.5 and FL 6 to the tax table. I want both done today, cheaply.
+  [tool] bash {"command":"cd .tmp/session-repo && find . -type f -not -path './.git/*' | head -100 && echo --- && cat *.m
+  [tool] bash {"command":"cd .tmp/session-repo && cat src/tax.ts && echo ---SHIP && cat src/shipping.ts && echo ---INV &&
+  [tool] bash {"command":"cd .tmp/session-repo && cat test/invoice.test.ts && echo --- && cat src/discount.ts | head -30 
+pi: Both tickets are small. I'll make the edits, then add tests.
+
+Decision: "orders of $50 or more" is measured on the amount after discount (the taxable subtotal). Shipping is still looked up first, so an unknown region keeps throwing even when shipping is free.
+  [tool] edit {"path":".tmp/session-repo/src/tax.ts","edits":[{"oldText":"{ CA: 7.25, NY: 4, TX: 6.25, OR: 0 }","newText"
+  [tool] edit {"path":".tmp/session-repo/src/invoice.ts","edits":[{"oldText":"import { add, zero } from \"./core/money.ts
+  [tool] edit {"path":".tmp/session-repo/test/tax.test.ts","edits":[{"oldText":"  assert.deepEqual(taxFor(money(5000), \"
+  [tool] edit {"path":".tmp/session-repo/test/invoice.test.ts","edits":[{"oldText":"test(\"an empty cart cannot be invoic
+  [tool] bash {"command":"cd .tmp/session-repo && node --test 2>&1 | grep -E \"^# |not ok|fail|pass\" | head -20","timeou
+  [tool] bash {"command":"cd .tmp/session-repo && node --test 2>&1 | grep -B2 -A12 \"not ok\" | head -50","timeout":60}
+  [tool] bash {"command":"cd .tmp/session-repo && node --test 2>&1 | sed -n '/failing tests/,+25p'","timeout":60}
+pi: The test caught a real issue. `shippingFor` has no WA or FL rate, so the free-shipping path still looked one up. `taxFor` already runs first and rejects unknown regions, so I can skip the shipping lookup entirely when shipping is free.
+  [tool] edit {"path":".tmp/session-repo/src/invoice.ts","edits":[{"oldText":"  const standard = shippingFor(region, cart
+  [tool] bash {"command":"cd .tmp/session-repo && node --test 2>&1 | grep -E \"^ℹ (pass|fail)\"; git diff --stat -- src t
+pi: Both tickets are done and the suite passes (25/25).
+
+- **Tax:** `WA: 6.5` and `FL: 6` added to `TAX_RATES` in `src/tax.ts`, with tests.
+- **Free shipping:** in `src/invoice.ts`, shipping is `0` when the taxable amount (subtotal after discount) is at least $50 (`FREE_SHIPPING_CENTS = 5000`). Tests cover the exact $50 boundary, $49.99, TX/WA/FL, and an unknown region still throwing.
+
+Two things to check:
+
+1. **WA and FL have no shipping rate.** Under $50, an order to WA or FL throws "no shipping to region", because `SHIPPING_CENTS` in `src/shipping.ts` has no entry for them. The ticket didn't cover this, so I left it alone. You'll probably want flat rates for both, and I can add them if you give me the amounts.
+2. **"$50 or more" is measured after discount.** If you meant the pre-discount subtotal, it's a one-line change in `buildInvoice`.
+
+you: /fleet both tickets, model claude-haiku-5-5, 2 tries each, up to 2 rounds, keep the whole run under $0.60. The seed is the repo as it was before my edits, use fleet/seed
+  [tool] bash {"command":"cd ~/assay && cat packages/web/docs/recipes.md; echo ---; ls -R examples/recipes | head -100; echo ---;
+  [tool] bash {"command":"cd ~/assay/examples/recipes/backlog && for f in plan.json proof.json check.sh README.md tasks/*.md chec
+  [tool] bash {"command":"cd ~/assay && ls packages/fleet packages/fleet/src; grep -rn \"rounds\\|repeat\\|budgetUsd\\|worstCase\
+  [tool] bash {"command":"cd ~/assay/packages/fleet/src && cat Plan.ts && sed -n 170,200p run.ts && sed -n 280,460p run.ts","time
+  [tool] bash {"command":"cd ~/assay && grep -n \"piCommand\" -A12 packages/fleet/src/agent.ts packages/fleet/src/run.ts | head -
+  [tool] bash {"command":"cd ~/assay && cat packages/fleet/test/recipes.test.ts | head -120; echo ---; grep -rn \"haiku-5\\|haiku
+  [tool] bash {"command":"cd ~/assay && sed -n 100,125p packages/domain/src/Assay/Assay.aggregate.ts; grep -n \"committedMicroUsd
+pi: The backlog recipe is the closest match: two independent tickets, one hidden check each. Before I write the plan, I need to check one thing. `fleet/seed` has to be the repo before your edits, and the session repo isn't under git, so I'll rebuild that copy by reverting my four edits.
+  [tool] bash {"command":"cd .tmp/session-repo && mkdir -p fleet && cp -R src test package.json tsconfig.json README.md f
+pi: I copied the edited files by mistake. The seed has to be the repo before your edits, so I'll revert those four changes in `fleet/seed`.
+  [tool] edit {"path":".tmp/session-repo/fleet/seed/src/tax.ts","edits":[{"oldText":"{ CA: 7.25, NY: 4, TX: 6.25, OR: 0, 
+  [tool] edit {"path":".tmp/session-repo/fleet/seed/src/invoice.ts","edits":[{"oldText":"import { add, compare, money, ze
+  [tool] edit {"path":".tmp/session-repo/fleet/seed/test/tax.test.ts","edits":[{"oldText":"  assert.deepEqual(taxFor(mone
+  [tool] bash {"command":"cd .tmp/session-repo/fleet/seed && grep -n \"shipping is free\" -A16 test/invoice.test.ts | hea
+pi: The seed's `invoice.test.ts` still has the free-shipping tests I added, so I'll remove them too.
+  [tool] bash {"command":"cd .tmp/session-repo/fleet/seed && node -e '\nconst fs=require(\"fs\");const f=\"test/invoice.t
+pi: The seed now matches the pre-edit repo: 23 tests pass and no free-shipping or WA/FL code remains. Before I write the plan, I'll check how the per-seat cap is enforced so the budget math holds.
+  [tool] bash {"command":"cd ~/assay/packages/fleet/src && grep -n \"capUsd\" -A4 agent.ts run.ts | head -40; grep -n \"microUsd 
+pi: The budget works out. 2 tasks × 2 tries × 2 rounds is at most 8 seats. At $0.07 worst case each, that's $0.56 reserved, under the $0.60 cap, and the ledger blocks any claim past the budget. The free-shipping ticket lives in `buildInvoice` in this repo, not in a `freeShippingFor` helper as in the backlog example, so the task and check need to target `invoice.ts`.
+  [tool] bash {"command":"cd .tmp/session-repo/fleet && mkdir -p tasks checks reference/src && cat > plan.json <<'EOF'\n{
+pi: The plan, tasks, hidden checks, and proof are written. Now I'll call `fleet_card` to prove the graders and show the card.
+  [tool] fleet_card {"plan":".tmp/session-repo/fleet/plan.json"}
+pi: The fleet is drafted and the card says the graders are proven. Nothing is running.
+
+```
+FLEET CONTRACT · tally-tickets
+
+  task shipping-free        writes src/invoice.ts, test/invoice.test.ts
+  task tax-regions          writes src/tax.ts, test/tax.test.ts
+
+  agents     4 per round, 4 at a time, model claude-haiku-5-5
+  rounds     2 (failed tasks run again while budget is left)
+  cost       at most $0.56 (budget $0.59, $0.07 cap per agent)
+  hidden     checks, reference
+  land test  node --test
+  graders    proven: untouched repo fails, known good fix passes
+
+Type go to start. Nothing runs before that.
+```
+
+Files are in `.tmp/session-repo/fleet/`:
+- `plan.json`, with `repeat: 2`, `rounds: 2`, and `budgetUsd: 0.59`.
+- `seed/` is the repo before your edits. I rebuilt it by reverting the four changes, and its 23 tests pass.
+- `tasks/`, `checks/` (hidden), `reference/` (hidden), `proof.json`, and `check.sh`, which follows the backlog recipe.
+
+Things to check before you type go:
+- **Model name.** `claude-haiku-5-5` is what you asked for, but every other plan in the repo uses `claude-haiku-4-5`. I didn't verify that the 5-5 name resolves. If it doesn't, the seats will fail, and that costs
+
+(card shown: true; session spend so far $0.0223)
+
+you: go
+[fleet] Started tally-tickets: 4 agents, up to 2 rounds, at most $0.56. Ask me to check, steer or stop any agent.
+
+you: tell every agent still working to run node --test before it stops
+  [tool] fleet_ps {}
+  [tool] fleet_steer {"seat":"all","message":"Before you stop, run `node --test` in the repo and make sure it exits 0. Fix any failure in your writable files fir
+pi: I sent the steer to the four agents that were working: `shipping-free-1`, `shipping-free-2`, `tax-regions-1`, and `tax-regions-2`. The four round-2 seats are still queued and didn't get it. They'll start later, so if you want them to run `node --test` too, I can steer them once they're working.
+
+The steer says to run `node --test` and fix failures in their writable files before stopping. I haven't seen the agents' replies yet. Ask me to check status, steer again, or stop any agent.
+[fleet] tax-regions-1             PASS    4 turns  $0.0015  13s  steered 1
+[fleet] tax-regions-2             PASS    5 turns  $0.0017  15s  steered 1
+[fleet] shipping-free-1           PASS    4 turns  $0.0018  18s  steered 1
+[fleet] shipping-free-2           PASS    5 turns  $0.0024  18s  steered 1
+[fleet] done: 2/2 tasks passed, 4/4 agents passed, $0.0074 spent, run in .tmp/session-home/runs/tally-tickets-20261116T19300991
+[fleet] Fleet finished: done: 2/2 tasks passed, 4/4 agents passed, $0.0074 spent, run in .tmp/session-home/runs/tally-tickets-20261116T19300991
+  LAND shipping-free: passed, 20 lines, $0.0018
+  LAND tax-regions: passed, 5 lines, $0.0015
+Branch assay/tally-tickets-20261116T19300991: 2/2 tasks, tests pass.
+Look: git -C .tmp/session-home/runs/tally-tickets-20261116T19300991/repo.git log --stat assay/tally-tickets-20261116T19300991
+Nothing is merged. Fleet mode stays on until you type /fleet-off.
+  [tool] bash {"command":"cd .tmp/session-home/runs/tally-tickets-20261116T19300991 && git -C repo.git log --oneline -3 a
+pi: The run finished with every task passing in round 1. I'll check the landed branch myself before reporting.
+  [tool] bash {"command":"cd /tmp && rm -rf tally-verify && mkdir tally-verify && cd tally-verify && git -C .tmp/session-
+  [tool] bash {"command":"cd /tmp/tally-verify && mkdir -p test/accept && cp .tmp/session-repo/fleet/checks/*.ts test/acc
+pi: My manual check was wrong: I rewrote the import paths with `sed` and they no longer resolve from `test/accept/`. I'll rerun with the original files.
+  [tool] bash {"command":"cd /tmp/tally-verify && mkdir -p test/accept && for t in shipping-free tax-regions; do cp .tmp/
+pi: Both tickets passed in round 1, and the landed branch passes all checks.
+
+- **Spend:** $0.0074 of the $0.56 cap, across 4 agents.
+- **Branch:** `assay/tally-tickets-20261116T19300991`, in the run's `repo.git`. Nothing is merged into your repo.
+- **My check:** I extracted the branch to `/tmp/tally-verify`. `node --test` gives 25/25. The hidden checks pass too: 3/3 for shipping-free and 2/2 for tax-regions.
+- **Round 2:** didn't run, since both tasks had already passed.
+
+The diff is small. `src/invoice.ts` adds a `FREE_SHIPPING_CENTS = 5000` constant and sets shipping to zero when the taxable amount is at least that. `src/tax.ts` adds `WA: 6.5` and `FL: 6`.
+
+Fleet mode is still on. Type `/fleet-off` when you're done with it.
+
+you: /fleet-off
+[fleet] Fleet mode is off. Branches stay in the run folder. Nothing was merged.
+
+session model spend (driver only) $0.0276

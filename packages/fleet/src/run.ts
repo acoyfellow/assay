@@ -443,9 +443,14 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
       join(runDir, "fleet.json"),
       JSON.stringify({ ...summary, planDir, test: plan.test ?? "" }, null, 2),
     );
-    const passed = receipts.filter((receipt) => receipt.passed).length;
+    const ran = receipts.filter((receipt) => !receipt.gradeOutput.startsWith("not needed"));
+    const passed = ran.filter((receipt) => receipt.passed).length;
     const spent = receipts.reduce((total, receipt) => total + receipt.usd, 0);
-    console.log(`done: ${passed}/${receipts.length} passed, $${spent.toFixed(4)} spent, run in ${runDir}`);
+    const tasks = new Set(receipts.map((receipt) => receipt.task));
+    const tasksPassed = new Set(receipts.filter((receipt) => receipt.passed).map((receipt) => receipt.task));
+    console.log(
+      `done: ${tasksPassed.size}/${tasks.size} tasks passed, ${passed}/${ran.length} agents passed, $${spent.toFixed(4)} spent, run in ${runDir}`,
+    );
     return summary;
   } finally {
     control.stop();
