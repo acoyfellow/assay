@@ -11,11 +11,12 @@ for (let i = 0; i < 28; i++) {
   await page.waitForTimeout(500);
 }
 await page.click('[data-control="play"]');
+await page.waitForTimeout(200);
 const overlayShown = (await page.locator('[data-control="play"]').getAttribute("data-playing")) === "false";
 const paused = await graded();
 await page.waitForTimeout(1200);
 const stillPaused = (await graded()) === paused;
-await page.mouse.click(700, 400);
+await page.locator('[data-control="play"]').click({ position: { x: 300, y: 200 } });
 await page.waitForTimeout(400);
 const resumed = (await page.locator('[data-control="play"]').getAttribute("data-playing")) === "true";
 
