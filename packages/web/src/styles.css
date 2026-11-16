@@ -12,6 +12,21 @@
   --radius: 6px;
   --container-measure: 640px;
   --container-page: 1040px;
+  --color-g0: #ffffff;
+  --color-g1: #f3f3f2;
+  --color-g2: #ececeb;
+  --color-g3: #e2e2e0;
+  --color-g5: #a3a3a0;
+  --color-g6: #6e6e6b;
+  --color-k0: #19191a;
+  --color-k1: #111112;
+  --color-k2: #080809;
+  --color-on-dark: #f2f2f0;
+  --color-on-dark-dim: #9a9a97;
+  --color-ok: #ffa45c;
+  --color-ok-deep: #24150b;
+  --radius-shell: 40px;
+  --shadow-shell: 0 40px 80px -40px rgb(10 10 12 / 0.18);
   --font-sans: "Google Sans Flex", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "Google Sans Code", ui-monospace, Menlo, monospace;
 }
@@ -19,8 +34,8 @@
 @layer base {
   html,
   body {
-    background: var(--color-paper);
-    color: var(--color-ink);
+    background: var(--color-g2);
+    color: var(--color-k1);
     overflow-x: hidden;
   }
 
@@ -28,4 +43,48 @@
     color: var(--color-ink);
     text-underline-offset: 3px;
   }
+}
+
+.display {
+  font-variation-settings:
+    "wght" 380,
+    "opsz" 96;
+  letter-spacing: -0.03em;
+}
+
+.pill {
+  background: linear-gradient(180deg, #fff, #f7f7f6);
+  border: 1px solid var(--color-g3);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 1px 2px rgb(10 10 12 / 0.1),
+    0 2px 6px -2px rgb(10 10 12 / 0.1);
+}
+
+.dark-card {
+  background: linear-gradient(180deg, var(--color-k0), var(--color-k2));
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.06) inset,
+    0 24px 48px -18px rgb(10 10 12 / 0.45),
+    0 8px 16px -8px rgb(10 10 12 / 0.25);
+  --stage-ink: #f2f2f0;
+  --stage-graphite: #9a9a97;
+  --stage-quiet: #6e6e6b;
+  --stage-line: #2a2a2b;
+  --stage-paper: #111112;
+  --stage-signal: #ffa45c;
+}
+
+.button-dark {
+  background: linear-gradient(180deg, #2a2a2b, #0c0c0d);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.12) inset,
+    0 6px 14px -6px rgb(0 0 0 / 0.45);
+}
+
+.button-light {
+  background: linear-gradient(180deg, #fff, #e9e9e7);
+  box-shadow:
+    0 1px 0 #fff inset,
+    0 6px 14px -6px rgb(0 0 0 / 0.5);
 }

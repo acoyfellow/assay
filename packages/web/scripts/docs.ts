@@ -129,10 +129,10 @@ ${headTags({
 </head>
 <body>
 <header class="top"><div class="top-in"><a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">assay</a><nav><a href="/docs/">Docs</a><a href="/docs/bench/">Bench</a><a href="${repo}">GitHub</a></nav></div></header>
-<div class="layout">
+<div class="shell"><div class="frame"><div class="layout">
 <details class="side" open><summary>Docs</summary><ul>${nav(page)}</ul></details>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
-</div>
+</div></div></div>
 <footer class="foot"><div class="foot-in"><a href="/">assay</a><a href="/llms.txt">llms.txt</a><a href="${repo}">GitHub</a></div></footer>
 ${swRegister}
 </body>

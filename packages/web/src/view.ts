@@ -59,21 +59,33 @@ const pixel = (h: H, drawing: Drawing, size: number, label = ""): Html =>
 
 const nav = (h: H): Html =>
   h.header(
-    [h.Class("border-b border-ink")],
+    [h.Class("sticky top-0 z-10 bg-g2/85 backdrop-blur")],
     [
       h.div(
-        [h.Class("mx-auto flex max-w-page items-center justify-between gap-4 px-6 py-5")],
+        [h.Class("mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4")],
         [
           h.a(
-            [h.Href("/"), h.Class("flex items-center gap-2.5 text-[22px] tracking-[-0.02em] no-underline")],
+            [h.Href("/"), h.Class("flex items-center gap-2.5 text-lg tracking-tight text-k1 no-underline")],
             [pixel(h, "tube", 24), "assay"],
           ),
           h.nav(
-            [h.Class("flex gap-6 text-[15px]")],
+            [h.Class("flex gap-1 rounded-full bg-g1 p-1 text-sm")],
             [
-              h.a([h.Href("/docs/"), h.Class("no-underline hover:underline")], ["Docs"]),
-              h.a([h.Href("/docs/bench/"), h.Class("no-underline hover:underline")], ["Bench"]),
-              h.a([h.Href(repo), h.Class("no-underline hover:underline")], ["GitHub"]),
+              h.a(
+                [h.Href("/docs/"), h.Class("rounded-full px-3.5 py-1.5 text-k1 no-underline hover:bg-g0")],
+                ["Docs"],
+              ),
+              h.a(
+                [
+                  h.Href("/docs/bench/"),
+                  h.Class("rounded-full px-3.5 py-1.5 text-k1 no-underline hover:bg-g0"),
+                ],
+                ["Bench"],
+              ),
+              h.a(
+                [h.Href(repo), h.Class("rounded-full px-3.5 py-1.5 text-k1 no-underline hover:bg-g0")],
+                ["GitHub"],
+              ),
             ],
           ),
         ],
@@ -91,11 +103,11 @@ const playOverlay = (h: H, playing: boolean): Html =>
     ],
     [
       h.span(
-        [h.Class("flex size-16 items-center justify-center rounded bg-ink")],
+        [h.Class("button-light flex size-16 items-center justify-center rounded-full")],
         [
           h.svg(
             [h.ViewBox("0 0 12 12"), h.Width("24"), h.Height("24"), h.ShapeRendering("crispEdges")],
-            [h.path([h.D("M3 1 L11 6 L3 11 Z"), h.Fill("var(--color-paper)")], [])],
+            [h.path([h.D("M4 2 L11 6 L4 10 Z"), h.Fill("var(--color-k1)")], [])],
           ),
         ],
       ),
@@ -104,74 +116,96 @@ const playOverlay = (h: H, playing: boolean): Html =>
 
 const hero = (h: H, model: Model): Html =>
   h.section(
-    [h.Class("border-b border-line")],
+    [h.Class("mx-auto max-w-6xl px-3 pt-6 pb-10 sm:px-5 sm:pt-10")],
     [
       h.div(
-        [
-          h.Class(
-            "mx-auto grid max-w-page grid-cols-1 items-start gap-12 px-6 pt-16 pb-16 sm:pt-20 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-14",
-          ),
-        ],
+        [h.Class("rounded-[32px] bg-g0 p-3 shadow-shell sm:rounded-shell sm:p-4")],
         [
           h.div(
-            [],
+            [h.Class("grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-6")],
             [
-              h.h1(
-                [
-                  h.Class(
-                    "m-0 text-[36px] leading-[1.08] font-medium tracking-[-0.025em] text-balance sm:text-[44px]",
-                  ),
-                ],
-                ["Spin up a fleet of coding agents."],
-              ),
-              h.p(
-                [h.Class("mt-6 mb-0 text-[17px] text-graphite text-pretty")],
-                [
-                  "One plan, one command. Each agent gets its own copy of your repo. A test it never saw checks the work.",
-                ],
-              ),
-              phaseList(h, model.clock),
               h.div(
-                [h.Class("mt-8 flex flex-wrap items-center gap-4")],
+                [h.Class("flex flex-col gap-6 px-5 pt-8 pb-4 sm:px-10 sm:pt-14 sm:pb-12")],
                 [
-                  h.a(
+                  h.h1(
                     [
-                      h.Href("/docs/quick-start/"),
                       h.Class(
-                        "rounded bg-ink px-[18px] py-2.5 text-[15px] font-medium text-paper no-underline",
+                        "display m-0 text-[40px] leading-[1.05] font-normal text-balance sm:text-[52px]",
                       ),
                     ],
-                    ["Quick start"],
+                    [h.span([h.Class("text-g5")], ["Spin up a fleet "]), "of coding agents."],
                   ),
-                  h.a([h.Href("/docs/"), h.Class("text-[15px]")], ["Read the docs"]),
+                  h.p(
+                    [h.Class("m-0 max-w-[40ch] text-[16px] text-g6 text-pretty")],
+                    [
+                      "One plan, one command. Each agent gets its own copy of your repo. A test it never saw checks the work.",
+                    ],
+                  ),
+                  phaseList(h, model.clock),
+                  h.div([h.Class("grow")], []),
+                  h.div(
+                    [h.Class("flex flex-wrap items-center gap-3")],
+                    [
+                      h.a(
+                        [
+                          h.Href("/docs/quick-start/"),
+                          h.Class(
+                            "button-dark rounded-full px-5 py-3 text-[15px] font-medium text-on-dark no-underline",
+                          ),
+                        ],
+                        ["Quick start"],
+                      ),
+                      h.a(
+                        [h.Href("/docs/"), h.Class("text-[15px] text-k1 underline underline-offset-[5px]")],
+                        ["Read the docs"],
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
-          h.figure(
-            [h.Class("m-0 min-w-0"), h.DataAttribute("figure", "fleet-run")],
-            [
-              h.button(
+              h.figure(
+                [h.Class("m-0 min-w-0"), h.DataAttribute("figure", "fleet-run")],
                 [
-                  h.Type("button"),
-                  h.OnClick(Message.ToggledPlay()),
-                  h.DataAttribute("control", "play"),
-                  h.DataAttribute("playing", String(model.playing)),
-                  h.AriaLabel(model.playing ? "Pause the replay" : "Play the replay"),
-                  h.Class(
-                    "group relative block w-full cursor-pointer appearance-none border-0 border-t border-ink bg-transparent p-0 pt-5 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink",
-                  ),
-                ],
-                [
-                  h.div(
+                  h.button(
                     [
+                      h.Type("button"),
+                      h.OnClick(Message.ToggledPlay()),
+                      h.DataAttribute("control", "play"),
+                      h.DataAttribute("playing", String(model.playing)),
+                      h.AriaLabel(model.playing ? "Pause the replay" : "Play the replay"),
                       h.Class(
-                        `transition-[filter,opacity] duration-300 ${model.playing ? "" : "opacity-40 grayscale"}`,
+                        "dark-card relative block w-full cursor-pointer appearance-none overflow-hidden rounded-[24px] border-0 p-6 text-left sm:p-9 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-k1",
                       ),
                     ],
-                    [heroStage(h, model.clock, false), heroStage(h, model.clock, true)],
+                    [
+                      h.div(
+                        [h.Class("mb-5 flex items-center justify-between gap-3")],
+                        [
+                          h.span([h.Class("display text-[22px] text-on-dark")], ["A real run"]),
+                          h.span(
+                            [
+                              h.Class(
+                                "inline-flex items-center gap-2 rounded-full bg-ok-deep px-3 py-1.5 font-mono text-[12px] text-ok",
+                              ),
+                            ],
+                            [
+                              h.span([h.Class("size-2 rotate-45 rounded-[2px] bg-ok")], []),
+                              `${numbers.fleet.passed}/${numbers.fleet.agents} passed · ${numbers.fleet.usd}`,
+                            ],
+                          ),
+                        ],
+                      ),
+                      h.div(
+                        [
+                          h.Class(
+                            `transition-[filter,opacity] duration-300 ${model.playing ? "" : "opacity-35 grayscale"}`,
+                          ),
+                        ],
+                        [heroStage(h, model.clock, false), heroStage(h, model.clock, true)],
+                      ),
+                      playOverlay(h, model.playing),
+                    ],
                   ),
-                  playOverlay(h, model.playing),
                 ],
               ),
             ],
@@ -183,48 +217,47 @@ const hero = (h: H, model: Model): Html =>
 
 const installStep = (h: H, model: Model, step: (typeof installSteps)[number], index: number): Html =>
   h.li(
-    [h.Class("border-b border-line py-6 first:pt-0 last:border-b-0")],
+    [
+      h.Class(
+        "grid min-w-0 items-center gap-5 rounded-[24px] bg-g0 p-6 sm:p-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-10",
+      ),
+    ],
     [
       h.div(
-        [h.Class("flex items-baseline gap-4")],
+        [h.Class("flex flex-col gap-2")],
         [
-          h.span([h.Class("w-5 shrink-0 font-mono text-[13px] text-quiet")], [String(index + 1)]),
+          h.p([h.Class("m-0 font-mono text-xs text-g5")], [`0${index + 1}`]),
+          h.h3([h.Class("m-0 text-[18px] font-medium")], [step.title]),
+          h.p([h.Class("m-0 text-[15px] text-g6")], [step.body]),
+        ],
+      ),
+      h.div(
+        [h.Class("dark-card rounded-[16px]")],
+        [
           h.div(
-            [h.Class("min-w-0 flex-1")],
+            [h.Class("flex items-center justify-between py-2 pr-2 pl-4")],
             [
-              h.h3([h.Class("m-0 text-[17px] font-medium")], [step.title]),
-              h.p([h.Class("mt-1 mb-0 text-[15px] text-graphite")], [step.body]),
-              h.div(
-                [h.Class("mt-4 rounded bg-ink")],
+              h.span([h.Class("font-mono text-[12px] text-on-dark-dim")], ["shell"]),
+              h.button(
                 [
-                  h.div(
-                    [h.Class("flex items-center justify-between border-b border-graphite py-2 pr-2 pl-5")],
-                    [
-                      h.span([h.Class("font-mono text-[12px] text-quiet")], ["shell"]),
-                      h.button(
-                        [
-                          h.Type("button"),
-                          h.OnClick(Message.ClickedCopy({ step: step.id })),
-                          h.DataAttribute("copy", step.id),
-                          h.Class(
-                            "cursor-pointer rounded border border-graphite bg-transparent px-3 py-1 font-mono text-[12px] text-paper",
-                          ),
-                        ],
-                        [model.copied === step.id ? "Copied" : "Copy"],
-                      ),
-                    ],
-                  ),
-                  h.pre(
-                    [
-                      h.Class(
-                        "m-0 px-5 py-4 font-mono text-[13px] leading-[1.8] break-all whitespace-pre-wrap text-paper",
-                      ),
-                    ],
-                    [h.code([], [step.lines.map((line) => `$ ${line}`).join("\n")])],
+                  h.Type("button"),
+                  h.OnClick(Message.ClickedCopy({ step: step.id })),
+                  h.DataAttribute("copy", step.id),
+                  h.Class(
+                    "button-light cursor-pointer rounded-full border-0 px-3.5 py-1 text-[12px] font-medium text-k1",
                   ),
                 ],
+                [model.copied === step.id ? "Copied" : "Copy"],
               ),
             ],
+          ),
+          h.pre(
+            [
+              h.Class(
+                "m-0 px-4 pt-1 pb-4 font-mono text-[13px] leading-[1.8] break-all whitespace-pre-wrap text-on-dark",
+              ),
+            ],
+            [h.code([], [step.lines.map((line) => `$ ${line}`).join("\n")])],
           ),
         ],
       ),
@@ -232,14 +265,19 @@ const installStep = (h: H, model: Model, step: (typeof installSteps)[number], in
   );
 
 const getStarted = (h: H, model: Model): Html =>
-  section(h, "01", "Get started", [
+  band(h, "Get started.", " Three commands.", "Clone it, pick a model provider, and run the example fleet.", [
     h.ol(
-      [h.Class("m-0 list-none p-0")],
+      [h.Class("m-0 mt-10 grid list-none gap-4 p-0")],
       installSteps.map((step, index) => installStep(h, model, step, index)),
     ),
     h.p(
-      [h.Class("mt-6 mb-0 text-[15px]")],
-      [h.a([h.Href("/docs/quick-start/")], ["Full quick start, and how to write your own plan"])],
+      [h.Class("mt-6 mb-0 px-2 text-[15px]")],
+      [
+        h.a(
+          [h.Href("/docs/quick-start/"), h.Class("text-k1 underline underline-offset-[5px]")],
+          ["Full quick start, and how to write your own plan"],
+        ),
+      ],
     ),
   ]);
 
@@ -262,9 +300,9 @@ const planExample = `{
 }`;
 
 const howItWorks = (h: H): Html =>
-  section(h, "02", "How it works", [
+  band(h, "How it works.", " Four parts.", "A plan, a budget, a hidden grader, and one receipt per agent.", [
     h.ol(
-      [h.Class("m-0 list-none p-0")],
+      [h.Class("m-0 mt-10 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4")],
       [
         [
           "plan",
@@ -284,42 +322,59 @@ const howItWorks = (h: H): Html =>
         ],
       ].map(([drawing, title, body]) => rule(h, drawing as Drawing, title as string, body as string)),
     ),
-    h.pre(
-      [h.Class("mt-8 mb-0 overflow-x-auto rounded bg-wash p-5 font-mono text-[13px] leading-[1.7] text-ink")],
-      [h.code([], [planExample])],
+    h.div(
+      [h.Class("mt-4 grid gap-4 rounded-shell bg-g0 p-3 sm:p-4 lg:grid-cols-[1fr_1.3fr] lg:gap-6")],
+      [
+        h.div(
+          [h.Class("flex flex-col gap-4 px-5 pt-8 pb-4 sm:px-10 sm:pt-12 sm:pb-10")],
+          [
+            h.h3(
+              [h.Class("display m-0 text-[30px] leading-[1.1] font-normal")],
+              [h.span([h.Class("text-g5")], ["One file. "]), "The whole run."],
+            ),
+            h.p(
+              [h.Class("m-0 text-g6")],
+              ["Paths are relative to the plan. A writable entry that ends in / allows a whole folder."],
+            ),
+          ],
+        ),
+        h.pre(
+          [
+            h.Class(
+              "dark-card m-0 overflow-x-auto rounded-[24px] p-6 font-mono text-[12.5px] leading-[1.75] text-on-dark-dim sm:p-10",
+            ),
+          ],
+          [h.code([], [planExample])],
+        ),
+      ],
     ),
-    h.p([h.Class("mt-3 mb-0 text-[13px] text-graphite")], ["examples/tally/plan.json, shortened."]),
   ]);
 
-const sectionHead = (h: H, n: string, title: string): Html =>
-  h.div(
-    [],
-    [
-      h.p([h.Class("m-0 font-mono text-[13px] text-quiet")], [n]),
-      h.h2([h.Class("mt-2 mb-0 text-[15px] font-medium")], [title]),
-    ],
-  );
-
-const section = (h: H, n: string, title: string, body: readonly Html[]): Html =>
+const band = (h: H, quiet: string, point: string, body: string, content: readonly Html[]): Html =>
   h.section(
-    [h.Class("border-t border-line")],
+    [h.Class("mx-auto max-w-6xl px-5 py-16 sm:py-24")],
     [
       h.div(
-        [h.Class("mx-auto grid max-w-page gap-4 px-6 py-16 md:grid-cols-[200px_minmax(0,1fr)] md:gap-10")],
-        [sectionHead(h, n, title), h.div([h.Class("min-w-0 max-w-measure")], body)],
+        [h.Class("max-w-2xl")],
+        [
+          h.h2(
+            [h.Class("display m-0 text-[30px] leading-[1.1] font-normal sm:text-[38px]")],
+            [h.span([h.Class("text-g5")], [quiet]), point],
+          ),
+          h.p([h.Class("mt-3 mb-0 text-g6 text-pretty")], [body]),
+        ],
       ),
+      ...content,
     ],
   );
 
 const rule = (h: H, drawing: Drawing, title: string, body: string): Html =>
   h.li(
-    [h.Class("flex gap-5 border-t border-line py-5 first:border-t-0 first:pt-0")],
+    [h.Class("flex flex-col gap-4 rounded-[24px] bg-g0 p-7 sm:p-8")],
     [
-      h.div([h.Class("rounded bg-wash p-3")], [pixel(h, drawing, 36, title)]),
-      h.div(
-        [],
-        [h.p([h.Class("m-0 font-medium")], [title]), h.p([h.Class("mt-1 mb-0 text-graphite")], [body])],
-      ),
+      h.div([h.Class("self-start rounded-[14px] bg-g1 p-3")], [pixel(h, drawing, 32, title)]),
+      h.h3([h.Class("m-0 mt-2 text-[18px] font-medium")], [title]),
+      h.p([h.Class("m-0 text-[15px] text-g6")], [body]),
     ],
   );
 
@@ -331,130 +386,151 @@ const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
       h.AriaPressed(String(model.surface === surface)),
       h.Class(
         model.surface === surface
-          ? "cursor-pointer border-b-2 border-ink px-1 pb-2 text-[15px] text-ink"
-          : "cursor-pointer border-b-2 border-transparent px-1 pb-2 text-[15px] text-graphite hover:text-ink",
+          ? "cursor-pointer rounded-full border-0 bg-white/[0.12] px-4 py-1.5 text-[13px] text-on-dark"
+          : "cursor-pointer rounded-full border-0 bg-transparent px-4 py-1.5 text-[13px] text-on-dark-dim hover:text-on-dark",
       ),
     ],
     [label],
   );
 
 const surfaces = (h: H, model: Model): Html =>
-  section(h, "03", "Drive it from an agent", [
-    h.p(
-      [h.Class("mt-0 mb-8 text-[17px] text-graphite")],
-      [
-        "The CLI and the MCP tools come from one model. Same inputs, same refusals, same words. If an agent sends a wrong id, the refusal names the right one.",
-      ],
-    ),
-    h.div([h.Class("mb-4 flex gap-5")], [tab(h, model, "cli", "CLI"), tab(h, model, "mcp", "MCP")]),
-    h.pre(
-      [h.Class("m-0 overflow-x-auto rounded bg-ink p-6 font-mono text-[13px] leading-[1.8] text-[#c9c9c5]")],
-      [
-        h.code(
-          [h.DataAttribute("surface-call", model.surface)],
-          [model.surface === "cli" ? cliCall : mcpCall],
-        ),
-      ],
-    ),
-    h.p([h.Class("mt-5 mb-0")], [h.a([h.Href("/docs/cli-and-mcp/")], ["CLI and MCP reference"])]),
-  ]);
-
-const armRow = (h: H, before: Arm, after: Arm): Html =>
-  h.tr(
-    [],
+  h.section(
+    [h.Class("mx-auto max-w-6xl px-5 py-16 sm:py-24")],
     [
-      h.td([h.Class("border-b border-line py-2.5 pr-6")], [after.arm.toUpperCase()]),
-      h.td(
-        [h.Class("border-b border-line py-2.5 pr-6 font-mono text-[13px]")],
-        [`${before.passed}/${before.seats}`],
-      ),
-      h.td(
+      h.div(
+        [h.Class("grid gap-4 rounded-shell bg-g0 p-3 sm:p-4 lg:grid-cols-[1fr_1.3fr] lg:gap-6")],
         [
-          h.Class(
-            after.arm === "mcp"
-              ? "border-b border-line py-2.5 pr-6 font-mono text-[13px] font-medium text-signal"
-              : "border-b border-line py-2.5 pr-6 font-mono text-[13px]",
+          h.div(
+            [h.Class("flex flex-col gap-5 px-5 pt-8 pb-4 sm:px-10 sm:pt-12 sm:pb-10")],
+            [
+              h.h2(
+                [h.Class("display m-0 text-[30px] leading-[1.1] font-normal")],
+                [h.span([h.Class("text-g5")], ["Drive it "]), "from an agent."],
+              ),
+              h.p(
+                [h.Class("m-0 text-g6")],
+                [
+                  "The CLI and the MCP tools come from one model. Same inputs, same refusals, same words. If an agent sends a wrong id, the refusal names the right one.",
+                ],
+              ),
+              h.div([h.Class("grow")], []),
+              h.a(
+                [
+                  h.Href("/docs/cli-and-mcp/"),
+                  h.Class("text-[15px] text-k1 underline underline-offset-[5px]"),
+                ],
+                ["CLI and MCP reference"],
+              ),
+            ],
+          ),
+          h.div(
+            [h.Class("dark-card flex min-w-0 flex-col gap-6 rounded-[24px] p-6 sm:p-10")],
+            [
+              h.div(
+                [h.Class("inline-flex self-start gap-1 rounded-full bg-white/[0.05] p-1")],
+                [tab(h, model, "cli", "CLI"), tab(h, model, "mcp", "MCP")],
+              ),
+              h.pre(
+                [h.Class("m-0 overflow-x-auto font-mono text-[12.5px] leading-[1.85] text-on-dark-dim")],
+                [
+                  h.code(
+                    [h.DataAttribute("surface-call", model.surface)],
+                    [model.surface === "cli" ? cliCall : mcpCall],
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
-        [`${after.passed}/${after.seats}`],
-      ),
-      h.td(
-        [h.Class("border-b border-line py-2.5 pr-6 font-mono text-[13px]")],
-        [`${before.meanTurns} → ${after.meanTurns}`],
-      ),
-      h.td(
-        [h.Class("border-b border-line py-2.5 font-mono text-[13px]")],
-        [`${before.meanCost} → ${after.meanCost}`],
       ),
     ],
   );
 
+const armRow = (h: H, before: Arm, after: Arm): Html =>
+  h.tr(
+    [h.Class("border-t border-g2")],
+    [
+      h.td([h.Class("px-8 py-4 text-[16px] font-medium")], [after.arm.toUpperCase()]),
+      h.td([h.Class("px-8 py-4 font-mono text-g6")], [`${before.passed}/${before.seats}`]),
+      h.td(
+        [
+          h.Class(
+            after.arm === "mcp" ? "px-8 py-4 font-mono font-medium text-[#d2691e]" : "px-8 py-4 font-mono",
+          ),
+        ],
+        [`${after.passed}/${after.seats}`],
+      ),
+      h.td([h.Class("px-8 py-4 font-mono text-g6")], [`${before.meanTurns} → ${after.meanTurns}`]),
+      h.td([h.Class("px-8 py-4 font-mono text-g6")], [`${before.meanCost} → ${after.meanCost}`]),
+    ],
+  );
+
 const bench = (h: H): Html =>
-  section(h, "04", "One thing we measured", [
-    h.p(
-      [h.Class("mt-0 mb-8 text-[17px] text-graphite")],
-      [
-        `An early test, from before the fleet runner: can an agent drive the ledger itself? ${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
-      ],
-    ),
-    h.div(
-      [h.Class("overflow-x-auto")],
-      [
-        h.table(
-          [
-            h.Class("w-full min-w-[480px] border-collapse text-left text-[15px]"),
-            h.DataAttribute("bench", "run1-vs-run2"),
-          ],
-          [
-            h.thead(
-              [],
-              [
-                h.tr(
-                  [],
-                  ["Surface", "Round 1", "Round 2", "Turns", "Cost per seat"].map((label) =>
-                    h.th(
-                      [h.Class("border-b border-ink pr-6 pb-2 text-[13px] font-normal text-graphite")],
-                      [label],
+  band(
+    h,
+    "One early test.",
+    " CLI or MCP?",
+    `Before the fleet runner existed: can an agent drive the ledger itself? ${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
+    [
+      h.div(
+        [h.Class("mt-10 overflow-x-auto rounded-[24px] bg-g0 py-4")],
+        [
+          h.table(
+            [
+              h.Class("w-full min-w-[520px] border-collapse text-left text-sm"),
+              h.DataAttribute("bench", "run1-vs-run2"),
+            ],
+            [
+              h.thead(
+                [],
+                [
+                  h.tr(
+                    [],
+                    ["Surface", "Round 1", "Round 2", "Turns", "Cost per seat"].map((label) =>
+                      h.th([h.Class("px-8 pt-3 pb-4 text-[13px] font-normal text-g5")], [label]),
                     ),
                   ),
-                ),
-              ],
-            ),
-            h.tbody(
-              [],
-              numbers.run2.arms.map((after, index) => armRow(h, numbers.run1.arms[index] ?? after, after)),
-            ),
-          ],
-        ),
-      ],
-    ),
-    h.p(
-      [h.Class("mt-5 mb-0 text-[15px] text-graphite")],
-      [
-        `Total cost: ${numbers.run1.total} for round 1, ${numbers.run2.total} for round 2. One task and one model, so this is a first signal, not proof. `,
-        h.a([h.Href("/docs/bench/"), h.Class("text-ink")], ["Method and receipts"]),
-      ],
-    ),
-  ]);
+                ],
+              ),
+              h.tbody(
+                [],
+                numbers.run2.arms.map((after, index) => armRow(h, numbers.run1.arms[index] ?? after, after)),
+              ),
+            ],
+          ),
+        ],
+      ),
+      h.p(
+        [h.Class("mt-5 mb-0 px-2 text-sm text-g6")],
+        [
+          `Total cost ${numbers.run1.total} for round 1, ${numbers.run2.total} for round 2. One task and one model, so this is a first signal, not proof. `,
+          h.a(
+            [h.Href("/docs/bench/"), h.Class("text-k1 underline underline-offset-[5px]")],
+            ["Method and receipts"],
+          ),
+        ],
+      ),
+    ],
+  );
 
 const footer = (h: H): Html =>
   h.footer(
-    [h.Class("border-t border-line")],
+    [h.Class("mx-auto max-w-6xl px-5 pt-6 pb-12")],
     [
       h.div(
         [
           h.Class(
-            "mx-auto flex max-w-page flex-wrap items-center justify-between gap-4 px-6 py-8 text-[13px] text-graphite",
+            "flex flex-wrap items-center justify-between gap-4 rounded-full bg-g1 px-6 py-4 text-[13px] text-g6",
           ),
         ],
         [
-          h.span([h.Class("flex items-center gap-2")], [pixel(h, "tube", 12), "assay"]),
+          h.span([h.Class("flex items-center gap-2 text-k1")], [pixel(h, "tube", 14), "assay"]),
           h.div(
             [h.Class("flex gap-5")],
             [
-              h.a([h.Href("/docs/"), h.Class("text-graphite")], ["Docs"]),
-              h.a([h.Href("/llms.txt"), h.Class("text-graphite")], ["llms.txt"]),
-              h.a([h.Href(repo), h.Class("text-graphite")], ["GitHub"]),
+              h.a([h.Href("/docs/"), h.Class("text-g6 no-underline hover:text-k1")], ["Docs"]),
+              h.a([h.Href("/llms.txt"), h.Class("text-g6 no-underline hover:text-k1")], ["llms.txt"]),
+              h.a([h.Href(repo), h.Class("text-g6 no-underline hover:text-k1")], ["GitHub"]),
             ],
           ),
         ],

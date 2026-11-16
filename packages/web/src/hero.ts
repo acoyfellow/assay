@@ -22,12 +22,12 @@ import {
 
 type H = HtmlBuilder<Message>;
 
-const ink = "var(--color-ink)";
-const graphite = "var(--color-graphite)";
-const quiet = "var(--color-quiet)";
-const line = "var(--color-line)";
-const signal = "var(--color-signal)";
-const paper = "var(--color-paper)";
+const ink = "var(--stage-ink, var(--color-ink))";
+const graphite = "var(--stage-graphite, var(--color-graphite))";
+const quiet = "var(--stage-quiet, var(--color-quiet))";
+const line = "var(--stage-line, var(--color-line))";
+const signal = "var(--stage-signal, var(--color-signal))";
+const paper = "var(--stage-paper, var(--color-paper))";
 
 const laneTop = 52;
 const laneGap = 44;
@@ -300,9 +300,9 @@ export const phaseList = (h: H, clock: number): Html => {
     [h.Class("m-0 mt-8 list-none p-0 font-mono text-[13px]"), h.AriaHidden(true)],
     phases.map((phase, index) =>
       h.li(
-        [h.Class(`flex items-center gap-3 py-1 ${phase === now ? "text-ink" : "text-quiet"}`)],
+        [h.Class(`flex items-center gap-3 py-1 ${phase === now ? "text-k1" : "text-g5"}`)],
         [
-          h.span([h.Class(`size-2 shrink-0 ${phase === now ? "bg-signal" : "bg-line"}`)], []),
+          h.span([h.Class(`size-2 shrink-0 rounded-[2px] ${phase === now ? "bg-ok" : "bg-g3"}`)], []),
           h.span([h.Class("w-4")], [String(index + 1)]),
           phaseText[phase],
         ],

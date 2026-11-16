@@ -8,15 +8,17 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&amp;display=swap">
 <link rel="stylesheet" href="/tokens.css">
 <style>
-html, body { margin: 0; height: 100%; background: var(--wash) url(/brand/patterns/rack-light.svg); color: var(--ink); font: var(--step-1)/1.6 var(--sans); }
-main { min-height: 100%; display: grid; place-items: center; text-align: center; padding: var(--space-4); }
+html, body { margin: 0; height: 100%; background: #ececeb; color: #111112; font: 16px/1.6 "Google Sans Flex", "Helvetica Neue", Arial, sans-serif; }
+main { min-height: 100%; display: grid; place-items: center; padding: 24px; }
+.panel { background: #fff; border-radius: 40px; padding: 56px 64px; text-align: center; box-shadow: 0 40px 80px -40px rgba(10, 10, 12, 0.18); }
 img { image-rendering: pixelated; }
-h1 { margin: var(--space-3) 0 var(--space-1); font-size: var(--step-4); font-weight: 500; letter-spacing: -0.02em; }
-p { margin: 0; color: var(--graphite); }
-a { color: var(--ink); text-underline-offset: 3px; }
+h1 { margin: 16px 0 6px; font-size: 36px; font-weight: 400; font-variation-settings: "wght" 380, "opsz" 96; letter-spacing: -0.03em; }
+h1 span { color: #a3a3a0; }
+p { margin: 0; color: #6e6e6b; }
+a { color: #111112; text-underline-offset: 4px; }
 </style>
 </head>
 <body>
-<main><div><img src="/logo.svg" alt="" width="48" height="48"><h1>Nothing here</h1><p><a href="/">Home</a> · <a href="/docs/">Docs</a></p></div></main>
+<main><div class="panel"><img src="/logo.svg" alt="" width="48" height="48"><h1><span>Not found.</span> Nothing here.</h1><p><a href="/">Home</a> · <a href="/docs/">Docs</a></p></div></main>
 </body>
 </html>
