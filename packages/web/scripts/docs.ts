@@ -133,7 +133,7 @@ ${headTags({
 <details class="side" open><summary>Docs</summary><ul>${nav(page)}</ul></details>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
 </div>
-<footer class="foot"><div class="foot-in"><a href="/">assay</a><a href="/llms.txt">llms.txt</a><a href="/brand/">Brand</a><a href="${repo}">GitHub</a></div></footer>
+<footer class="foot"><div class="foot-in"><a href="/">assay</a><a href="/llms.txt">llms.txt</a><a href="${repo}">GitHub</a></div></footer>
 ${swRegister}
 </body>
 </html>

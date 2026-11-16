@@ -454,7 +454,6 @@ const footer = (h: H): Html =>
             [
               h.a([h.Href("/docs/"), h.Class("text-graphite")], ["Docs"]),
               h.a([h.Href("/llms.txt"), h.Class("text-graphite")], ["llms.txt"]),
-              h.a([h.Href("/brand/"), h.Class("text-graphite")], ["Brand"]),
               h.a([h.Href(repo), h.Class("text-graphite")], ["GitHub"]),
             ],
           ),
