@@ -1,6 +1,7 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { marked } from "marked";
+import { docJsonLd, headTags, site, swRegister } from "./head.ts";
 import type { ArmNumbers } from "./numbers.ts";
 
 type Page = {
@@ -111,10 +112,17 @@ const shell = (page: Page, index: number, html: string) => `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${escapeHtml(page.title)} · assay</title>
-<meta name="description" content="${escapeHtml(page.description)}">
-<meta name="theme-color" content="#ffffff">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+${headTags({
+  title: `${page.title} · assay`,
+  description: page.description,
+  path: page.url,
+  type: "article",
+  jsonLd: docJsonLd(page.title, page.description, page.url, [
+    { name: "assay", path: "/" },
+    { name: "Docs", path: "/docs/" },
+    ...(page.url === "/docs/" ? [] : [{ name: page.title, path: page.url }]),
+  ]),
+})}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&amp;family=Google+Sans+Code:wght@300..800&amp;display=swap">
 <link rel="stylesheet" href="/docs.css">
@@ -126,6 +134,7 @@ const shell = (page: Page, index: number, html: string) => `<!doctype html>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
 </div>
 <footer class="foot"><div class="foot-in"><a href="/">assay</a><a href="/llms.txt">llms.txt</a><a href="/brand/">Brand</a><a href="${repo}">GitHub</a></div></footer>
+${swRegister}
 </body>
 </html>
 `;
@@ -149,4 +158,15 @@ const llms = [
   ...pages.flatMap((page) => [`# ${page.title}`, "", page.body.trim(), ""]),
 ].join("\n");
 writeFileSync(join(web, "public/llms.txt"), llms);
+
+const today = new Date().toISOString().slice(0, 10);
+const sitemapPaths = ["/", ...pages.map((page) => page.url)];
+const sitemap = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ...sitemapPaths.map((path) => `  <url><loc>${site.origin}${path}</loc><lastmod>${today}</lastmod></url>`),
+  "</urlset>",
+  "",
+].join("\n");
+writeFileSync(join(web, "public/sitemap.xml"), sitemap);
 console.log(`docs: ${pages.length} pages, llms.txt ${llms.length} bytes`);

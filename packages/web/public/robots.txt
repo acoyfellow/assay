@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /brand/patterns/
+
+Sitemap: https://assay.coey.dev/sitemap.xml

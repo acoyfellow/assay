@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { foldkit } from "@foldkit/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, type Plugin } from "vite";
+import { headTags, homeJsonLd, site } from "./scripts/head.ts";
 
 const publicDir = fileURLToPath(new URL("./public", import.meta.url));
 
@@ -21,8 +22,17 @@ const docsIndex = (): Plugin => ({
   },
 });
 
+const homeHead = (): Plugin => ({
+  name: "assay-home-head",
+  transformIndexHtml: (html) =>
+    html.replace(
+      /<meta name="assay-head" ?\/?>/,
+      headTags({ title: site.title, description: site.description, path: "/", jsonLd: homeJsonLd }),
+    ),
+});
+
 export default defineConfig({
-  plugins: [docsIndex(), foldkit(), tailwindcss()],
+  plugins: [homeHead(), docsIndex(), foldkit(), tailwindcss()],
   server: { port: 5290, strictPort: true },
   preview: { port: 4174, strictPort: true },
 });

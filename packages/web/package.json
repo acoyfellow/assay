@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "numbers": "bun scripts/numbers.ts",
+    "assets": "bun scripts/assets.ts",
     "patterns": "bun scripts/patterns.ts",
     "docs": "bun scripts/docs.ts",
     "dev": "bun run numbers && bun run docs && vite",

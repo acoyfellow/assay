@@ -3,17 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>assay · evals pick a winner, assay shows what to change next</title>
-    <meta name="description" content="Open source. Run many agents on one goal and score each with a grader it never sees. Frozen plans, a hard budget, one receipt per agent." />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="assay-head" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&amp;family=Google+Sans+Code:wght@300..800&amp;display=swap" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body class="font-sans antialiased">
-    <div id="root"></div>
-    <noscript><h1>assay</h1><p>Run many agents on one goal. Score each with a grader it never sees. <a href="/docs/">Read the docs</a>.</p></noscript>
+    <div id="root">
+      <main style="max-width: 640px; margin: 0 auto; padding: 64px 24px; font-family: sans-serif">
+        <h1>Run many agents on one goal. Grade each one with a check it cannot see.</h1>
+        <p>Assay keeps one receipt and one grade per agent, and computes the score from them. Change one thing, run again, and see if the score moved.</p>
+        <h2>Four rules</h2>
+        <ul>
+          <li>The plan is frozen. Each receipt names its plan.</li>
+          <li>The budget is hard. A seat starts only if its worst-case cost still fits.</li>
+          <li>The grader is hidden. Each seat is graded once, after it stops.</li>
+          <li>The score is recomputed from receipts and grades.</li>
+        </ul>
+        <p><a href="/docs/quick-start/">Quick start</a> · <a href="/docs/">Docs</a> · <a href="/docs/bench/">The bench</a> · <a href="/llms.txt">llms.txt</a></p>
+      </main>
+    </div>
     <script type="module" src="/src/entry.ts"></script>
+    <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js"));</script>
   </body>
 </html>
