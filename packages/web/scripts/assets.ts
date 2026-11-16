@@ -40,22 +40,18 @@ const iconSvg = (size: number, padding: number) => {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="${paper}"/>${tubeRects(offset, scale)}</svg>`;
 };
 
-const bars = [numbers.run1, numbers.run2].flatMap(
-  (run: { arms: { arm: string; passed: number; seats: number }[] }, round: number) =>
-    run.arms.map((arm, index) => ({ ...arm, round, index, focus: round === 1 && arm.arm === "mcp" })),
-);
+const fleetRun = JSON.parse(
+  readFileSync(new URL("../../../examples/tally/runs/first-run.json", import.meta.url), "utf8"),
+) as { receipts: { seat: string; passed: boolean; usd: number; ms: number }[] };
 
 const ogHtml = () => {
-  const unit = 44;
-  const floor = 470;
-  const columns = bars
-    .map((bar) => {
-      const height = Math.round((bar.passed / bar.seats) * 5) * unit;
-      const x = 700 + bar.round * 240 + bar.index * 96;
-      return `<rect x="${x}" y="${floor - height}" width="64" height="${height}" fill="${bar.focus ? signal : ink}"/><text x="${x + 32}" y="${floor + 34}" text-anchor="middle" font-size="22" font-family="Google Sans Code, monospace" fill="#62625f">${bar.arm.toUpperCase()}</text>`;
-    })
+  const rows = fleetRun.receipts
+    .map(
+      (receipt) =>
+        `<li><i class="${receipt.passed ? "pass" : "fail"}"></i><span class="seat">${receipt.seat}</span><span class="${receipt.passed ? "ok" : "no"}">${receipt.passed ? "pass" : "fail"}</span><span class="cost">$${receipt.usd.toFixed(2)}</span></li>`,
+    )
     .join("");
-  return `<!doctype html><html><head><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Google+Sans+Code:wght@300..800&display=swap"><style>html,body{margin:0}body{width:1200px;height:630px;background:${paper};font-family:"Google Sans Flex",sans-serif;color:${ink};position:relative;overflow:hidden}.word{position:absolute;left:72px;top:64px;display:flex;align-items:center;gap:16px;font-size:36px;letter-spacing:-.02em}h1{position:absolute;left:72px;top:170px;width:560px;margin:0;font-size:58px;line-height:1.06;font-weight:500;letter-spacing:-.03em}p{position:absolute;left:72px;bottom:64px;margin:0;font-size:22px;color:#62625f}svg.c{position:absolute;left:0;top:0}</style></head><body><div class="word"><svg width="48" height="48" viewBox="0 0 48 48" shape-rendering="crispEdges">${tubeRects(0, 4)}</svg>assay</div><h1>Run many agents on one goal. Grade each one with a check it cannot see.</h1><p>assay.coey.dev</p><svg class="c" width="1200" height="630" shape-rendering="crispEdges"><rect x="680" y="${floor}" width="460" height="3" fill="${ink}"/>${columns}<text x="780" y="150" text-anchor="middle" font-size="22" font-family="Google Sans Code, monospace" fill="#9b9b97">round 1</text><text x="1020" y="150" text-anchor="middle" font-size="22" font-family="Google Sans Code, monospace" fill="#9b9b97">round 2</text></svg></body></html>`;
+  return `<!doctype html><html><head><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Google+Sans+Code:wght@300..800&display=swap"><style>html,body{margin:0}body{width:1200px;height:630px;background:${paper};font-family:"Google Sans Flex",sans-serif;color:${ink};position:relative;overflow:hidden}.word{position:absolute;left:72px;top:64px;display:flex;align-items:center;gap:16px;font-size:36px;letter-spacing:-.02em}h1{position:absolute;left:72px;top:190px;width:520px;margin:0;font-size:68px;line-height:1.02;font-weight:500;letter-spacing:-.03em}p{position:absolute;left:72px;bottom:64px;margin:0;font-size:22px;color:#62625f}.run{position:absolute;left:660px;top:150px;width:470px;border-top:3px solid ${ink};padding-top:18px;font-family:"Google Sans Code",monospace}.cmd{font-size:19px;color:#62625f;margin:0 0 14px}ul{list-style:none;margin:0;padding:0}li{display:flex;align-items:center;gap:16px;font-size:22px;padding:11px 0;border-bottom:1px solid #e4e4e2}i{width:14px;height:14px;flex:none}i.pass{background:${signal}}i.fail{border:2px solid ${ink};box-sizing:border-box}.seat{flex:1}.ok{color:${signal};width:60px}.no{color:#62625f;width:60px}.cost{color:#62625f;width:70px;text-align:right}</style></head><body><div class="word"><svg width="48" height="48" viewBox="0 0 48 48" shape-rendering="crispEdges">${tubeRects(0, 4)}</svg>assay</div><h1>Spin up a fleet of coding agents.</h1><p>assay.coey.dev</p><div class="run"><div class="cmd">$ assay-fleet run plan.json</div><ul>${rows}</ul></div></body></html>`;
 };
 
 const icoFromPngs = (pngs: { size: number; data: Buffer }[]) => {

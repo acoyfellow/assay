@@ -21,6 +21,19 @@
         "vitest": "^5.1.0",
       },
     },
+    "packages/fleet": {
+      "name": "@assay/fleet",
+      "bin": {
+        "assay-fleet": "./src/cli.ts",
+      },
+      "dependencies": {
+        "effect": "^4.1.4",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.4.4",
+        "typescript": "^7.0.2",
+      },
+    },
     "packages/server": {
       "name": "@assay/server",
       "bin": {
@@ -65,6 +78,8 @@
     "@alchemy.run/sigil": ["@alchemy.run/sigil@0.1.0-alpha.4", "", { "peerDependencies": { "@types/react": ">=19.2.0", "react-devtools-core": ">=6.1.2" }, "optionalPeers": ["@types/react", "react-devtools-core"] }, "sha512-d6Uo16C2P6Wk7TNoYt4qzjjNGyjsrJLjq8bBotl86Nmcp/U6+R34/n4CZomqFERF2wMinut2DBqWNeUQPTBtFQ=="],
 
     "@assay/domain": ["@assay/domain@workspace:packages/domain"],
+
+    "@assay/fleet": ["@assay/fleet@workspace:packages/fleet"],
 
     "@assay/server": ["@assay/server@workspace:packages/server"],
 

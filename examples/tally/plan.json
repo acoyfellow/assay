@@ -1,0 +1,30 @@
+{
+  "name": "tally",
+  "repo": "seed",
+  "model": "claude-haiku-4-5",
+  "parallel": 6,
+  "minutesPerSeat": 8,
+  "worstCaseUsdPerSeat": 0.4,
+  "budgetUsd": 6,
+  "repeat": 2,
+  "seats": [
+    {
+      "id": "cart-merge",
+      "task": "tasks/cart-merge.md",
+      "writable": ["src/cart.ts", "test/cart.test.ts"],
+      "grade": "sh \"$ASSAY_PLAN_DIR/grade.sh\" cart-merge"
+    },
+    {
+      "id": "catalog-search",
+      "task": "tasks/catalog-search.md",
+      "writable": ["src/catalog.ts", "test/catalog.test.ts"],
+      "grade": "sh \"$ASSAY_PLAN_DIR/grade.sh\" catalog-search"
+    },
+    {
+      "id": "discount-cap",
+      "task": "tasks/discount-cap.md",
+      "writable": ["src/discount.ts", "test/discount.test.ts"],
+      "grade": "sh \"$ASSAY_PLAN_DIR/grade.sh\" discount-cap"
+    }
+  ]
+}

@@ -15,4 +15,8 @@ echo "== domain stories"
 echo "== cli + mcp end to end"
 bun packages/server/test/e2e.ts
 
+echo "== fleet plan and fake fleet run"
+bun packages/fleet/test/plan.test.ts
+bun packages/fleet/test/fleet.test.ts
+
 echo "GATE PASS"

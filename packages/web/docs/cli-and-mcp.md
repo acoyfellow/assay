@@ -1,8 +1,10 @@
 ---
 title: CLI and MCP
-description: One API, two surfaces. Give your agent the one it uses best.
+description: Drive the ledger from your own runner or agent, over the CLI or MCP.
 order: 4
 ---
+
+You only need this if you write your own runner. `assay-fleet run` already calls these for you.
 
 Assay has one API. The CLI and the MCP tools both come from it, so they take the same inputs and refuse the same things. `--help` and the MCP tool schema use the same words.
 

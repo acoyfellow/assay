@@ -11,16 +11,16 @@
   <body class="font-sans antialiased">
     <div id="root">
       <main style="max-width: 640px; margin: 0 auto; padding: 64px 24px; font-family: sans-serif">
-        <h1>Run many agents on one goal. Grade each one with a check it cannot see.</h1>
-        <p>Assay keeps one receipt and one grade per agent, and computes the score from them. Change one thing, run again, and see if the score moved.</p>
-        <h2>Four rules</h2>
-        <ul>
-          <li>The plan is frozen. Each receipt names its plan.</li>
-          <li>The budget is hard. A seat starts only if its worst-case cost still fits.</li>
-          <li>The grader is hidden. Each seat is graded once, after it stops.</li>
-          <li>The score is recomputed from receipts and grades.</li>
-        </ul>
-        <p><a href="/docs/quick-start/">Quick start</a> · <a href="/docs/">Docs</a> · <a href="/docs/bench/">The bench</a> · <a href="/llms.txt">llms.txt</a></p>
+        <h1>Spin up a fleet of coding agents.</h1>
+        <p>Write a plan, run one command. Each agent gets its own copy of your repo and can only write the files you allow. When it stops, a test it never saw checks the work.</p>
+        <h2>How it works</h2>
+        <ol>
+          <li>Write a plan: a repo, a model, and a list of tasks.</li>
+          <li>Set a budget. Each agent starts only if its worst-case cost still fits.</li>
+          <li>When an agent stops, assay runs your grade command in its copy.</li>
+          <li>Read one receipt per agent: what it did, what it cost, and whether it passed.</li>
+        </ol>
+        <p><a href="/docs/quick-start/">Quick start</a> · <a href="/docs/">Docs</a> · <a href="/llms.txt">llms.txt</a></p>
       </main>
     </div>
     <script type="module" src="/src/entry.ts"></script>

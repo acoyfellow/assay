@@ -3,7 +3,7 @@ import { installLine } from "./command.ts";
 import { Message } from "./message.ts";
 import type { Model, Surface } from "./model.ts";
 import numbers from "./numbers.json";
-import { type Bar, cellsOf, type Drawing, figureGeometry, layoutBars } from "./pixels.ts";
+import { cellsOf, type Drawing } from "./pixels.ts";
 
 type H = HtmlBuilder<Message>;
 type Arm = (typeof numbers.run2.arms)[number];
@@ -80,93 +80,45 @@ const nav = (h: H): Html =>
     ],
   );
 
-const barsFromNumbers = (): readonly Bar[] =>
-  [numbers.run1, numbers.run2].flatMap((run, round) =>
-    run.arms.map((arm) => ({
-      label: arm.arm.toUpperCase(),
-      passed: arm.passed,
-      seats: arm.seats,
-      round,
-      focus: round === 1 && arm.arm === "mcp",
-    })),
-  );
+type FleetSeat = (typeof numbers.fleet.seats)[number];
 
-const figureText = (h: H, x: number, y: number, label: string, tone: string): Html =>
-  h.text(
+const fleetCell = (h: H, seat: FleetSeat): Html =>
+  h.li(
+    [h.Class("flex items-center gap-3 border-b border-line py-2.5 font-mono text-[13px]")],
     [
-      h.X(String(x)),
-      h.Y(String(y)),
-      h.TextAnchor("middle"),
-      h.FontSize("2.6"),
-      h.FontFamily("Google Sans Code, monospace"),
-      h.Fill(tone),
+      h.span([h.Class(seat.passed ? "size-2 shrink-0 bg-signal" : "size-2 shrink-0 border border-ink")], []),
+      h.span([h.Class("min-w-0 flex-1 truncate text-ink")], [seat.seat]),
+      h.span(
+        [h.Class(seat.passed ? "w-10 text-signal" : "w-10 text-graphite")],
+        [seat.passed ? "pass" : "fail"],
+      ),
+      h.span([h.Class("hidden w-16 text-right text-graphite sm:inline")], [`${seat.turns} turns`]),
+      h.span([h.Class("w-16 text-right text-graphite")], [seat.cost]),
+      h.span([h.Class("w-10 text-right text-graphite")], [`${seat.seconds}s`]),
     ],
-    [label],
   );
 
-const passFigure = (h: H): Html => {
-  const { unit, floor, width, height, barWidth } = figureGeometry;
-  const bars = layoutBars(barsFromNumbers());
-  return h.figure(
-    [h.Class("m-0 border-t border-ink pt-4")],
+const fleetFigure = (h: H): Html =>
+  h.figure(
+    [h.Class("m-0 border-t border-ink pt-4"), h.DataAttribute("figure", "fleet-run")],
     [
-      h.svg(
-        [
-          h.ViewBox(`0 0 ${width} ${height}`),
-          h.ShapeRendering("crispEdges"),
-          h.Role("img"),
-          h.AriaLabel(
-            `Seats passed out of ${numbers.seatsPerArm}. Round 1: ${numbers.run1.arms.map((a) => `${a.arm} ${a.passed}`).join(", ")}. Round 2: ${numbers.run2.arms.map((a) => `${a.arm} ${a.passed}`).join(", ")}.`,
-          ),
-          h.Class("block h-auto w-full max-w-[520px]"),
-          h.DataAttribute("figure", "pass-by-round"),
-        ],
-        [
-          ...[0, 1, 2, 3, 4, 5].map((step) =>
-            h.rect(
-              [
-                h.X("0"),
-                h.Y(String(floor - step * unit)),
-                h.Width("2"),
-                h.Height("0.5"),
-                h.Fill("var(--color-quiet)"),
-              ],
-              [],
-            ),
-          ),
-          h.rect(
-            [h.X("3"), h.Y(String(floor)), h.Width("90"), h.Height("0.5"), h.Fill("var(--color-ink)")],
-            [],
-          ),
-          ...bars.map((bar) =>
-            h.rect(
-              [
-                h.X(String(bar.x)),
-                h.Y(String(bar.top)),
-                h.Width(String(barWidth)),
-                h.Height(String(bar.height)),
-                h.Fill(bar.focus ? "var(--color-signal)" : "var(--color-ink)"),
-              ],
-              [],
-            ),
-          ),
-          ...bars.map((bar) =>
-            figureText(h, bar.x + barWidth / 2, floor + 3.6, bar.label, "var(--color-graphite)"),
-          ),
-          figureText(h, 21, 2.6, "round 1", "var(--color-quiet)"),
-          figureText(h, 65, 2.6, "round 2", "var(--color-quiet)"),
-        ],
+      h.pre(
+        [h.Class("m-0 overflow-x-auto font-mono text-[13px] text-graphite")],
+        [h.code([], [`$ assay-fleet run examples/tally/plan.json`])],
+      ),
+      h.ul(
+        [h.Class("mt-3 mb-0 list-none p-0")],
+        numbers.fleet.seats.map((seat) => fleetCell(h, seat)),
       ),
       h.figcaption(
         [h.Class("mt-3 text-[13px] text-graphite")],
         [
           h.b([h.Class("font-medium text-ink")], ["Figure 1. "]),
-          `Seats that passed, out of ${numbers.seatsPerArm}, by surface. ${numbers.model} on ${numbers.harness}. One sentence was added to the model between rounds.`,
+          `A real run. ${numbers.fleet.agents} agents at once on three coding tasks in a small shop repo, each task twice. ${numbers.fleet.passed} passed the hidden tests. ${numbers.fleet.usd} total, ${numbers.fleet.seconds} seconds.`,
         ],
       ),
     ],
   );
-};
 
 const hero = (h: H, model: Model): Html =>
   h.section(
@@ -181,12 +133,12 @@ const hero = (h: H, model: Model): Html =>
                 "m-0 text-[36px] leading-[1.08] font-medium tracking-[-0.025em] text-balance sm:text-[44px]",
               ),
             ],
-            ["Run many agents on one goal. Grade each one with a check it cannot see."],
+            ["Spin up a fleet of coding agents."],
           ),
           h.p(
             [h.Class("mt-6 mb-0 text-[17px] text-graphite text-pretty")],
             [
-              "Assay keeps one receipt and one grade per agent, and computes the score from them. Change one thing, run again, and see if the score moved.",
+              "Write a plan, run one command. Each agent gets its own copy of your repo and can only write the files you allow. When it stops, a test it never saw checks the work.",
             ],
           ),
           h.div(
@@ -220,9 +172,57 @@ const hero = (h: H, model: Model): Html =>
           ),
         ],
       ),
-      h.div([h.Class("mt-16 max-w-measure")], [passFigure(h)]),
+      h.div([h.Class("mt-16 max-w-measure")], [fleetFigure(h)]),
     ],
   );
+
+const planExample = `{
+  "name": "tally",
+  "repo": "seed",
+  "model": "claude-haiku-4-5",
+  "parallel": 6,
+  "repeat": 2,
+  "budgetUsd": 6,
+  "worstCaseUsdPerSeat": 0.4,
+  "seats": [
+    {
+      "id": "cart-merge",
+      "task": "tasks/cart-merge.md",
+      "writable": ["src/cart.ts", "test/cart.test.ts"],
+      "grade": "sh grade.sh cart-merge"
+    }
+  ]
+}`;
+
+const howItWorks = (h: H): Html =>
+  section(h, "01", "How it works", [
+    h.ol(
+      [h.Class("m-0 list-none p-0")],
+      [
+        [
+          "plan",
+          "Write a plan",
+          "A repo, a model, and a list of tasks. Each task names the files the agent may change and the command that grades it.",
+        ],
+        ["budget", "Set a budget", "Each agent starts only if its worst-case cost still fits. Run 6 or 60."],
+        [
+          "grader",
+          "Grade in secret",
+          "When an agent stops, assay runs your grade command in its copy. The agent never saw it.",
+        ],
+        [
+          "receipt",
+          "Read the receipts",
+          "One receipt per agent: what it did, what it cost, and whether it passed. The score is added up from those.",
+        ],
+      ].map(([drawing, title, body]) => rule(h, drawing as Drawing, title as string, body as string)),
+    ),
+    h.pre(
+      [h.Class("mt-8 mb-0 overflow-x-auto rounded bg-wash p-5 font-mono text-[13px] leading-[1.7] text-ink")],
+      [h.code([], [planExample])],
+    ),
+    h.p([h.Class("mt-3 mb-0 text-[13px] text-graphite")], ["examples/tally/plan.json, shortened."]),
+  ]);
 
 const sectionHead = (h: H, n: string, title: string): Html =>
   h.div(
@@ -256,33 +256,6 @@ const rule = (h: H, drawing: Drawing, title: string, body: string): Html =>
     ],
   );
 
-const rules = (h: H): Html =>
-  section(h, "01", "Four rules", [
-    h.p(
-      [h.Class("mt-0 mb-8 text-[17px] text-graphite")],
-      ["The rules stay the same every round. That is what lets you compare one round with the next."],
-    ),
-    h.ul(
-      [h.Class("m-0 list-none p-0")],
-      [
-        rule(h, "plan", "The plan is frozen", "Each receipt names its plan. A new plan needs a new assay."),
-        rule(h, "budget", "The budget is hard", "A seat starts only if its worst-case cost still fits."),
-        rule(
-          h,
-          "grader",
-          "The grader is hidden",
-          "Each seat is graded once, after it stops. It cannot read or change the grader.",
-        ),
-        rule(
-          h,
-          "receipt",
-          "The score is recomputed",
-          "From receipts and grades, not from what the agent reports.",
-        ),
-      ],
-    ),
-  ]);
-
 const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
   h.button(
     [
@@ -299,7 +272,7 @@ const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
   );
 
 const surfaces = (h: H, model: Model): Html =>
-  section(h, "02", "CLI and MCP", [
+  section(h, "02", "Drive it from an agent", [
     h.p(
       [h.Class("mt-0 mb-8 text-[17px] text-graphite")],
       [
@@ -350,11 +323,11 @@ const armRow = (h: H, before: Arm, after: Arm): Html =>
   );
 
 const bench = (h: H): Html =>
-  section(h, "03", "What we measured", [
+  section(h, "03", "One thing we measured", [
     h.p(
       [h.Class("mt-0 mb-8 text-[17px] text-graphite")],
       [
-        `We tested assay with assay. ${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
+        `An early test, from before the fleet runner: can an agent drive the ledger itself? ${numbers.seatsPerArm} seats per surface, ${numbers.model} on ${numbers.harness}. In round 1, most seats sent a command to the wrong id. For round 2, we added one sentence that says which id each command takes.`,
       ],
     ),
     h.div(
@@ -424,4 +397,4 @@ const footer = (h: H): Html =>
   );
 
 export const view = (model: Model, h: H): Html =>
-  h.div([], [nav(h), h.main([], [hero(h, model), rules(h), surfaces(h, model), bench(h)]), footer(h)]);
+  h.div([], [nav(h), h.main([], [hero(h, model), howItWorks(h), surfaces(h, model), bench(h)]), footer(h)]);

@@ -1,7 +1,7 @@
 {
   "name": "assay",
   "short_name": "assay",
-  "description": "Run many agents on one goal. Grade each one with a check it cannot see.",
+  "description": "Spin up a fleet of coding agents. Each gets its own copy of your repo. A test it never saw checks the work.",
   "id": "/",
   "start_url": "/",
   "scope": "/",

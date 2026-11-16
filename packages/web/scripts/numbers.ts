@@ -51,12 +51,31 @@ const run2 = receiptsIn(join(bench, "receipts"));
 const totalUsd = (receipts: ReadonlyArray<Receipt>) =>
   `$${(receipts.reduce((sum, receipt) => sum + receipt.microUsd, 0) / 1e6).toFixed(2)}`;
 
+type FleetReceipt = { seat: string; passed: boolean; turns: number; usd: number; ms: number };
+const fleetRun = JSON.parse(
+  readFileSync(new URL("../../../examples/tally/runs/first-run.json", import.meta.url), "utf8"),
+) as { receipts: FleetReceipt[] };
+const fleet = {
+  agents: fleetRun.receipts.length,
+  passed: fleetRun.receipts.filter((receipt) => receipt.passed).length,
+  usd: `$${fleetRun.receipts.reduce((sum, receipt) => sum + receipt.usd, 0).toFixed(2)}`,
+  seconds: Math.round(Math.max(...fleetRun.receipts.map((receipt) => receipt.ms)) / 1000),
+  seats: fleetRun.receipts.map((receipt) => ({
+    seat: receipt.seat,
+    passed: receipt.passed,
+    turns: receipt.turns,
+    cost: `$${receipt.usd.toFixed(4)}`,
+    seconds: Math.round(receipt.ms / 1000),
+  })),
+};
+
 const numbers = {
   model: "Claude Haiku 4.5",
   harness: "Pi",
   seatsPerArm: run2.filter((receipt) => receipt.arm === "cli").length,
   run1: { arms: armsOf(run1), total: totalUsd(run1) },
   run2: { arms: armsOf(run2), total: totalUsd(run2) },
+  fleet,
 };
 
 writeFileSync(new URL("../src/numbers.json", import.meta.url), `${JSON.stringify(numbers, null, 2)}\n`);

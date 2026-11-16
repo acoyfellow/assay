@@ -4,7 +4,9 @@ description: The words assay uses, its commands, and the rules that refuse them.
 order: 3
 ---
 
-Assay is a domain model built with [@alchemy.run/domain](https://alchemy.run/domain). Every rule is in one place. Today the model runs in memory, for tests and for the local server.
+The fleet runner keeps its books in a domain model built with [@alchemy.run/domain](https://alchemy.run/domain). Every rule about budgets, receipts and grades is in one place. `assay-fleet run` starts a local copy of it for each run.
+
+You can also drive the model yourself, from the CLI or over MCP, if you write your own runner. See [CLI and MCP](/docs/cli-and-mcp/).
 
 ## Words
 

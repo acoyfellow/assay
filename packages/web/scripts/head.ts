@@ -1,15 +1,14 @@
 export const site = {
   origin: "https://assay.coey.dev",
   name: "assay",
-  title: "assay · run many agents, grade each with a hidden check",
+  title: "assay · spin up a fleet of coding agents",
   description:
-    "Run many agents on one goal. Grade each one with a check it cannot see. Keep one receipt per agent and recompute the score.",
+    "Write a plan, run one command, and get a fleet of coding agents. Each gets its own copy of your repo. A test it can't see checks the work.",
   repo: "https://github.com/acoyfellow/assay",
   author: "Jordan Coeyman",
   x: "@acoyfellow",
   image: "/og.png",
-  imageAlt:
-    "assay. Run many agents on one goal. Grade each one with a check it cannot see. A bar chart of seats passed by round.",
+  imageAlt: "assay. Spin up a fleet of coding agents. A grid of agents, some passed, some failed.",
 } as const;
 
 const escapeAttribute = (value: string) =>

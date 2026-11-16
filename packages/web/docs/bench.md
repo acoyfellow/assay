@@ -1,10 +1,10 @@
 ---
 title: The bench
-description: CLI vs MCP, measured with assay. Two rounds, one change between them.
+description: An early test. Do agents drive the assay ledger better through the CLI or MCP?
 order: 5
 ---
 
-Our first test with assay was of assay. Does an agent do better with the CLI or with the MCP tools?
+An early test, run before the fleet runner existed. Does an agent drive the assay ledger better with the CLI or with the MCP tools?
 
 ## How it ran
 

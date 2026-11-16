@@ -2,7 +2,7 @@
   "name": "assay",
   "private": true,
   "type": "module",
-  "description": "Run many agents on the same goal. Score each with a grader it never sees.",
+  "description": "Spin up a fleet of coding agents. Each gets its own copy of your repo. A test it never saw checks the work.",
   "license": "MIT",
   "repository": {
     "type": "git",

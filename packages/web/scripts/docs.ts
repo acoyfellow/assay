@@ -149,7 +149,7 @@ pages.forEach((page, index) => {
 const llms = [
   "# assay",
   "",
-  "> Run many agents on one goal. Score each with a grader it never sees.",
+  "> Spin up a fleet of coding agents. Each gets its own copy of your repo, and a test it never saw checks the work.",
   "",
   "## Docs",
   "",
