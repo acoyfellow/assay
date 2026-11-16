@@ -7,6 +7,7 @@ import { AlreadyClaimed, ClaimSeat, OverBudget, SeatClaimed, UnknownSeat } from 
 import { NotRunning } from "./NotRunning.rejection.ts";
 import { SeatPlan } from "./SeatPlan.ts";
 import { NotClaimed, SeatSettled, SettleSeat } from "./SettleSeat.command.ts";
+import { NotOpen, SeatSkipped, SkipSeat } from "./SkipSeat.command.ts";
 import {
   AlreadyStarted,
   AssayStarted,
@@ -75,7 +76,7 @@ export class Assay extends Domain.Aggregate("Assay", {
   id: AssayId,
   state: AssayState,
   initial: { _tag: "Unstarted" },
-  commands: [StartAssay, ClaimSeat, SettleSeat, CancelAssay],
+  commands: [StartAssay, ClaimSeat, SettleSeat, SkipSeat, CancelAssay],
   decide: {
     StartAssay: (assay, cmd) => {
       if (assay._tag !== "Unstarted") return new AlreadyStarted();
@@ -129,6 +130,16 @@ export class Assay extends Domain.Aggregate("Assay", {
         }),
       ];
     },
+    SkipSeat: (assay, cmd, ctx) => {
+      const running = runningFor(assay, ctx.id);
+      if (running._tag !== "Running") return running;
+      const slot = running.seats[cmd.seat];
+      if (slot === undefined) return new UnknownSeat({ seat: cmd.seat, seats: Object.keys(running.seats) });
+      if (slot.stage !== "open") return new NotOpen({ seat: cmd.seat });
+      const others = Object.entries(running.seats).filter(([seat]) => seat !== cmd.seat);
+      const finished = others.every(([, other]) => other.stage === "settled");
+      return [new SeatSkipped({ seat: cmd.seat, reason: cmd.reason, finished })];
+    },
     CancelAssay: (assay, cmd, ctx) => {
       const running = runningFor(assay, ctx.id);
       if (running._tag !== "Running") return running;
@@ -178,6 +189,17 @@ export class Assay extends Domain.Aggregate("Assay", {
         planHash: settled.planHash,
         budgetMicroUsd: settled.budgetMicroUsd,
         committedMicroUsd,
+        cancelled: false,
+      };
+    },
+    SeatSkipped: (state, event) => {
+      const skipped = withSlot(state, event.seat, (slot) => ({ ...slot, stage: "settled" }));
+      if (skipped._tag !== "Running" || !event.finished || !allSettled(skipped.seats)) return skipped;
+      return {
+        _tag: "Finished" as const,
+        planHash: skipped.planHash,
+        budgetMicroUsd: skipped.budgetMicroUsd,
+        committedMicroUsd: skipped.committedMicroUsd,
         cancelled: false,
       };
     },

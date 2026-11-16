@@ -14,6 +14,7 @@ import {
 } from "../src/Assay/ClaimSeat.command.ts";
 import { NotRunning } from "../src/Assay/NotRunning.rejection.ts";
 import { SeatSettled } from "../src/Assay/SettleSeat.command.ts";
+import { NotOpen, SeatSkipped, SkipSeat } from "../src/Assay/SkipSeat.command.ts";
 import {
   AlreadyStarted,
   AssayStarted,
@@ -51,17 +52,23 @@ const started = new AssayStarted({
 const claim = (seat: string) => new SeatClaimed({ seat, runner: "local", reservedMicroUsd: 100_000 });
 const s1 = Seat.ref(seatIdOf(id, "s1"));
 const s2 = Seat.ref(seatIdOf(id, "s2"));
-const receipt = (seat: string, outcome: "stopped" | "died", spentMicroUsd: number, total = spentMicroUsd) =>
+const receipt = (
+  seat: string,
+  outcome: "stopped" | "died" | "killed",
+  spentMicroUsd: number,
+  total = spentMicroUsd,
+) =>
   new ReceiptRecorded({
     assayId: id,
     seat,
     planHash: "p1",
     outcome,
     turns: 3,
+    steers: 0,
     spentMicroUsd,
     totalSpentMicroUsd: total,
   });
-const stop = (seat: string, spentMicroUsd: number, outcome: "stopped" | "died" = "stopped") =>
+const stop = (seat: string, spentMicroUsd: number, outcome: "stopped" | "died" | "killed" = "stopped") =>
   new RecordReceipt({
     assayId: id,
     seat,
@@ -301,5 +308,36 @@ it.effect("a claim sent to a seat id says to use the assay id", () =>
         hint: '"a-1/s1" is a seat id. Send this command to the assay id "a-1" and name the seat in the input.',
       }),
     ),
+  ),
+);
+
+it.effect("a seat that no longer fits is skipped, and the assay still finishes", () =>
+  story(
+    Story.given(run, started, claim("s1")),
+    Story.when(run, new SkipSeat({ seat: "s2", reason: "over budget" })),
+    Story.then(run, new SeatSkipped({ seat: "s2", reason: "over budget", finished: false })),
+    Story.when(run, new SkipSeat({ seat: "s1", reason: "again" })),
+    Story.rejected(new NotOpen({ seat: "s1" })),
+    Story.view(AssayScore, run, { skipped: 1, status: "running" }),
+  ),
+);
+
+it.effect("a killed seat keeps its receipt and can still be graded", () =>
+  story(
+    Story.given(run, started, claim("s1")),
+    Story.when(s1, stop("s1", 9, "killed")),
+    Story.then(s1, receipt("s1", "killed", 9)),
+    Story.when(s1, new RecordGrade({ passed: false, reason: "killed by a person" })),
+    Story.then(
+      s1,
+      new SeatGraded({
+        assayId: id,
+        seat: "s1",
+        passed: false,
+        reason: "killed by a person",
+        totalSpentMicroUsd: 9,
+      }),
+    ),
+    Story.then(run, new SeatSettled({ seat: "s1", spentMicroUsd: 9, passed: false, finished: false })),
   ),
 );

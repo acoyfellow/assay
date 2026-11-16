@@ -5,6 +5,7 @@ import * as Layer from "effect/Layer";
 export const calls = [
   "StartAssay",
   "ClaimSeat",
+  "SkipSeat",
   "CancelAssay",
   "RecordReceipt",
   "RecordGrade",

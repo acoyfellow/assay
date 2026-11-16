@@ -43,6 +43,7 @@ export class Seat extends Domain.Aggregate("Seat", {
           planHash: cmd.planHash,
           outcome: cmd.outcome,
           turns: cmd.turns,
+          steers: cmd.steers ?? 0,
           spentMicroUsd: cmd.spentMicroUsd,
           totalSpentMicroUsd: spentSoFar(seat) + cmd.spentMicroUsd,
         }),
@@ -64,7 +65,7 @@ export class Seat extends Domain.Aggregate("Seat", {
   },
   evolve: {
     ReceiptRecorded: (seat, event) => ({
-      _tag: event.outcome === "stopped" ? ("Stopped" as const) : ("Died" as const),
+      _tag: event.outcome === "died" ? ("Died" as const) : ("Stopped" as const),
       assayId: event.assayId,
       seat: event.seat,
       planHash: event.planHash,

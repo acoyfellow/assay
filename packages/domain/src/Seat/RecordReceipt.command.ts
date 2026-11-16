@@ -4,7 +4,10 @@ import { AssayId } from "../Assay/Assay.id.ts";
 import { MicroUsd } from "../Money.ts";
 import { SeatId } from "./Seat.id.ts";
 
-export const Outcome = Schema.Literals(["stopped", "died"]);
+export const Outcome = Schema.Literals(["stopped", "died", "killed"]).annotate({
+  description:
+    "stopped: the agent finished. died: it crashed and may be resumed. killed: a person or the spend cap stopped it.",
+});
 export type Outcome = typeof Outcome.Type;
 
 export class ReceiptRecorded extends Domain.Event("ReceiptRecorded", {
@@ -13,6 +16,7 @@ export class ReceiptRecorded extends Domain.Event("ReceiptRecorded", {
   planHash: Schema.String,
   outcome: Outcome,
   turns: Schema.Int,
+  steers: Schema.Int,
   spentMicroUsd: MicroUsd,
   totalSpentMicroUsd: MicroUsd,
 }) {}
@@ -38,6 +42,9 @@ export class RecordReceipt extends Domain.Command(
       planHash: Schema.String,
       outcome: Outcome,
       turns: Schema.Int,
+      steers: Schema.optional(Schema.Int).annotate({
+        description: "Messages a person sent to the agent while it ran.",
+      }),
       spentMicroUsd: MicroUsd,
     },
     events: [ReceiptRecorded],

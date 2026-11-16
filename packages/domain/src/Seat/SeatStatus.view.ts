@@ -9,20 +9,30 @@ export class SeatStatus extends Domain.View(
     from: [Seat],
     key: Seat,
     state: Schema.Struct({
-      stage: Schema.Literals(["waiting", "died", "stopped", "graded"]),
+      stage: Schema.Literals(["waiting", "died", "stopped", "killed", "graded"]),
       attempts: Schema.Int,
       turns: Schema.Int,
+      steers: Schema.Int,
       spentMicroUsd: MicroUsd,
       passed: Schema.NullOr(Schema.Boolean),
       reason: Schema.String,
     }),
-    initial: { stage: "waiting", attempts: 0, turns: 0, spentMicroUsd: 0, passed: null, reason: "" },
+    initial: {
+      stage: "waiting",
+      attempts: 0,
+      turns: 0,
+      steers: 0,
+      spentMicroUsd: 0,
+      passed: null,
+      reason: "",
+    },
     evolve: {
       ReceiptRecorded: (status, event) => ({
         ...status,
-        stage: event.outcome === "stopped" ? ("stopped" as const) : ("died" as const),
+        stage: event.outcome,
         attempts: status.attempts + 1,
         turns: status.turns + event.turns,
+        steers: status.steers + event.steers,
         spentMicroUsd: event.totalSpentMicroUsd,
       }),
       SeatGraded: (status, event) => ({
