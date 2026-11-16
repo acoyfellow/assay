@@ -5,7 +5,7 @@ export type Surface = typeof Surface.Type;
 
 export const Model = Schema.Struct({
   surface: Surface,
-  copied: Schema.Boolean,
+  copied: Schema.String,
   clock: Schema.Number,
   playing: Schema.Boolean,
 });

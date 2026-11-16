@@ -4,8 +4,8 @@ import { Surface } from "./model.ts";
 
 export const Message = defineMessageUnion({
   ChoseSurface: { surface: Surface },
-  ClickedCopy: {},
-  Copied: {},
+  ClickedCopy: { step: Schema.String },
+  Copied: { step: Schema.String },
   Ticked: { deltaTime: Schema.Number },
   ToggledPlay: {},
 });

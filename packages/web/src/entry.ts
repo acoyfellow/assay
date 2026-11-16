@@ -14,7 +14,7 @@ Runtime.run(
   Runtime.makeElement({
     Model,
     init: () => ({
-      model: { surface: "cli" as const, copied: false, clock: startClock, playing: startPlaying },
+      model: { surface: "cli" as const, copied: "", clock: startClock, playing: startPlaying },
       commands: [],
     }),
     update,

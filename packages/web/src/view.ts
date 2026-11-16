@@ -1,5 +1,5 @@
 import type { Html, HtmlBuilder } from "foldkit/html";
-import { installLine } from "./command.ts";
+import { installSteps } from "./command.ts";
 import { heroStage, phaseList } from "./hero.ts";
 import { Message } from "./message.ts";
 import type { Model, Surface } from "./model.ts";
@@ -178,22 +178,51 @@ const hero = (h: H, model: Model): Html =>
           ),
         ],
       ),
+    ],
+  );
+
+const installStep = (h: H, model: Model, step: (typeof installSteps)[number], index: number): Html =>
+  h.li(
+    [h.Class("border-b border-line py-6 first:pt-0 last:border-b-0")],
+    [
       h.div(
-        [h.Class("mx-auto max-w-page px-6 pb-14")],
+        [h.Class("flex items-baseline gap-4")],
         [
+          h.span([h.Class("w-5 shrink-0 font-mono text-[13px] text-quiet")], [String(index + 1)]),
           h.div(
-            [h.Class("flex min-w-0 max-w-measure items-center gap-2 rounded bg-wash py-1.5 pr-1.5 pl-4")],
+            [h.Class("min-w-0 flex-1")],
             [
-              h.code([h.Class("min-w-0 flex-1 truncate font-mono text-[13px] text-graphite")], [installLine]),
-              h.button(
+              h.h3([h.Class("m-0 text-[17px] font-medium")], [step.title]),
+              h.p([h.Class("mt-1 mb-0 text-[15px] text-graphite")], [step.body]),
+              h.div(
+                [h.Class("mt-4 rounded bg-ink")],
                 [
-                  h.Type("button"),
-                  h.OnClick(Message.ClickedCopy()),
-                  h.Class(
-                    "shrink-0 cursor-pointer rounded border border-line bg-paper px-3 py-1 text-[13px] text-ink",
+                  h.div(
+                    [h.Class("flex items-center justify-between border-b border-graphite py-2 pr-2 pl-5")],
+                    [
+                      h.span([h.Class("font-mono text-[12px] text-quiet")], ["shell"]),
+                      h.button(
+                        [
+                          h.Type("button"),
+                          h.OnClick(Message.ClickedCopy({ step: step.id })),
+                          h.DataAttribute("copy", step.id),
+                          h.Class(
+                            "cursor-pointer rounded border border-graphite bg-transparent px-3 py-1 font-mono text-[12px] text-paper",
+                          ),
+                        ],
+                        [model.copied === step.id ? "Copied" : "Copy"],
+                      ),
+                    ],
+                  ),
+                  h.pre(
+                    [
+                      h.Class(
+                        "m-0 px-5 py-4 font-mono text-[13px] leading-[1.8] break-all whitespace-pre-wrap text-paper",
+                      ),
+                    ],
+                    [h.code([], [step.lines.map((line) => `$ ${line}`).join("\n")])],
                   ),
                 ],
-                [model.copied ? "Copied" : "Copy"],
               ),
             ],
           ),
@@ -201,6 +230,18 @@ const hero = (h: H, model: Model): Html =>
       ),
     ],
   );
+
+const getStarted = (h: H, model: Model): Html =>
+  section(h, "01", "Get started", [
+    h.ol(
+      [h.Class("m-0 list-none p-0")],
+      installSteps.map((step, index) => installStep(h, model, step, index)),
+    ),
+    h.p(
+      [h.Class("mt-6 mb-0 text-[15px]")],
+      [h.a([h.Href("/docs/quick-start/")], ["Full quick start, and how to write your own plan"])],
+    ),
+  ]);
 
 const planExample = `{
   "name": "tally",
@@ -221,7 +262,7 @@ const planExample = `{
 }`;
 
 const howItWorks = (h: H): Html =>
-  section(h, "01", "How it works", [
+  section(h, "02", "How it works", [
     h.ol(
       [h.Class("m-0 list-none p-0")],
       [
@@ -298,7 +339,7 @@ const tab = (h: H, model: Model, surface: Surface, label: string): Html =>
   );
 
 const surfaces = (h: H, model: Model): Html =>
-  section(h, "02", "Drive it from an agent", [
+  section(h, "03", "Drive it from an agent", [
     h.p(
       [h.Class("mt-0 mb-8 text-[17px] text-graphite")],
       [
@@ -349,7 +390,7 @@ const armRow = (h: H, before: Arm, after: Arm): Html =>
   );
 
 const bench = (h: H): Html =>
-  section(h, "03", "One thing we measured", [
+  section(h, "04", "One thing we measured", [
     h.p(
       [h.Class("mt-0 mb-8 text-[17px] text-graphite")],
       [
@@ -423,4 +464,11 @@ const footer = (h: H): Html =>
   );
 
 export const view = (model: Model, h: H): Html =>
-  h.div([], [nav(h), h.main([], [hero(h, model), howItWorks(h), surfaces(h, model), bench(h)]), footer(h)]);
+  h.div(
+    [],
+    [
+      nav(h),
+      h.main([], [hero(h, model), getStarted(h, model), howItWorks(h), surfaces(h, model), bench(h)]),
+      footer(h),
+    ],
+  );

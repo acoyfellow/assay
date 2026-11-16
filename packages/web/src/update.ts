@@ -1,5 +1,5 @@
 import type { Update } from "foldkit";
-import { CopyInstall } from "./command.ts";
+import { CopyStep } from "./command.ts";
 import { Message } from "./message.ts";
 import type { Model } from "./model.ts";
 import { cycleMs, wrap } from "./timeline.ts";
@@ -11,8 +11,8 @@ const maxFrameMs = 48;
 export const update = (model: Model, message: Message): Return =>
   Message.match(message, {
     ChoseSurface: ({ surface }) => ({ model: { ...model, surface }, commands: [] }),
-    ClickedCopy: () => ({ model, commands: [CopyInstall({})] }),
-    Copied: () => ({ model: { ...model, copied: true }, commands: [] }),
+    ClickedCopy: ({ step }) => ({ model, commands: [CopyStep({ step })] }),
+    Copied: ({ step }) => ({ model: { ...model, copied: step }, commands: [] }),
     Ticked: ({ deltaTime }) => ({
       model: { ...model, clock: wrap(model.clock + Math.min(deltaTime, maxFrameMs)) },
       commands: [],
