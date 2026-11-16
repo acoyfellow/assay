@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { marked } from "marked";
+import { cloudflareSvg, dragonSvg } from "../src/dragon-art.ts";
 import { docJsonLd, headTags, site, swRegister } from "./head.ts";
 import { highlight, languageOf } from "./highlight.ts";
 import type { ArmNumbers } from "./numbers.ts";
@@ -168,7 +169,8 @@ ${headTags({
 <details class="side" open><summary>Docs</summary><ul>${nav(page)}</ul></details>
 <main class="prose"><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.description)}</p>${html}${pager(index)}</main>
 </div></div></div>
-<footer class="foot"><div class="foot-in"><a href="/">assay</a><a href="/llms.txt">llms.txt</a><a href="${repo}">GitHub</a></div></footer>
+<footer class="foot"><div class="foot-in"><div class="peek" aria-hidden="true"><img src="/brand/astronaut-peek.webp" alt="" width="400" height="362" loading="lazy"></div><div class="foot-note">${cloudflareSvg()}<p><strong>OSS experiment, not officially endorsed by Cloudflare.</strong> Here be dragons.${dragonSvg()}</p></div><div class="foot-links"><a href="/">assay · MIT</a><a href="/llms.txt">llms.txt</a><a href="${repo}">GitHub</a></div></div></footer>
+<script>(()=>{const p=document.querySelector(".peek");if(!p)return;const r=()=>{const b=p.getBoundingClientRect();const s=Math.min(1,Math.max(0,(innerHeight-b.bottom+40)/(b.height+40)));const e=innerHeight+scrollY>=document.documentElement.scrollHeight-4;p.style.setProperty("--peek",String(e?1:s))};addEventListener("scroll",r,{passive:true});addEventListener("resize",r);r()})();</script>
 ${swRegister}
 </body>
 </html>

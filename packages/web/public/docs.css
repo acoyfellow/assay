@@ -59,8 +59,35 @@ td:last-child, th:last-child { white-space: normal; }
 th { color: var(--g5); font-weight: 400; font-size: 13px; }
 
 .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 64px; font-size: 15px; }
-.foot-in { max-width: 1152px; margin: 24px auto 48px; padding: 16px 24px; border-radius: 999px; background: var(--g1); display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; }
-.foot { padding: 0 20px; }
+.foot { padding: 176px 20px 0; }
+.foot-in { position: relative; max-width: 1152px; margin: 24px auto 48px; padding: 16px 24px; border-radius: 28px; background: var(--g1); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; font-size: 13px; color: var(--g6); }
+.foot-note { display: flex; align-items: center; gap: 14px; max-width: 480px; }
+.foot-note p { margin: 0; line-height: 1.45; }
+.foot-note strong { font-weight: 500; color: var(--k1); }
+.foot-note .cf { display: block; width: 57px; height: 26px; flex: none; }
+.foot-links { display: flex; gap: 20px; }
+.peek { pointer-events: none; position: absolute; bottom: 100%; left: 32px; height: 154px; width: min(170px, 34vw); overflow: hidden; }
+.peek img { position: absolute; bottom: 0; left: 0; width: 100%; height: auto; transform-origin: bottom; transform: translateY(calc((1 - var(--peek, 0)) * 100%)) rotate(calc((1 - var(--peek, 0)) * -10deg)); }
+.dragon { display: inline-block; width: 64px; height: 20px; margin-left: 6px; vertical-align: -5px; }
+.dragon svg { display: block; width: 64px; height: 20px; fill: #ffa45c; }
+.dragon .eye { fill: var(--k1); }
+.dragon .inhale { fill: #fff3dc; animation: inhale 2.4s step-end infinite; }
+.dragon .wing-up { animation: wing-up 2.4s step-end infinite; }
+.dragon .wing-down { animation: wing-down 2.4s step-end infinite; }
+.dragon .fire { opacity: 0; fill: #ff6a1a; }
+.dragon .fire.hot { fill: #fff3dc; }
+.dragon .fire-1 { animation: fire-1 2.4s step-end infinite; }
+.dragon .fire-2 { animation: fire-2 2.4s step-end infinite; }
+.dragon .fire-3 { animation: fire-3 2.4s step-end infinite; }
+.dragon .fire-4 { animation: fire-4 2.4s step-end infinite; }
+@keyframes wing-up { 0%, 25%, 50%, 75% { opacity: 1; } 12.5%, 37.5%, 62.5%, 87.5% { opacity: 0; } }
+@keyframes wing-down { 0%, 25%, 50%, 75% { opacity: 0; } 12.5%, 37.5%, 62.5%, 87.5% { opacity: 1; } }
+@keyframes inhale { 0%, 40%, 75%, 100% { opacity: 0; } 45%, 70% { opacity: 1; } }
+@keyframes fire-1 { 0%, 50% { opacity: 0; } 52%, 82% { opacity: 1; } 84%, 100% { opacity: 0; } }
+@keyframes fire-2 { 0%, 54% { opacity: 0; } 56%, 80% { opacity: 1; } 82%, 100% { opacity: 0; } }
+@keyframes fire-3 { 0%, 58% { opacity: 0; } 60%, 78% { opacity: 1; } 80%, 100% { opacity: 0; } }
+@keyframes fire-4 { 0%, 62% { opacity: 0; } 64%, 74% { opacity: 0.8; } 76%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .dragon * { animation: none !important; } .peek img { transform: none; } }
 .foot a { color: var(--g6); text-decoration: none; }
 .foot a:hover { color: var(--k1); }
 

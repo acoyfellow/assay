@@ -1,5 +1,6 @@
 import type { Html, HtmlBuilder } from "foldkit/html";
 import { installSteps, type OutputLine } from "./command.ts";
+import { astronaut, cloudflareLogo, dragon } from "./dragons.ts";
 import { heroStage, phaseList } from "./hero.ts";
 import { Message } from "./message.ts";
 import type { Model, Surface } from "./model.ts";
@@ -752,19 +753,37 @@ const bench = (h: H): Html =>
 
 const footer = (h: H): Html =>
   h.footer(
-    [h.Class("mx-auto max-w-6xl px-5 pt-6 pb-12")],
+    [h.Class("mx-auto max-w-6xl px-5 pt-44 pb-12")],
     [
       h.div(
         [
           h.Class(
-            "flex flex-wrap items-center justify-between gap-4 rounded-full bg-g1 px-6 py-4 text-[13px] text-g6",
+            "relative flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-[28px] bg-g1 px-6 py-4 text-[13px] text-g6",
           ),
         ],
         [
-          h.span([h.Class("flex items-center gap-2 text-k1")], [pixel(h, "tube", 14), "assay"]),
+          astronaut(h),
           h.div(
-            [h.Class("flex gap-5")],
+            [h.Class("flex max-w-[480px] items-center gap-3.5")],
             [
+              cloudflareLogo(h),
+              h.p(
+                [h.Class("m-0 leading-[1.45]")],
+                [
+                  h.strong(
+                    [h.Class("font-medium text-k1")],
+                    ["OSS experiment, not officially endorsed by Cloudflare."],
+                  ),
+                  " Here be dragons.",
+                  dragon(h),
+                ],
+              ),
+            ],
+          ),
+          h.div(
+            [h.Class("flex items-center gap-5")],
+            [
+              h.span([h.Class("flex items-center gap-2 text-k1")], [pixel(h, "tube", 14), "assay · MIT"]),
               h.a([h.Href("/docs/"), h.Class("text-g6 no-underline hover:text-k1")], ["Docs"]),
               h.a([h.Href("/llms.txt"), h.Class("text-g6 no-underline hover:text-k1")], ["llms.txt"]),
               h.a([h.Href(repo), h.Class("text-g6 no-underline hover:text-k1")], ["GitHub"]),

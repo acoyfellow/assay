@@ -8,5 +8,6 @@ export const Message = defineMessageUnion({
   Copied: { step: Schema.String },
   Ticked: { deltaTime: Schema.Number },
   ToggledPlay: {},
+  MountedPeek: {},
 });
 export type Message = typeof Message.Type;

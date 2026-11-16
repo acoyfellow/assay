@@ -116,10 +116,20 @@ Point `repo` at your code and add a seat per task:
 }
 ```
 
-Paths in the plan are relative to the plan file. Agents cannot read folders listed in `hidden` (on macOS this uses `sandbox-exec`). A `writable` entry that ends in `/` allows a whole folder. Add `"repeat": 3` to run every seat three times.
+Paths in the plan are relative to the plan file. Agents cannot read folders listed in `hidden` (`sandbox-exec` on macOS, bubblewrap on Linux). A `writable` entry that ends in `/` allows a whole folder. Add `"repeat": 3` to run every seat three times.
 
 Model names change. Set `ASSAY_MODEL` to run any plan on another model without editing it. Seats that name their own `model` keep it.
 
-If your provider needs a token minted, set `ASSAY_PI_TOKEN_COMMAND` and `ASSAY_PI_TOKEN_ENV`. To load Pi extensions, set `ASSAY_PI_EXTENSIONS`.
+The relay reads its upstream from the environment. The agents never see these:
+
+| Variable | What |
+|---|---|
+| `ASSAY_UPSTREAM_URL` | Base URL of an Anthropic messages API |
+| `ASSAY_UPSTREAM_TOKEN_COMMAND` | Command that prints the token. Run again every 5 minutes. |
+| `ASSAY_UPSTREAM_TOKEN_ENV` | Or the name of a variable that holds it |
+| `ASSAY_UPSTREAM_HEADER` | Header for the token. Default `x-api-key`. `authorization` adds `Bearer`. |
+| `ASSAY_UPSTREAM_EXTRA_HEADERS` | More headers, as `name=value,name=value` |
+| `ASSAY_USD_PER_M_INPUT`, `ASSAY_USD_PER_M_OUTPUT` | Price per million tokens. Default 1 and 5. |
+| `ASSAY_MAX_TOKENS` | Cap per call. Default 16000. |
 
 Next: [The model](/docs/model/).

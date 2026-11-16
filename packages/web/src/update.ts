@@ -10,6 +10,7 @@ const maxFrameMs = 48;
 
 export const update = (model: Model, message: Message): Return =>
   Message.match(message, {
+    MountedPeek: () => ({ model, commands: [] }),
     ChoseSurface: ({ surface }) => ({ model: { ...model, surface }, commands: [] }),
     ClickedCopy: ({ step }) => ({ model, commands: [CopyStep({ step })] }),
     Copied: ({ step }) => ({ model: { ...model, copied: step }, commands: [] }),

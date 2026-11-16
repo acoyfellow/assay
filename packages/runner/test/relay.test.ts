@@ -92,6 +92,8 @@ describe("model relay: agents never hold a key", () => {
     process.env.ANTHROPIC_API_KEY = secret;
     process.env.SOME_PROVIDER_TOKEN = secret;
     process.env.ASSAY_UPSTREAM_URL = "https://provider";
+    process.env.PLAIN_NAME = secret;
+    process.env.ASSAY_UPSTREAM_TOKEN_ENV = "PLAIN_NAME";
     const env = agentEnv({ PI_CODING_AGENT_DIR: "/x" });
     expect(JSON.stringify(env)).not.toContain(secret);
     expect(env.ASSAY_UPSTREAM_URL).toBeUndefined();
@@ -100,5 +102,7 @@ describe("model relay: agents never hold a key", () => {
     delete process.env.ANTHROPIC_API_KEY;
     delete process.env.SOME_PROVIDER_TOKEN;
     delete process.env.ASSAY_UPSTREAM_URL;
+    delete process.env.PLAIN_NAME;
+    delete process.env.ASSAY_UPSTREAM_TOKEN_ENV;
   });
 });

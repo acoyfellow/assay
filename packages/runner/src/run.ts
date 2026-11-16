@@ -107,7 +107,10 @@ const secretShaped = /(key|token|secret|password|credential|auth|cookie|session)
 export const agentEnv = (extra: Record<string, string>): Record<string, string> => {
   const keep = Object.entries(process.env).filter(
     (entry): entry is [string, string] =>
-      typeof entry[1] === "string" && !secretShaped.test(entry[0]) && !entry[0].startsWith("ASSAY_UPSTREAM"),
+      typeof entry[1] === "string" &&
+      !secretShaped.test(entry[0]) &&
+      !entry[0].startsWith("ASSAY_UPSTREAM") &&
+      entry[0] !== process.env.ASSAY_UPSTREAM_TOKEN_ENV,
   );
   return { ...Object.fromEntries(keep), ...extra };
 };
