@@ -1,5 +1,5 @@
 import type { Html, HtmlBuilder } from "foldkit/html";
-import { installSteps } from "./command.ts";
+import { installSteps, type OutputLine } from "./command.ts";
 import { heroStage, phaseList } from "./hero.ts";
 import { Message } from "./message.ts";
 import type { Model, Surface } from "./model.ts";
@@ -215,6 +215,22 @@ const hero = (h: H, model: Model): Html =>
     ],
   );
 
+const toneClass: Record<OutputLine["tone"], string> = {
+  dim: "text-on-dark-dim",
+  pass: "text-ok",
+  fail: "text-[#8a8a87]",
+  plain: "text-on-dark",
+  command: "text-on-dark",
+};
+
+const commandRow = (h: H, text: string): Html =>
+  h.span([h.Class("block text-on-dark")], [h.span([h.Class("text-ok")], ["$ "]), text]);
+
+const outputRow = (h: H, line: OutputLine): Html =>
+  line.tone === "command"
+    ? commandRow(h, line.text)
+    : h.span([h.Class(`block w-max break-normal whitespace-pre ${toneClass[line.tone]}`)], [line.text]);
+
 const installStep = (h: H, model: Model, step: (typeof installSteps)[number], index: number): Html =>
   h.li(
     [
@@ -224,7 +240,7 @@ const installStep = (h: H, model: Model, step: (typeof installSteps)[number], in
     ],
     [
       h.div(
-        [h.Class("flex flex-col gap-2")],
+        [h.Class("flex min-w-0 flex-col gap-2")],
         [
           h.p([h.Class("m-0 font-mono text-xs text-g5")], [`0${index + 1}`]),
           h.h3([h.Class("m-0 text-[18px] font-medium")], [step.title]),
@@ -232,12 +248,23 @@ const installStep = (h: H, model: Model, step: (typeof installSteps)[number], in
         ],
       ),
       h.div(
-        [h.Class("dark-card rounded-[16px]")],
+        [h.Class("dark-card min-w-0 rounded-[16px]")],
         [
           h.div(
             [h.Class("flex items-center justify-between py-2 pr-2 pl-4")],
             [
-              h.span([h.Class("font-mono text-[12px] text-on-dark-dim")], ["shell"]),
+              h.span(
+                [h.Class("flex items-center gap-1.5")],
+                [
+                  h.span([h.Class("size-2.5 rounded-full bg-[#3a3a3c]")], []),
+                  h.span([h.Class("size-2.5 rounded-full bg-[#3a3a3c]")], []),
+                  h.span([h.Class("size-2.5 rounded-full bg-[#3a3a3c]")], []),
+                  h.span(
+                    [h.Class("ml-2 font-mono text-[12px] text-on-dark-dim")],
+                    [index === 3 ? "terminal 2" : "terminal"],
+                  ),
+                ],
+              ),
               h.button(
                 [
                   h.Type("button"),
@@ -254,10 +281,18 @@ const installStep = (h: H, model: Model, step: (typeof installSteps)[number], in
           h.pre(
             [
               h.Class(
-                "m-0 px-4 pt-1 pb-4 font-mono text-[13px] leading-[1.8] break-all whitespace-pre-wrap text-on-dark",
+                "m-0 overflow-x-auto px-4 pt-1 pb-4 font-mono text-[12.5px] leading-[1.75] break-all whitespace-pre-wrap text-on-dark",
               ),
             ],
-            [h.code([], [step.lines.map((line) => `$ ${line}`).join("\n")])],
+            [
+              h.code(
+                [],
+                [
+                  ...step.lines.map((line) => commandRow(h, line)),
+                  ...step.output.map((line) => outputRow(h, line)),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -265,21 +300,27 @@ const installStep = (h: H, model: Model, step: (typeof installSteps)[number], in
   );
 
 const getStarted = (h: H, model: Model): Html =>
-  band(h, "Get started.", " Three commands.", "Clone it, pick a model provider, and run the example fleet.", [
-    h.ol(
-      [h.Class("m-0 mt-10 grid list-none gap-4 p-0")],
-      installSteps.map((step, index) => installStep(h, model, step, index)),
-    ),
-    h.p(
-      [h.Class("mt-6 mb-0 px-2 text-[15px]")],
-      [
-        h.a(
-          [h.Href("/docs/quick-start/"), h.Class("text-k1 underline underline-offset-[5px]")],
-          ["Full quick start, and how to write your own plan"],
-        ),
-      ],
-    ),
-  ]);
+  band(
+    h,
+    "Get started.",
+    " What you will see.",
+    "Real output from one run on a laptop: six Haiku agents, one steered mid-task, two tasks landed on a branch, 74 cents.",
+    [
+      h.ol(
+        [h.Class("m-0 mt-10 grid list-none gap-4 p-0")],
+        installSteps.map((step, index) => installStep(h, model, step, index)),
+      ),
+      h.p(
+        [h.Class("mt-6 mb-0 px-2 text-[15px]")],
+        [
+          h.a(
+            [h.Href("/docs/quick-start/"), h.Class("text-k1 underline underline-offset-[5px]")],
+            ["Full quick start, and how to write your own plan"],
+          ),
+        ],
+      ),
+    ],
+  );
 
 const planExample = `{
   "name": "tally",
