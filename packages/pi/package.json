@@ -1,0 +1,6 @@
+{
+  "name": "@assay/pi",
+  "private": true,
+  "type": "module",
+  "pi": { "extensions": ["./src/index.ts"] }
+}

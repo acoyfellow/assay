@@ -99,7 +99,7 @@ export class Assay extends Domain.Aggregate("Assay", {
       if (slot === undefined) return new UnknownSeat({ seat: cmd.seat, seats: Object.keys(running.seats) });
       if (slot.stage !== "open") return new AlreadyClaimed({ runner: slot.runner });
       const needed = slot.plan.worstCaseMicroUsd;
-      const remaining = running.budgetMicroUsd - running.committedMicroUsd;
+      const remaining = Math.max(0, running.budgetMicroUsd - running.committedMicroUsd);
       if (needed > remaining) {
         return new OverBudget({
           remainingMicroUsd: remaining,

@@ -3,12 +3,13 @@ import { dirname, join, resolve } from "node:path";
 import { type Agent, startAgent } from "./agent.ts";
 import { type SeatView, startControl } from "./control.ts";
 import { addWorktree, commitSeat, diffStat, repoPath, seedRepo } from "./git.ts";
-import { decodePlan, type ExpandedSeat, expandSeats, type Plan } from "./Plan.ts";
+import { decodePlan, type ExpandedSeat, expandSeats, type Plan, roundsOf } from "./Plan.ts";
 import { sandboxed } from "./sandbox.ts";
 
 export type Receipt = {
   seat: string;
   task: string;
+  round: number;
   outcome: "stopped" | "died" | "killed" | "skipped";
   killedBy: string;
   passed: boolean;
@@ -241,28 +242,42 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
     return claimed;
   };
 
+  const blank = (seat: ExpandedSeat): Receipt => ({
+    seat: seat.runId,
+    task: seat.id,
+    round: seat.round,
+    outcome: "skipped",
+    killedBy: "",
+    passed: false,
+    gradeOutput: "",
+    turns: 0,
+    toolCalls: 0,
+    steers: 0,
+    usd: 0,
+    ms: 0,
+    branch: "",
+    sha: base,
+    changedLines: 0,
+    lastText: "",
+  });
+
+  const skipSeat = async (seat: ExpandedSeat, reason: string): Promise<Receipt> => {
+    await ledgerCall(api, ["skip-seat", "--target", assayId, "--seat", seat.runId, "--reason", reason]);
+    setStage(seat.runId, "skipped");
+    const seatDir = join(runDir, seat.runId);
+    mkdirSync(seatDir, { recursive: true });
+    const receipt = { ...blank(seat), gradeOutput: reason };
+    writeFileSync(join(seatDir, "receipt.json"), JSON.stringify(receipt, null, 2));
+    if (!reason.startsWith("not needed")) console.log(line(receipt));
+    return receipt;
+  };
+
   const runSeat = async (seat: ExpandedSeat): Promise<Receipt> => {
     const started = Date.now();
     const seatDir = join(runDir, seat.runId);
     const worktree = join(seatDir, "repo");
     const branch = `seat/${seat.runId}`;
-    const empty: Receipt = {
-      seat: seat.runId,
-      task: seat.id,
-      outcome: "skipped",
-      killedBy: "",
-      passed: false,
-      gradeOutput: "",
-      turns: 0,
-      toolCalls: 0,
-      steers: 0,
-      usd: 0,
-      ms: 0,
-      branch: "",
-      sha: base,
-      changedLines: 0,
-      lastText: "",
-    };
+    const empty = blank(seat);
     mkdirSync(seatDir, { recursive: true });
 
     const claim = await claimInOrder(seat);
@@ -395,10 +410,32 @@ export const runFleet = async (planPath: string, outRoot: string): Promise<Fleet
     console.log(
       `fleet ${assayId}: ${seats.length} agents, ${plan.parallel ?? 4} at a time, model ${plan.model}, control ${control.url}`,
     );
-    const receipts = await pool(
-      seats.map((seat) => () => runSeat(seat)),
-      plan.parallel ?? 4,
-    );
+    const receipts: Receipt[] = [];
+    const passedTasks = new Set<string>();
+    for (let round = 1; round <= roundsOf(plan); round++) {
+      const inRound = seats.filter((seat) => seat.round === round);
+      const needed = inRound.filter((seat) => !passedTasks.has(seat.id));
+      for (const seat of inRound.filter((each) => passedTasks.has(each.id))) {
+        receipts.push(await skipSeat(seat, "not needed: task already passed"));
+      }
+      if (needed.length === 0) continue;
+      if (round > 1)
+        console.log(`round ${round}: retrying ${[...new Set(needed.map((seat) => seat.id))].join(", ")}`);
+      const results = await pool(
+        needed.map((seat) => () => runSeat(seat)),
+        plan.parallel ?? 4,
+      );
+      receipts.push(...results);
+      for (const receipt of results) if (receipt.passed) passedTasks.add(receipt.task);
+      const broke = results.every((receipt) => receipt.gradeOutput === "not started: over budget");
+      if (broke && round < roundsOf(plan)) {
+        console.log(`stopped after round ${round}: budget spent`);
+        for (const seat of seats.filter((each) => each.round > round)) {
+          receipts.push(await skipSeat(seat, "not needed: budget spent"));
+        }
+        break;
+      }
+    }
     await Bun.sleep(300);
     const score = await ledgerMust(api, ["assay-score", "get", "--key", assayId]);
     const summary: FleetSummary = { assayId, planHash, base, runDir, score, receipts };

@@ -40,9 +40,15 @@ const work = async () => {
   }
   if (aborted) return;
   if (steers.length > 0) writeFileSync("steer.txt", steers.join("\n"));
-  if (fixFrom && fixTo && existsSync(fixFrom)) {
+  const onlyRound = directive("only-round");
+  const round = process.cwd().includes("-r2-") ? "2" : "1";
+  const needSteer = directive("needs-steer") === "yes";
+  const allowed = (!onlyRound || onlyRound === round) && (!needSteer || steers.length > 0);
+  if (allowed && fixFrom && fixTo && existsSync(fixFrom)) {
     emit({ type: "tool_execution_start", toolName: "write" });
-    copyFileSync(fixFrom, join(process.cwd(), fixTo));
+    try {
+      copyFileSync(fixFrom, join(process.cwd(), fixTo));
+    } catch {}
   }
   turn(0.01, "done");
   emit({ type: "agent_end", messages: [], willRetry: false });

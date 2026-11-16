@@ -1,6 +1,6 @@
 import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { decodePlan, expandSeats } from "../src/Plan.ts";
 
 const here = new URL(".", import.meta.url).pathname;
@@ -11,11 +11,15 @@ type Proof = Record<string, ReadonlyArray<Fix>>;
 
 const target = process.argv[2] ? resolve(process.argv[2]) : recipesDir;
 const isRecipe = (dir: string) => existsSync(join(dir, "plan.json"));
-const recipeDirs = isRecipe(target)
+const planFiles = target.endsWith(".json")
   ? [target]
-  : readdirSync(target)
-      .map((name) => join(target, name))
-      .filter(isRecipe);
+  : isRecipe(target)
+    ? [join(target, "plan.json")]
+    : readdirSync(target)
+        .map((name) => join(target, name))
+        .filter(isRecipe)
+        .map((dir) => join(dir, "plan.json"));
+const gallery = target === recipesDir;
 
 const grade = async (command: string, cwd: string, planDir: string) => {
   const child = Bun.spawn(["sh", "-c", command], {
@@ -34,9 +38,9 @@ const check = (name: string, ok: boolean) => {
   if (!ok) failures.push(name);
 };
 
-for (const planDir of recipeDirs) {
+for (const planFile of planFiles) {
+  const planDir = dirname(planFile);
   const name = basename(planDir);
-  const planFile = join(planDir, "plan.json");
   const proofFile = join(planDir, "proof.json");
   check(`${name}: proof.json names a known good fix for each seat`, existsSync(proofFile));
   const proof: Proof = existsSync(proofFile) ? JSON.parse(readFileSync(proofFile, "utf8")) : {};
@@ -44,7 +48,7 @@ for (const planDir of recipeDirs) {
   const seats = expandSeats(plan);
   const holds = plan.worstCaseUsdPerSeat * seats.length;
   check(`${name}: plan decodes, ${seats.length} agents, worst case $${holds.toFixed(2)}`, seats.length > 0);
-  check(`${name}: README explains it`, existsSync(join(planDir, "README.md")));
+  if (gallery) check(`${name}: README explains it`, existsSync(join(planDir, "README.md")));
   for (const hidden of plan.hidden ?? [])
     check(`${name}: hidden ${hidden} exists`, existsSync(resolve(planDir, hidden)));
 

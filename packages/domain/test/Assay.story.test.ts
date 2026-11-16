@@ -341,3 +341,16 @@ it.effect("a killed seat keeps its receipt and can still be graded", () =>
     Story.then(run, new SeatSettled({ seat: "s1", spentMicroUsd: 9, passed: false, finished: false })),
   ),
 );
+
+it.effect("a seat that overspent its hold leaves nothing, and the next claim is refused as over budget", () =>
+  story(
+    Story.given(
+      run,
+      started,
+      claim("s1"),
+      new SeatSettled({ seat: "s1", spentMicroUsd: 260_000, passed: false, finished: false }),
+    ),
+    Story.when(run, new ClaimSeat({ seat: "s2", runner: "local" })),
+    Story.rejected(new OverBudget({ remainingMicroUsd: 0, neededMicroUsd: 100_000 })),
+  ),
+);
