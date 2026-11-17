@@ -1,4 +1,4 @@
-const cacheName = "assay-v1";
+const cacheName = "assay-v2";
 const shell = ["/", "/docs/", "/docs.css", "/tokens.css", "/favicon.svg", "/logo.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
